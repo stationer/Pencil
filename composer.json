@@ -1,0 +1,29 @@
+{
+  "name": "stationer/pencil",
+  "description": "Content Management System based on Graphite",
+  "homepage": "https://github.com/stationer/Pencil",
+  "require": {
+    "php": "^7.0",
+    "stationer/graphite": "*",
+    "stationer/barrel": "*"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Stationer\\Pencil\\": "src/"
+    }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/stationer/Graphite"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/stationer/Barrel"
+    }
+  ]
+}
