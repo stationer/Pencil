@@ -1,14 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: andrew_leach
- * Date: 8/9/18
- * Time: 9:49 AM
- */
 
 namespace Stationer\Pencil\libs;
 
-
+/**
+ * ArboristWorkflow - A workflow for handling trees
+ *
+ * PHP version 7.0
+ *
+ * @category Graphite
+ * @package  Pencil
+ * @license  CC BY-NC-SA http://creativecommons.org/licenses/by-nc-sa/3.0/
+ * @link     http://g.lonefry.com
+ */
 class ArboristWorkflow {
     public function create() {
 
@@ -49,5 +52,4 @@ class ArboristWorkflow {
     public function copy($newLabel) {
 
     }
-
 }

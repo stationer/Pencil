@@ -6,12 +6,12 @@
  *
  * @category Graphite
  * @package  Pencil
- * @author   Andrew Leach <andrew@leachcreative.com>
  * @license  CC BY-NC-SA http://creativecommons.org/licenses/by-nc-sa/3.0/
  * @link     http://g.lonefry.com
  */
 namespace Stationer\Pencil\controllers;
 
+use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\Controller;
 use Stationer\Graphite\data\IDataProvider;
@@ -20,7 +20,6 @@ use Stationer\Graphite\data\IDataProvider;
  * Class P_BlogController
  * @package Stationer\Pencil\controllers
  * @category Pencil
- * @author   Andrew Leach <andrew@leachcreative.com>
  * @license  CC BY-NC-SA http://creativecommons.org/licenses/by-nc-sa/3.0/
  * @link     http://g.lonefry.com
  */
@@ -35,10 +34,6 @@ class P_BlogController extends Controller {
      */
     public function __construct(array $argv = [], IDataProvider $DB = null, View $View = null) {
         parent::__construct($argv, $DB, $View);
-
-        if (!G::$S->roleTest('Admin/Login')) {
-            return parent::do_403($argv);
-        }
     }
 
     /**
@@ -50,7 +45,9 @@ class P_BlogController extends Controller {
      * @return View
      */
     public function do_list(array $argv = array(), array $request = array()) {
-
+        if (!G::$S->roleTest('Admin/Login')) {
+            return parent::do_403($argv);
+        }
 
         return $this->View;
     }
@@ -64,7 +61,9 @@ class P_BlogController extends Controller {
      * @return View
      */
     public function do_add(array $argv = array(), array $request = array()) {
-
+        if (!G::$S->roleTest('Admin/Login')) {
+            return parent::do_403($argv);
+        }
 
         return $this->View;
     }
@@ -78,7 +77,9 @@ class P_BlogController extends Controller {
      * @return View
      */
     public function do_search(array $argv = array(), array $request = array()) {
-
+        if (!G::$S->roleTest('Admin/Login')) {
+            return parent::do_403($argv);
+        }
 
         return $this->View;
     }
