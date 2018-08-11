@@ -4,11 +4,11 @@
  *
  * PHP version 7.0
  *
- * @category Graphite
- * @package  Pencil
- * @license  CC BY-NC-SA http://creativecommons.org/licenses/by-nc-sa/3.0/
- * @link     http://g.lonefry.com
+ * @package  Stationer\Pencil
+ * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
+ * @link     https://github.com/stationer/Pencil
  */
+
 namespace Stationer\Pencil\controllers;
 
 use Stationer\Graphite\G;
@@ -18,10 +18,11 @@ use Stationer\Graphite\data\IDataProvider;
 
 /**
  * Class P_BlogController
- * @package Stationer\Pencil\controllers
+ *
+ * @package  Stationer\Pencil\controllers
  * @category Pencil
- * @license  CC BY-NC-SA http://creativecommons.org/licenses/by-nc-sa/3.0/
- * @link     http://g.lonefry.com
+ * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
+ * @link     https://github.com/stationer/Pencil
  */
 class P_BlogController extends Controller {
 
@@ -44,7 +45,7 @@ class P_BlogController extends Controller {
      *
      * @return View
      */
-    public function do_list(array $argv = array(), array $request = array()) {
+    public function do_list(array $argv = [], array $request = []) {
         if (!G::$S->roleTest('Admin/Login')) {
             return parent::do_403($argv);
         }
@@ -60,7 +61,7 @@ class P_BlogController extends Controller {
      *
      * @return View
      */
-    public function do_add(array $argv = array(), array $request = array()) {
+    public function do_add(array $argv = [], array $request = []) {
         if (!G::$S->roleTest('Admin/Login')) {
             return parent::do_403($argv);
         }
@@ -76,7 +77,7 @@ class P_BlogController extends Controller {
      *
      * @return View
      */
-    public function do_search(array $argv = array(), array $request = array()) {
+    public function do_search(array $argv = [], array $request = []) {
         if (!G::$S->roleTest('Admin/Login')) {
             return parent::do_403($argv);
         }

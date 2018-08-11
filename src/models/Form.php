@@ -1,4 +1,13 @@
 <?php
+/**
+ * Form - For managing HTML forms
+ *
+ * PHP version 7.0
+ *
+ * @package  Stationer\Pencil
+ * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
+ * @link     https://github.com/stationer/Pencil
+ */
 
 namespace Stationer\Pencil\models;
 

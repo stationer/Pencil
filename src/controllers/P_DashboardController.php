@@ -4,10 +4,9 @@
  *
  * PHP version 7.0
  *
- * @category Graphite
- * @package  Pencil
- * @license  CC BY-NC-SA http://creativecommons.org/licenses/by-nc-sa/3.0/
- * @link     http://g.lonefry.com
+ * @package  Stationer\Pencil
+ * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
+ * @link     https://github.com/stationer/Pencil
  */
 
 namespace Stationer\Pencil\controllers;
@@ -36,7 +35,7 @@ class P_DashboardController extends Controller {
      *
      * @return View
      */
-    public function do_settings(array $argv = array(), array $request = array()) {
+    public function do_settings(array $argv = [], array $request = []) {
         if (!G::$S->roleTest('Admin/Login')) {
             return parent::do_403($argv);
         }
@@ -52,7 +51,7 @@ class P_DashboardController extends Controller {
      *
      * @return View
      */
-    public function do_fancyGraphs(array $argv = array(), array $request = array()) {
+    public function do_fancyGraphs(array $argv = [], array $request = []) {
         if (!G::$S->roleTest('Admin/Login')) {
             return parent::do_403($argv);
         }

@@ -1,8 +1,16 @@
 <?php
 /**
  * Module config.
+ * File : /src/config.php
  *
  * Namespace to Stationer\Graphite
+ *
+ * PHP version 7.0
+ *
+ * @package  Stationer\Pencil
+ * @author   Tyler Uebele
+ * @license  MIT https://github.com/stationer/Graphite/blob/master/LICENSE
+ * @link     https://github.com/stationer/Graphite
  */
 
 namespace Stationer\Graphite;

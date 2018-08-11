@@ -1,4 +1,13 @@
 <?php
+/**
+ * ArboristWorkflow - For working the Node tree
+ *
+ * PHP version 7.0
+ *
+ * @package  Stationer\Pencil
+ * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
+ * @link     https://github.com/stationer/Pencil
+ */
 
 namespace Stationer\Pencil\libs;
 
@@ -7,10 +16,10 @@ namespace Stationer\Pencil\libs;
  *
  * PHP version 7.0
  *
- * @category Graphite
- * @package  Pencil
- * @license  CC BY-NC-SA http://creativecommons.org/licenses/by-nc-sa/3.0/
- * @link     http://g.lonefry.com
+ * @package  Stationer\Pencil
+ * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
+ * @link     https://github.com/stationer/Pencil
+ * @see      /src/models/Node.php
  */
 class ArboristWorkflow {
     public function create() {
