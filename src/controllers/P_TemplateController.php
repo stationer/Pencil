@@ -12,7 +12,6 @@
 namespace Stationer\Pencil\controllers;
 
 use Stationer\Graphite\View;
-use Stationer\Graphite\Controller;
 use Stationer\Graphite\data\IDataProvider;
 
 /**
@@ -23,7 +22,7 @@ use Stationer\Graphite\data\IDataProvider;
  * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
  * @link     https://github.com/stationer/Pencil
  */
-class P_TemplateController extends Controller {
+class P_TemplateController extends PencilController {
 
     /**
      * Controller constructor
@@ -45,7 +44,7 @@ class P_TemplateController extends Controller {
      * @return View
      */
     public function do_list(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Admin/Login')) {
+        if (!G::$S->roleTest('Pencil')) {
             return parent::do_403($argv);
         }
 
@@ -61,7 +60,7 @@ class P_TemplateController extends Controller {
      * @return View
      */
     public function do_add(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Admin/Login')) {
+        if (!G::$S->roleTest('Pencil')) {
             return parent::do_403($argv);
         }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * P_ThemeController - Theme Controller
+ * PencilController - Theme Controller
  *
  * PHP version 7.0
  *
@@ -12,6 +12,7 @@
 namespace Stationer\Pencil\controllers;
 
 use Stationer\Graphite\View;
+use Stationer\Graphite\Controller;
 use Stationer\Graphite\data\IDataProvider;
 
 /**
@@ -22,8 +23,7 @@ use Stationer\Graphite\data\IDataProvider;
  * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
  * @link     https://github.com/stationer/Pencil
  */
-class P_ThemeController extends PencilController {
-
+abstract class PencilController extends Controller {
     /**
      * Controller constructor
      *
@@ -33,37 +33,10 @@ class P_ThemeController extends PencilController {
      */
     public function __construct(array $argv = [], IDataProvider $DB = null, View $View = null) {
         parent::__construct($argv, $DB, $View);
-    }
 
-    /**
-     * List available themes
-     *
-     * @param array $argv    Argument list passed from Dispatcher
-     * @param array $request Request_method-specific parameters
-     *
-     * @return View
-     */
-    public function do_list(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
-            return parent::do_403($argv);
-        }
-
-        return $this->View;
-    }
-
-    /**
-     * Build a theme
-     *
-     * @param array $argv    Argument list passed from Dispatcher
-     * @param array $request Request_method-specific parameters
-     *
-     * @return View
-     */
-    public function do_add(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
-            return parent::do_403($argv);
-        }
-
-        return $this->View;
+        $this->View->setTemplate('header', 'Pencil._header.php');
+        $this->View->setTemplate('footer', 'Pencil._footer.php');
+        $this->View->_style(dirname(__DIR__).'/css/Pencil.css');
+        $this->View->_script(dirname(__DIR__).'/js/Pencil.js');
     }
 }

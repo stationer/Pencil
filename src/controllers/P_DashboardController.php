@@ -12,10 +12,17 @@
 namespace Stationer\Pencil\controllers;
 
 use Stationer\Graphite\View;
-use Stationer\Graphite\Controller;
 use Stationer\Graphite\data\IDataProvider;
 
-class P_DashboardController extends Controller {
+/**
+ * Class P_DashboardController
+ *
+ * @package  Stationer\Pencil\controllers
+ * @category Pencil
+ * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
+ * @link     https://github.com/stationer/Pencil
+ */
+class P_DashboardController extends PencilController {
     /**
      * Controller constructor
      *
@@ -36,7 +43,7 @@ class P_DashboardController extends Controller {
      * @return View
      */
     public function do_settings(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Admin/Login')) {
+        if (!G::$S->roleTest('Pencil')) {
             return parent::do_403($argv);
         }
 
@@ -52,7 +59,7 @@ class P_DashboardController extends Controller {
      * @return View
      */
     public function do_fancyGraphs(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Admin/Login')) {
+        if (!G::$S->roleTest('Pencil')) {
             return parent::do_403($argv);
         }
 
