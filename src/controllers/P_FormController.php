@@ -11,6 +11,7 @@
 
 namespace Stationer\Pencil\controllers;
 
+use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
 
@@ -23,6 +24,8 @@ use Stationer\Graphite\data\IDataProvider;
  * @link     https://github.com/stationer/Pencil
  */
 class P_FormController extends PencilController {
+    /** @var string Default action */
+    protected $action = 'list';
 
     /**
      * Controller constructor
@@ -44,9 +47,13 @@ class P_FormController extends PencilController {
      * @return View
      */
     public function do_list(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
+
+        $Forms = $this->Tree->setPath(self::FORMS)->getChildren();
+
+        $this->View->Forms = $Forms;
 
         return $this->View;
     }
@@ -60,7 +67,7 @@ class P_FormController extends PencilController {
      * @return View
      */
     public function do_add(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
 
@@ -76,7 +83,7 @@ class P_FormController extends PencilController {
      * @return View
      */
     public function do_submissions(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
 

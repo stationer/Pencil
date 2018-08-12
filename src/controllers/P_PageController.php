@@ -11,6 +11,7 @@
 
 namespace Stationer\Pencil\controllers;
 
+use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
 
@@ -23,6 +24,8 @@ use Stationer\Graphite\data\IDataProvider;
  * @link     https://github.com/stationer/Pencil
  */
 class P_PageController extends PencilController {
+    /** @var string Default action */
+    protected $action = 'list';
 
     /**
      * Controller constructor
@@ -44,9 +47,15 @@ class P_PageController extends PencilController {
      * @return View
      */
     public function do_list(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
+
+        $Pages['Public']  = $this->Tree->setPath(self::WEBROOT)->getChildren();
+        $Pages['Landing'] = $this->Tree->setPath(self::LANDING)->getChildren();
+        $Pages['Error']   = $this->Tree->setPath(self::ERROR)->getChildren();
+
+        $this->View->Pages = $Pages;
 
         return $this->View;
     }
@@ -60,7 +69,7 @@ class P_PageController extends PencilController {
      * @return View
      */
     public function do_add(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
 
@@ -76,7 +85,7 @@ class P_PageController extends PencilController {
      * @return View
      */
     public function do_search(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
 

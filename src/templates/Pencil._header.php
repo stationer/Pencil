@@ -63,7 +63,57 @@ if (!isset($_bodyClass)) {
         }
         ?></div>
     <nav>
-        <a href="/P_Dashboard" title="Pencil Dashboard">Dashboard</a>
+        <ul>
+            <li><a href="/P_Dashboard" title="Pencil Dashboard">Dashboard</a>
+                <ul>
+                    <li><a href="/P_Dashboard/home" title="Pencil Dashboard">Home</a></li>
+                    <li><a href="/P_Dashboard/settings" title="Site Settings">Site Settings</a></li>
+                </ul>
+            </li>
+            <li><a href="/P_Navigation" title="Site Navigation">Navigation</a></li>
+            <li><a href="/P_Page" title="Pages">Pages</a>
+                <ul>
+                    <li><a href="/P_Page/list" title="List Pages">List</a></li>
+                    <li><a href="/P_Page/add" title="Add a New Page">Add New</a></li>
+                    <li><a href="/P_Page/search" title="Search Pages">Search</a></li>
+                </ul>
+            </li>
+            <li><a href="/P_Template" title="Templates">Templates</a>
+                <ul>
+                    <li><a href="/P_Template/list" title="List Page Templates">List Templates</a></li>
+                    <li><a href="/P_Template/add" title="Add a New Template">Add New Template</a></li>
+                    <li><a href="/P_Component/list" title="List Components">List Components</a></li>
+                    <li><a href="/P_Component/add" title="Add a New Component">Add New Component</a></li>
+                </ul>
+            </li>
+            <li><a href="/P_Theme" title="Themes">Themes</a>
+                <ul>
+                    <li><a href="/P_Theme/list" title="List Site Themes">List Themes</a></li>
+                    <li><a href="/P_Theme/add" title="Add a Site Theme">Add New Theme</a></li>
+                </ul>
+            </li>
+            <li><a href="/P_Blog" title="Blog">Blog</a>
+                <ul>
+                    <li><a href="/P_Blog/list" title="List Blog Articles">List</a></li>
+                    <li><a href="/P_Blog/add" title="Add a New Blog Article">Add New</a></li>
+                    <li><a href="/P_Blog/search" title="Search Blog Articles">Search</a></li>
+                </ul>
+            </li>
+            <li><a href="/P_Media" title="Media, Images, Videos, Documents">Media</a>
+                <ul>
+                    <li><a href="/P_Media/list" title="Browse Media">List</a></li>
+                    <li><a href="/P_Media/add" title="Upload New Media">Add New</a></li>
+                    <li><a href="/P_Media/search" title="Search Media">Search</a></li>
+                </ul>
+            </li>
+            <li><a href="/P_Form" title="Forms">Forms</a>
+                <ul>
+                    <li><a href="/P_Form/list" title="List Forms">List</a></li>
+                    <li><a href="/P_Form/add" title="Create New Form">Add New</a></li>
+                    <li><a href="/P_Form/submissions" title="List Submissions">Submissions</a></li>
+                </ul>
+            </li>
+        </ul>
     </nav>
     <div class="clear"></div>
 </header>

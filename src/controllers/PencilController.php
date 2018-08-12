@@ -11,9 +11,11 @@
 
 namespace Stationer\Pencil\controllers;
 
+use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\Controller;
 use Stationer\Graphite\data\IDataProvider;
+use Stationer\Pencil\libs\ArboristWorkflow;
 
 /**
  * Class P_ThemeController
@@ -24,6 +26,26 @@ use Stationer\Graphite\data\IDataProvider;
  * @link     https://github.com/stationer/Pencil
  */
 abstract class PencilController extends Controller {
+    const WEBROOT = '/webroot';
+    const ERROR = '/error';
+    const LANDING = '/landing';
+    const BLOG = '/webroot/blog';
+    const COMPONENTS = '/components';
+    const TEMPLATES = '/templates';
+    const FORMS = '/forms';
+    const MEDIA = '/media';
+    const THEMES = '/themes';
+    const NAVIGATION = '/nagivation';
+
+    /** @var string Required Role, TODO set to false for no requirement while testing */
+    protected $role = false;
+
+    /** @var string Tree path of current site root */
+    protected $siteRoot = '';
+
+    /** @var ArboristWorkflow */
+    protected $Tree;
+
     /**
      * Controller constructor
      *
@@ -38,5 +60,9 @@ abstract class PencilController extends Controller {
         $this->View->setTemplate('footer', 'Pencil._footer.php');
         $this->View->_style(dirname(__DIR__).'/css/Pencil.css');
         $this->View->_script(dirname(__DIR__).'/js/Pencil.js');
+
+        $this->Tree = G::build(ArboristWorkflow::class);
+        // Set the default root path to the current site.
+        $this->Tree->setRoot('/'.$_SERVER['SERVER_NAME']);
     }
 }

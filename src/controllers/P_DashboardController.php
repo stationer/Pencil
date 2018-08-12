@@ -11,6 +11,7 @@
 
 namespace Stationer\Pencil\controllers;
 
+use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
 
@@ -23,6 +24,9 @@ use Stationer\Graphite\data\IDataProvider;
  * @link     https://github.com/stationer/Pencil
  */
 class P_DashboardController extends PencilController {
+    /** @var string Default action */
+    protected $action = 'home';
+
     /**
      * Controller constructor
      *
@@ -43,9 +47,35 @@ class P_DashboardController extends PencilController {
      * @return View
      */
     public function do_settings(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
+
+        return $this->View;
+    }
+
+    /**
+     * Page for updating website settings
+     *
+     * @param array $argv    Argument list passed from Dispatcher
+     * @param array $request Request_method-specific parameters
+     *
+     * @return View
+     */
+    public function do_init(array $argv = [], array $request = []) {
+        if (!G::$S->roleTest($this->role)) {
+            return parent::do_403($argv);
+        }
+
+        $this->Tree->getByPath(self::WEBROOT, true);
+        $this->Tree->getByPath(self::BLOG, true);
+        $this->Tree->getByPath(self::COMPONENTS, true);
+        $this->Tree->getByPath(self::TEMPLATES, true);
+        $this->Tree->getByPath(self::FORMS, true);
+        $this->Tree->getByPath(self::MEDIA, true);
+        $this->Tree->getByPath(self::LANDING, true);
+        $this->Tree->getByPath(self::ERROR, true);
+        $this->Tree->getByPath(self::THEMES, true);
 
         return $this->View;
     }
@@ -58,8 +88,8 @@ class P_DashboardController extends PencilController {
      *
      * @return View
      */
-    public function do_fancyGraphs(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+    public function do_home(array $argv = [], array $request = []) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
 

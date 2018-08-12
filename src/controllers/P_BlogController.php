@@ -24,6 +24,8 @@ use Stationer\Graphite\data\IDataProvider;
  * @link     https://github.com/stationer/Pencil
  */
 class P_BlogController extends PencilController {
+    /** @var string Default action */
+    protected $action = 'list';
 
     /**
      * Controller constructor
@@ -45,9 +47,13 @@ class P_BlogController extends PencilController {
      * @return View
      */
     public function do_list(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
+
+        $Articles = $this->Tree->setPath(self::BLOG)->getChildren();
+
+        $this->View->Articles = $Articles;
 
         return $this->View;
     }
@@ -61,7 +67,7 @@ class P_BlogController extends PencilController {
      * @return View
      */
     public function do_add(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
 
@@ -77,7 +83,7 @@ class P_BlogController extends PencilController {
      * @return View
      */
     public function do_search(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
 

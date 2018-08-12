@@ -38,4 +38,7 @@ class Template extends PassiveRecord {
         'body'        => ['type' => 's', 'max' => 65535],
         'css'         => ['type' => 's', 'max' => 65535],
     ];
+
+    const PAGE = 1;
+    const COMPONENT = 2;
 }

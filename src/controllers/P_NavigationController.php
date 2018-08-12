@@ -1,6 +1,6 @@
 <?php
 /**
- * P_ThemeController - Theme Controller
+ * P_NavigationController - Navigation Controller
  *
  * PHP version 7.0
  *
@@ -16,14 +16,14 @@ use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
 
 /**
- * Class P_ThemeController
+ * Class P_NavigationController
  *
  * @package  Stationer\Pencil\controllers
  * @category Pencil
  * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
  * @link     https://github.com/stationer/Pencil
  */
-class P_ThemeController extends PencilController {
+class P_NavigationController extends PencilController {
     /** @var string Default action */
     protected $action = 'list';
 
@@ -39,7 +39,7 @@ class P_ThemeController extends PencilController {
     }
 
     /**
-     * List available themes
+     * Manage Navigation
      *
      * @param array $argv    Argument list passed from Dispatcher
      * @param array $request Request_method-specific parameters
@@ -51,25 +51,10 @@ class P_ThemeController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Themes = $this->Tree->setPath(self::THEMES)->getChildren();
+        // TODO support nested nav
+        $Navigation = $this->Tree->setPath(self::NAVIGATION)->getChildren();
 
-        $this->View->Themes = $Themes;
-
-        return $this->View;
-    }
-
-    /**
-     * Build a theme
-     *
-     * @param array $argv    Argument list passed from Dispatcher
-     * @param array $request Request_method-specific parameters
-     *
-     * @return View
-     */
-    public function do_add(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest($this->role)) {
-            return parent::do_403($argv);
-        }
+        $this->View->Navigation = $Navigation;
 
         return $this->View;
     }

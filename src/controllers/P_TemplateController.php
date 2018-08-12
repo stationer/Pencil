@@ -11,8 +11,10 @@
 
 namespace Stationer\Pencil\controllers;
 
+use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
+use Stationer\Pencil\models\Template;
 
 /**
  * Class P_TemplateController
@@ -23,6 +25,8 @@ use Stationer\Graphite\data\IDataProvider;
  * @link     https://github.com/stationer/Pencil
  */
 class P_TemplateController extends PencilController {
+    /** @var string Default action */
+    protected $action = 'list';
 
     /**
      * Controller constructor
@@ -44,9 +48,13 @@ class P_TemplateController extends PencilController {
      * @return View
      */
     public function do_list(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
+
+        $Templates = $this->Tree->setPath(self::TEMPLATES)->getChildren();
+
+        $this->View->Templates = $Templates;
 
         return $this->View;
     }
@@ -60,9 +68,14 @@ class P_TemplateController extends PencilController {
      * @return View
      */
     public function do_add(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest('Pencil')) {
+        if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
+
+        $Template = G::build(Template::class);
+        // Do stuff
+
+        $this->View->Template = $Template;
 
         return $this->View;
     }
