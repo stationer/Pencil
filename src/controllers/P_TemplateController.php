@@ -15,6 +15,7 @@ use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
 use Stationer\Pencil\models\Template;
+use Stationer\Pencil\PencilController;
 
 /**
  * Class P_TemplateController

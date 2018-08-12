@@ -9,7 +9,7 @@
  * @link     https://github.com/stationer/Pencil
  */
 
-namespace Stationer\Pencil\libs;
+namespace Stationer\Pencil;
 
 use Stationer\Graphite\G;
 use Stationer\Graphite\data\DataBroker;

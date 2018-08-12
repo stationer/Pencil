@@ -9,13 +9,12 @@
  * @link     https://github.com/stationer/Pencil
  */
 
-namespace Stationer\Pencil\controllers;
+namespace Stationer\Pencil;
 
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\Controller;
 use Stationer\Graphite\data\IDataProvider;
-use Stationer\Pencil\libs\ArboristWorkflow;
 
 /**
  * Class P_ThemeController
@@ -38,7 +37,7 @@ abstract class PencilController extends Controller {
     const NAVIGATION = '/nagivation';
 
     /** @var string Required Role, TODO set to false for no requirement while testing */
-    protected $role = false;
+    protected $role = false; // 'Pencil';
 
     /** @var string Tree path of current site root */
     protected $siteRoot = '';
