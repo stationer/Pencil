@@ -34,7 +34,7 @@ abstract class PencilController extends Controller {
     const FORMS = '/forms';
     const MEDIA = '/media';
     const THEMES = '/themes';
-    const NAVIGATION = '/nagivation';
+    const NAVIGATION = '/navigation';
 
     /** @var string Required Role, TODO set to false for no requirement while testing */
     protected $role = false; // 'Pencil';
@@ -58,8 +58,8 @@ abstract class PencilController extends Controller {
         $this->View->setTemplate('header', 'Pencil._header.php');
         $this->View->setTemplate('footer', 'Pencil._footer.php');
         $this->View->setTemplate('debug', 'footer.debug.php');
-        $this->View->_style(dirname(__DIR__).'/css/Pencil.css');
-        $this->View->_script(dirname(__DIR__).'/js/Pencil.js');
+        $this->View->_style(str_replace(SITE, '', __DIR__.'/css/Pencil.css'));
+        $this->View->_script(str_replace(SITE, '', __DIR__.'/js/Pencil.js'));
 
         $this->Tree = G::build(ArboristWorkflow::class);
         // Set the default root path to the current site.

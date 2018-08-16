@@ -85,6 +85,10 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
             $Model->undiff(['parent_id', 'label', 'path', 'left_index', 'right_index']);
         }
 
+        if (!empty($row['path'])) {
+            $Model->path = $row['path'];
+        }
+
         if (is_object($result)) {
             $result->close();
         }

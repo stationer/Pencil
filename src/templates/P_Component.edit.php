@@ -9,9 +9,9 @@ echo $View->render('header'); ?>
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h1>Add Component</h1>
+            <h1>Edit Component</h1>
 
-            <form action="/P_Component/add/" method="POST">
+            <form action="/P_Component/edit/<?php echo $Node->node_id; ?>" method="POST">
                 <div class="form-group">
                     <label for="title">Label</label>
                     <input class="form-control" type="text" name="label" value="<?php echo $Node->label ?? ''; ?>">
@@ -31,6 +31,7 @@ echo $View->render('header'); ?>
                     <label for="header">Description</label>
                     <textarea class="form-control" name="description"><?php echo $Node->description; ?></textarea>
                 </div>
+
                 <div class="form-group">
                     <label for="body">Template Body</label>
                     <textarea class="form-control" name="body"><?php echo $Node->File->body; ?></textarea>
@@ -52,11 +53,10 @@ echo $View->render('header'); ?>
                     </select>
                 </div>
 
-                <button class="btn btn-primary" type="submit">Add Component</button>
+                <button class="btn btn-primary" type="submit">Update Component</button>
             </form>
         </div>
     </div>
 </div>
-
 
 <?php echo $View->render('footer');

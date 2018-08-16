@@ -35,7 +35,7 @@ class Theme extends PassiveRecord {
         'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
 
         'footer'      => ['type' => 's', 'max' => 65535],
-        'header'      => ['type' => 's', 'min' => 65535],
-        'css'         => ['type' => 's', 'min' => 65535],
+        'header'      => ['type' => 's', 'max' => 65535],
+        'css'         => ['type' => 's', 'max' => 65535],
     ];
 }

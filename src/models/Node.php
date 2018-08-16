@@ -13,7 +13,6 @@ namespace Stationer\Pencil\models;
 
 use Stationer\Graphite\data\PassiveRecord;
 
-
 /**
  * Class Node
  *
@@ -83,6 +82,7 @@ class Node extends PassiveRecord {
         if (count($argv)) {
             $type = get_class($File);
             $type = substr($type, strrpos($type, '\\') + 1);
+            $this->File = $File;
             $this->__set('contentType', $type);
             $this->__set('content_id', $File->{$File->getPkey()});
             $this->File = $File;
