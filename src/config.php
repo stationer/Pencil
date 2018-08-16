@@ -17,6 +17,7 @@ namespace Stationer\Graphite;
 
 G::$G['namespaces'][] = '\\Stationer\\Pencil\\';
 G::$G['namespaces'][] = '\\Stationer\\Pencil\\models\\';
+G::$G['namespaces'][] = '\\Stationer\\Pencil\\reports\\';
 G::$G['namespaces'][] = '\\Stationer\\Pencil\\controllers\\';
 
 G::$G['db']['ProviderDict'][\Stationer\Pencil\models\Node::class] = \Stationer\Pencil\data\TreeMySQLDataProvider::class;

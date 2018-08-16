@@ -15,6 +15,7 @@ use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
 use Stationer\Pencil\PencilController;
+use Stationer\Pencil\reports\NodeParentByPathReport;
 
 /**
  * Class P_PageController
@@ -52,9 +53,10 @@ class P_PageController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Pages['Public']  = $this->Tree->setPath(self::WEBROOT)->getChildren(true);
-        $Pages['Landing'] = $this->Tree->setPath(self::LANDING)->getChildren(true);
-        $Pages['Error']   = $this->Tree->setPath(self::ERROR)->getChildren(true);
+
+        $Pages['Public']  = $this->Tree->setPath(self::WEBROOT)->children()->loadFiles()->get();
+        $Pages['Landing'] = $this->Tree->setPath(self::LANDING)->children()->loadFiles()->get();
+        $Pages['Error']   = $this->Tree->setPath(self::ERROR)->children()->loadFiles()->get();
 
         $this->View->Pages = $Pages;
 

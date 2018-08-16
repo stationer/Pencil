@@ -58,8 +58,9 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
         if (false === $result) {
             return false;
         }
-        if (0 != G::$M->insert_id) {
-            $Model->{$Model->getPkey()} = G::$M->insert_id;
+        $row = $result->fetch_assoc();
+        if (0 != $row['@@LAST_INSERT_ID']) {
+            $Model->{$Model->getPkey()} = $row['@@LAST_INSERT_ID'];
             // The stored procedure only accepts a few fields, use update for the rest
             parent::update($Model);
         }

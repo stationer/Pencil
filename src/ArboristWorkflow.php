@@ -14,6 +14,7 @@ namespace Stationer\Pencil;
 use Stationer\Graphite\G;
 use Stationer\Graphite\data\DataBroker;
 use Stationer\Pencil\models\Node;
+use Stationer\Pencil\reports\NodeParentByPathReport;
 
 /**
  * ArboristWorkflow - A workflow for handling trees
@@ -29,9 +30,9 @@ class ArboristWorkflow {
     /** @var string */
     protected $root = '';
     /** @var string */
-    protected $path = '';
-    /** @var Node */
-    protected $Node;
+    protected $path = '/';
+    /** @var Node[] */
+    protected $Nodes = [];
     /** @var array */
     protected $pathCache = ['' => 1];
     /** @var DataBroker */
@@ -54,8 +55,8 @@ class ArboristWorkflow {
      * @return $this
      */
     public function setRoot(string $path) {
-        $this->root = \fakepath($path, '/');
-        $this->Node = null;
+        $this->root  = \fakepath($path, '/');
+        $this->Nodes = [];
 
         return $this;
     }
@@ -68,8 +69,115 @@ class ArboristWorkflow {
      * @return $this
      */
     public function setPath(string $path) {
-        $this->path = \fakepath($path, '/');
-        $this->Node = null;
+        $this->path  = \fakepath($path, '/');
+        $this->Nodes = [];
+
+        return $this;
+    }
+
+    /**
+     * Set the current path, relative to root path. to the parent of the current path
+     *
+     * @param string $path Optional new current path
+     *
+     * @return $this
+     */
+    public function parent(string $path = null) {
+        if (null !== $path) {
+            $this->setPath($path);
+        }
+
+        // Take the substring of the path from the start to the last slash
+        // $this->path = substr($this->path, 0, strrpos($this->path, '/')) ?: '/';
+        $this->path  = dirname($this->path) ?: '/';
+        $this->Nodes = [];
+
+        return $this;
+    }
+
+    /**
+     * Load Nodes directly included in the current path.
+     *
+     * @param string $path Optional new current path
+     *
+     * @return $this
+     */
+    public function children(string $path = null) {
+        if (null !== $path) {
+            $this->setPath($path);
+        }
+
+        // If we have the current path's node_id cached, use it
+        if (isset($this->pathCache[$path])) {
+            $node_id = $this->pathCache[$path];
+        } else {
+            // else load the current path to get the node_id
+            if (empty($this->Nodes)) {
+                $this->load();
+            }
+            $Node = reset($this->Nodes);
+            if (is_a($Node, Node::class)) {
+                $node_id = reset($this->Nodes)->node_id;
+            }
+        }
+
+        // Use false to indicate a failure to load, distinct from empty success
+        $this->Nodes = [false];
+        if (isset($node_id)) {
+            $this->Nodes = $this->DB->fetch(Node::class, ['parent_id' => $node_id]);
+        }
+
+
+        return $this;
+    }
+
+    /**
+     * Load Nodes containing the current path.
+     *
+     * @param string $path Optional new current path
+     *
+     * @return $this
+     */
+    public function ancestors(string $path = null) {
+        if (null !== $path) {
+            $this->setPath($path);
+        }
+        $this->Nodes = $this->DB->fetch(NodeParentByPathReport::class, ['path' => $this->root.$this->path]) ?: [];
+
+        return $this;
+    }
+
+    /**
+     * Fetch the tree Node corresponding to the current path
+     *
+     * @param string $path Optional new current path
+     *
+     * @return $this
+     */
+    public function load(string $path = null) {
+        if (null !== $path) {
+            $this->setPath($path);
+        }
+        $path = $this->root.\fakepath($this->path);
+
+        // If we already have the node_id cached, load it.
+        if (isset($this->pathCache[$path])) {
+            $this->Nodes = [$this->getById($this->pathCache[$path])];
+
+            return $this;
+        }
+
+        // Try to load the node by the indexed path
+        $result = $this->DB->fetch(Node::class, ['path' => $path]);
+        if (!empty($result)) {
+            $Node = array_pop($result);
+            if (is_a($Node, Node::class)) {
+                $this->pathCache[$path] = $Node->node_id;
+                $this->Nodes            = [$Node];
+
+                return $this;
+            }
+        }
 
         return $this;
     }
@@ -77,16 +185,123 @@ class ArboristWorkflow {
     /**
      * Create a Node at the current path
      *
-     * @return bool|Node
+     * @param string $path Optional new current path
+     *
+     * @return $this
      */
-    public function create() {
-        if (empty($this->path)) {
-            return false;
+    public function create(string $path = null) {
+        if (null !== $path) {
+            $this->setPath($path);
+        }
+        $path = $this->path;
+
+        // Get ancestors to requested path, sorted by deepest first
+        $AncestorNodes = $this->ancestors()->get();
+
+        // If No nodes came back, we are starting from the bottom
+        if (!empty($AncestorNodes)) {
+            $Node = reset($AncestorNodes);
+            // If the path already exists we are done
+            if ($path == $Node->path) {
+                return $this;
+            }
+            $progress  = $Node->path;
+            $parent_id = $Node->node_id;
+        } else {
+            $progress  = '';
+            $parent_id = 1;
+        }
+        $progress = substr($progress, strlen($this->root));
+
+        // Climb the tree, creating as we go
+        $labels = explode('/', trim(substr($path, strlen($progress)), '/'));
+        foreach ($labels as $label) {
+            $progress .= "/$label";
+            // Instantiate the next child node
+            $Node = G::build(Node::class, ['label' => $label, 'parent_id' => $parent_id]);
+            // Insert the Node
+            $result = $this->DB->insert($Node);
+            // If $result is still false, Fail
+            if (false === $result) {
+                $this->Nodes[] = false;
+                break;
+            }
+            // Add the next Node to the collection
+            $this->Nodes[] = $Node;
+            // Update the parent_id for the next insert
+            $parent_id = $this->pathCache[$progress] = $Node->node_id;
         }
 
-        $this->Node = $this->getByPath($this->path, true);
+        return $this;
+    }
 
-        return $this->Node;
+    /**
+     * @param $Nodes
+     */
+    public function loadFiles() {
+        if (empty($this->Nodes)) {
+            return $this;
+        }
+        G::croak($this->Nodes);
+        $fetchList = [];
+        // Group the content_ids for quicker fetching
+        /** @var Node $Node */
+        foreach ($this->Nodes as $Node) {
+            $fetchList[$Node->contentType][$Node->content_id] = null;
+            echo $Node->contentType;
+        }
+        echo "<br>";
+        // Fetch all records for each type
+        foreach ($fetchList as $type => $ids) {
+            if ('' == $type) {
+                continue;
+            }
+            echo $type;
+            $fetchList[$type] = $this->DB->byPK('\\Stationer\\Pencil\\models\\'.$type, array_keys($ids));
+            G::croak($fetchList[$type]);
+        }
+        echo "<br>";
+        // Add the records to their Nodes
+        foreach ($this->Nodes as $key => $Node) {
+            $this->Nodes[$key]->File = $fetchList[$Node->contentType][$Node->content_id];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add specified tag to current Nodes
+     *
+     * @param string $tag
+     *
+     * @return $this
+     */
+    public function tag(string $tag) {
+        trigger_error("Unfinished function ".__METHOD__);
+
+        return $this;
+    }
+
+    /**
+     * Remove specified tag from current Nodes
+     *
+     * @param string $tag
+     *
+     * @return $this
+     */
+    public function untag(string $tag) {
+        trigger_error("Unfinished function ".__METHOD__);
+
+        return $this;
+    }
+
+    /**
+     * Simply return the current Nodes array
+     *
+     * @return Node[]
+     */
+    public function get() {
+        return $this->Nodes;
     }
 
     /**
@@ -98,22 +313,9 @@ class ArboristWorkflow {
      * @return Node|bool
      */
     public function getByPath(string $path, bool $create = false) {
-        $path = $this->root.\fakepath($path);
-
-        // If we already have the node_id cached, load it.
-        if (isset($this->pathCache[$path])) {
-            return $this->getById($this->pathCache[$path]);
-        }
-
-        // Try to load the node by the indexed path
-        $result = $this->DB->fetch(Node::class, ['path' => $path]);
-        if (!empty($result)) {
-            $Node = array_pop($result);
-            if (is_a($Node, Node::class)) {
-                $this->pathCache[$path] = $Node->node_id;
-
-                return $Node;
-            }
+        $this->load($path);
+        if (!empty($this->Nodes)) {
+            return reset($this->Nodes);
         }
 
         // If we didn't find the node, and we're not supposed to create it, fail
@@ -121,34 +323,12 @@ class ArboristWorkflow {
             return false;
         }
 
-        // We didn't have the node_id cached, climb the tree
-        $labels    = explode('/', trim($path, '/'));
-        $path      = '';
-        $parent_id = 1;
-        foreach ($labels as $label) {
-            $path .= "/$label";
-            // If the path-so-far is found, grab the node_id from cache
-            if (isset($this->pathCache[$path])) {
-                $parent_id = $this->pathCache[$path];
-                continue;
-            }
-            // We're not cached, Instantiate the next child node
-            $Node = G::build(Node::class, ['label' => $label, 'parent_id' => $parent_id]);
-            // Try to fetch the Node from the DB
-            $result = $this->DB->fill($Node);
-            // If the Node doesn't exist, but we're supposed to create it
-            if (false === $result && true == $create) {
-                // Insert the Node
-                $result = $this->DB->insert($Node);
-            }
-            // If $result is still false, Fail
-            if (false === $result) {
-                return false;
-            }
-            $parent_id = $this->pathCache[$path] = $Node->node_id;
+        $this->create($path);
+        if (!empty($this->Nodes)) {
+            return reset($this->Nodes);
         }
 
-        return $Node;
+        return false;
     }
 
     /**
@@ -164,24 +344,8 @@ class ArboristWorkflow {
         }
         $children = $this->DB->fetch(Node::class, ['parent_id' => $this->Node->node_id]);
 
-        if (!empty($children) && $fetchFiles) {
-            $fetchList = [];
-            // Group the content_ids for quicker fetching
-            /** @var Node $Node */
-            foreach ($children as $Node) {
-                $fetchList[$Node->contentType][$Node->content_id] = null;
-            }
-            // Fetch all records for each type
-            foreach ($fetchList as $type => $ids) {
-                if ('' == $type) {
-                    continue;
-                }
-                $fetchList[$type] = $this->DB->byPK('\\Stationer\\Pencil\\models\\'.$type, array_keys($ids));
-            }
-            // Add the records to their Nodes
-            foreach ($children as $key => $Node) {
-                $children[$key]->File = $fetchList[$Node->contentType][$Node->content_id];
-            }
+        if ($fetchFiles) {
+            $this->getFilesForNodes($children);
         }
 
         return $children;
@@ -286,5 +450,30 @@ class ArboristWorkflow {
 
     public function copy($newLabel) {
 
+    }
+
+    /**
+     * @param $Nodes
+     */
+    public function getFilesForNodes(array $Nodes) {
+        if (!empty($Nodes)) {
+            $fetchList = [];
+            // Group the content_ids for quicker fetching
+            /** @var Node $Node */
+            foreach ($Nodes as $Node) {
+                $fetchList[$Node->contentType][$Node->content_id] = null;
+            }
+            // Fetch all records for each type
+            foreach ($fetchList as $type => $ids) {
+                if ('' == $type) {
+                    continue;
+                }
+                $fetchList[$type] = $this->DB->byPK('\\Stationer\\Pencil\\models\\'.$type, array_keys($ids));
+            }
+            // Add the records to their Nodes
+            foreach ($Nodes as $key => $Node) {
+                $Nodes[$key]->File = $fetchList[$Node->contentType][$Node->content_id];
+            }
+        }
     }
 }
