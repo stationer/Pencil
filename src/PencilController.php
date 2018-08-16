@@ -57,11 +57,12 @@ abstract class PencilController extends Controller {
 
         $this->View->setTemplate('header', 'Pencil._header.php');
         $this->View->setTemplate('footer', 'Pencil._footer.php');
+        $this->View->setTemplate('debug', 'footer.debug.php');
         $this->View->_style(dirname(__DIR__).'/css/Pencil.css');
         $this->View->_script(dirname(__DIR__).'/js/Pencil.js');
 
         $this->Tree = G::build(ArboristWorkflow::class);
         // Set the default root path to the current site.
-        $this->Tree->setRoot('/'.$_SERVER['SERVER_NAME']);
+        $this->Tree->setRoot('/sites/'.$_SERVER['SERVER_NAME']);
     }
 }

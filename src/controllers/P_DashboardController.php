@@ -14,6 +14,7 @@ namespace Stationer\Pencil\controllers;
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
+use Stationer\Pencil\models\Site;
 use Stationer\Pencil\PencilController;
 
 /**
@@ -52,22 +53,19 @@ class P_DashboardController extends PencilController {
             return parent::do_403($argv);
         }
 
-        return $this->View;
-    }
 
-    /**
-     * Page for updating website settings
-     *
-     * @param array $argv    Argument list passed from Dispatcher
-     * @param array $request Request_method-specific parameters
-     *
-     * @return View
-     */
-    public function do_init(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest($this->role)) {
-            return parent::do_403($argv);
+        // If the site-root doesn't have a contentType, it didn't exist, so create Site record, also
+        $SiteNode = $this->Tree->getByPath('', true);
+        if (empty($SiteNode->contentType)) {
+            /** @var Site $Site */
+            $Site = G::build(Site::class);
+            $this->DB->insert($Site);
+            $SiteNode->contentType = Site::getTable();
+            $SiteNode->content_id  = $Site->site_id;
+        } else {
+            $Site = $this->DB->byPK(Site::class, $SiteNode->content_id);
         }
-
+        // Ensure other key nodes exist
         $this->Tree->getByPath(self::WEBROOT, true);
         $this->Tree->getByPath(self::BLOG, true);
         $this->Tree->getByPath(self::COMPONENTS, true);
@@ -77,6 +75,17 @@ class P_DashboardController extends PencilController {
         $this->Tree->getByPath(self::LANDING, true);
         $this->Tree->getByPath(self::ERROR, true);
         $this->Tree->getByPath(self::THEMES, true);
+
+        // Get Themes
+        $Themes = $this->Tree->setPath(self::THEMES)->getChildren();
+
+        // Get Pages
+        $Pages = $this->Tree->setPath(self::WEBROOT)->getChildren();
+
+        $this->View->Themes   = $Themes;
+        $this->View->Pages    = $Pages;
+        $this->View->Site     = $Site;
+        $this->View->SiteNode = $SiteNode;
 
         return $this->View;
     }

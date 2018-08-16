@@ -13,7 +13,6 @@ namespace Stationer\Pencil;
 
 use Stationer\Graphite\G;
 use Stationer\Graphite\data\DataBroker;
-use Stationer\Pencil\controllers\PencilController;
 use Stationer\Pencil\models\Node;
 
 /**
@@ -34,7 +33,7 @@ class ArboristWorkflow {
     /** @var Node */
     protected $Node;
     /** @var array */
-    protected $pathCache = ['' => 0];
+    protected $pathCache = ['' => 1];
     /** @var DataBroker */
     protected $DB;
 
@@ -100,15 +99,32 @@ class ArboristWorkflow {
      */
     public function getByPath(string $path, bool $create = false) {
         $path = $this->root.\fakepath($path);
+
         // If we already have the node_id cached, load it.
         if (isset($this->pathCache[$path])) {
             return $this->getById($this->pathCache[$path]);
         }
 
+        // Try to load the node by the indexed path
+        $result = $this->DB->fetch(Node::class, ['path' => $path]);
+        if (!empty($result)) {
+            $Node = array_pop($result);
+            if (is_a($Node, Node::class)) {
+                $this->pathCache[$path] = $Node->node_id;
+
+                return $Node;
+            }
+        }
+
+        // If we didn't find the node, and we're not supposed to create it, fail
+        if (false === $create) {
+            return false;
+        }
+
         // We didn't have the node_id cached, climb the tree
         $labels    = explode('/', trim($path, '/'));
         $path      = '';
-        $parent_id = 0;
+        $parent_id = 1;
         foreach ($labels as $label) {
             $path .= "/$label";
             // If the path-so-far is found, grab the node_id from cache
@@ -138,13 +154,35 @@ class ArboristWorkflow {
     /**
      * Return array of Nodes directly included in the current path.
      *
+     * @param bool $fetchFiles Whether to also fetch content files
+     *
      * @return Node[]
      */
-    public function getChildren() {
+    public function getChildren($fetchFiles = false) {
         if (null === $this->Node) {
             $this->Node = $this->getByPath($this->path);
         }
         $children = $this->DB->fetch(Node::class, ['parent_id' => $this->Node->node_id]);
+
+        if (!empty($children) && $fetchFiles) {
+            $fetchList = [];
+            // Group the content_ids for quicker fetching
+            /** @var Node $Node */
+            foreach ($children as $Node) {
+                $fetchList[$Node->contentType][$Node->content_id] = null;
+            }
+            // Fetch all records for each type
+            foreach ($fetchList as $type => $ids) {
+                if ('' == $type) {
+                    continue;
+                }
+                $fetchList[$type] = $this->DB->byPK('\\Stationer\\Pencil\\models\\'.$type, array_keys($ids));
+            }
+            // Add the records to their Nodes
+            foreach ($children as $key => $Node) {
+                $children[$key]->File = $fetchList[$Node->contentType][$Node->content_id];
+            }
+        }
 
         return $children;
     }
@@ -168,7 +206,7 @@ class ArboristWorkflow {
      * @return Node|bool
      */
     public function getByURL(string $url) {
-        $result = $this->DB->fetch(Node::class, ['permalink' => $url]);
+        $result = $this->DB->fetch(Node::class, ['pathAlias' => $url]);
         if (false !== $result) {
             return array_pop($result);
         }

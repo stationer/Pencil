@@ -15,8 +15,9 @@ use Stationer\Graphite\data\PassiveRecord;
 
 /**
  * Class Node
+ *
  * @package Stationer\Pencil\models
- * @author Andrew Leach
+ * @author  Andrew Leach
  *
  * @property int    node_id
  * @property string created_uts
@@ -31,13 +32,17 @@ use Stationer\Graphite\data\PassiveRecord;
  * @property bool   published
  * @property bool   trashed
  * @property bool   featured
- * @property string permalink
+ * @property string pathAlias
  * @property int    ordinal
+ * @property string path
+ * @property int    left_index
+ * @property int    right_index
  */
 class Node extends PassiveRecord {
-    protected static $table = G_DB_TABL . 'Node';
+    protected static $table = G_DB_TABL.'Node';
     protected static $pkey = 'node_id';
     protected static $ukeys = [['parent_id', 'label']];
+    protected static $keys = [['left_index', 'right_index'], ['right_index', 'left_index'], '`path`(64)'];
     protected static $query = '';
     protected static $vars = [
         'node_id'     => ['type' => 'i', 'min' => 0],
@@ -54,7 +59,12 @@ class Node extends PassiveRecord {
         'published'   => ['type' => 'b', 'def' => 0],
         'trashed'     => ['type' => 'b', 'def' => 0],
         'featured'    => ['type' => 'b', 'def' => 0],
-        'permalink'   => ['type' => 's', 'strict' => true, 'min' => 0, 'max' => 255],
+        'pathAlias'   => ['type' => 's', 'strict' => true, 'min' => 0, 'max' => 255],
         'ordinal'     => ['type' => 'i', 'min' => 0, 'max' => 65535],
+        'path'        => ['type' => 's', 'def' => '', 'min' => 0, 'max' => 65535],
+        'left_index'  => ['type' => 'i', 'min' => 1, 'guard' => true],
+        'right_index' => ['type' => 'i', 'min' => 1, 'guard' => true],
     ];
+    /** @var PassiveRecord The record identified by contentType and content_id */
+    public $File;
 }

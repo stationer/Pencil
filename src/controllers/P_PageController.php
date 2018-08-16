@@ -52,9 +52,9 @@ class P_PageController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Pages['Public']  = $this->Tree->setPath(self::WEBROOT)->getChildren();
-        $Pages['Landing'] = $this->Tree->setPath(self::LANDING)->getChildren();
-        $Pages['Error']   = $this->Tree->setPath(self::ERROR)->getChildren();
+        $Pages['Public']  = $this->Tree->setPath(self::WEBROOT)->getChildren(true);
+        $Pages['Landing'] = $this->Tree->setPath(self::LANDING)->getChildren(true);
+        $Pages['Error']   = $this->Tree->setPath(self::ERROR)->getChildren(true);
 
         $this->View->Pages = $Pages;
 
