@@ -106,6 +106,7 @@ class ArboristWorkflow {
         if (null !== $path) {
             $this->setPath($path);
         }
+        $path = $this->root.\fakepath($this->path);
 
         // If we have the current path's node_id cached, use it
         if (isset($this->pathCache[$path])) {
@@ -126,7 +127,6 @@ class ArboristWorkflow {
         if (isset($node_id)) {
             $this->Nodes = $this->DB->fetch(Node::class, ['parent_id' => $node_id]);
         }
-
 
         return $this;
     }
@@ -236,31 +236,28 @@ class ArboristWorkflow {
     }
 
     /**
-     * @param $Nodes
+     * Load the content associated with the current Nodes, attach to Node->File
+     *
+     * return $this
      */
     public function loadFiles() {
         if (empty($this->Nodes)) {
             return $this;
         }
-        G::croak($this->Nodes);
+
         $fetchList = [];
         // Group the content_ids for quicker fetching
         /** @var Node $Node */
         foreach ($this->Nodes as $Node) {
             $fetchList[$Node->contentType][$Node->content_id] = null;
-            echo $Node->contentType;
         }
-        echo "<br>";
         // Fetch all records for each type
         foreach ($fetchList as $type => $ids) {
             if ('' == $type) {
                 continue;
             }
-            echo $type;
             $fetchList[$type] = $this->DB->byPK('\\Stationer\\Pencil\\models\\'.$type, array_keys($ids));
-            G::croak($fetchList[$type]);
         }
-        echo "<br>";
         // Add the records to their Nodes
         foreach ($this->Nodes as $key => $Node) {
             $this->Nodes[$key]->File = $fetchList[$Node->contentType][$Node->content_id];
