@@ -1,6 +1,6 @@
 <?php
 /**
- * NodeParentByPathReport - Fetch all nodes with paths parent to specified
+ * AncestorsByPathReport - Fetch all nodes with paths parent to specified
  *
  * PHP version 7.0
  *
@@ -16,13 +16,13 @@ use Stationer\Graphite\G;
 use Stationer\Pencil\models\Node;
 
 /**
- * Class NodeParentByPathReport
+ * Class AncestorsByPathReport
  *
  * @package Stationer\Pencil\reports
  * @author  Tyler Uebele
  *
  */
-class NodeParentByPathReport extends Report {
+class AncestorsByPathReport extends Report {
     protected static $query = "";
     protected static $vars = [
         'path' => ['type' => 's', 'sql' => "'%s' LIKE CONCAT(t.`path`, '%%')"],
@@ -44,7 +44,6 @@ ORDER BY `left_index` DESC
     public function onload() {
         $Nodes = [];
         foreach ($this->_data as $row) {
-            G::croak("Found ".$row['path']);
             $Nodes[$row[Node::getPkey()]] = G::build(Node::class);
             $Nodes[$row[Node::getPkey()]]->load_array($row);
         }

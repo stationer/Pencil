@@ -55,7 +55,7 @@ class P_DashboardController extends PencilController {
 
 
         // If the site-root doesn't have a contentType, it didn't exist, so create Site record, also
-        $SiteNode = $this->Tree->getByPath('', true);
+        $SiteNode = $this->Tree->create('')->first();
         if (empty($SiteNode->contentType)) {
             /** @var Site $Site */
             $Site = G::build(Site::class);
@@ -66,21 +66,21 @@ class P_DashboardController extends PencilController {
             $Site = $this->DB->byPK(Site::class, $SiteNode->content_id);
         }
         // Ensure other key nodes exist
-        $this->Tree->getByPath(self::WEBROOT, true);
-        $this->Tree->getByPath(self::BLOG, true);
-        $this->Tree->getByPath(self::COMPONENTS, true);
-        $this->Tree->getByPath(self::TEMPLATES, true);
-        $this->Tree->getByPath(self::FORMS, true);
-        $this->Tree->getByPath(self::MEDIA, true);
-        $this->Tree->getByPath(self::LANDING, true);
-        $this->Tree->getByPath(self::ERROR, true);
-        $this->Tree->getByPath(self::THEMES, true);
+        $this->Tree->create(self::WEBROOT);
+        $this->Tree->create(self::BLOG);
+        $this->Tree->create(self::COMPONENTS);
+        $this->Tree->create(self::TEMPLATES);
+        $this->Tree->create(self::FORMS);
+        $this->Tree->create(self::MEDIA);
+        $this->Tree->create(self::LANDING);
+        $this->Tree->create(self::ERROR);
+        $this->Tree->create(self::THEMES);
 
         // Get Themes
-        $Themes = $this->Tree->setPath(self::THEMES)->getChildren();
+        $Themes = $this->Tree->setPath(self::THEMES)->descendants()->get();
 
         // Get Pages
-        $Pages = $this->Tree->setPath(self::WEBROOT)->getChildren();
+        $Pages = $this->Tree->setPath(self::WEBROOT)->descendants()->get();
 
         $this->View->Themes   = $Themes;
         $this->View->Pages    = $Pages;

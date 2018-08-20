@@ -29,6 +29,9 @@ use Stationer\Pencil\models\Node;
  * @see      /src/data/PassiveRecord.php
  */
 class TreeMySQLDataProvider extends MySQLDataProvider {
+    /** @var bool Whether next delete should be recursive */
+    public static $nextDeleteRecursive = false;
+
     /**
      * Save data for passed model
      *
@@ -49,27 +52,34 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
         }
 
         $Model->oninsert();
-        $query = sprintf("CALL `usp_Tree_insert` (%d, '%s', %d)",
+        $query  = sprintf("CALL `usp_Tree_insert` (%d, '%s', %d)",
             $Model->parent_id,
             G::$M->escape_string($Model->label),
             $Model->creator_id
         );
         $result = G::$M->query($query);
+        while (G::$M->more_results()) {
+            G::$M->next_result();
+        }
         if (false === $result) {
             return false;
         }
         $row = $result->fetch_assoc();
+
         if (0 != $row['@@LAST_INSERT_ID']) {
             $Model->{$Model->getPkey()} = $row['@@LAST_INSERT_ID'];
+            // Unset the three values covered by the stored procedure
+            unset($diff['node_id']);
+            unset($diff['parent_id']);
+            unset($diff['label']);
             // The stored procedure only accepts a few fields, use update for the rest
-            parent::update($Model);
+            if (!empty($diff)) {
+                parent::update($Model);
+            }
         }
 
         if (is_object($result)) {
             $result->close();
-        }
-        while (G::$M->more_results()) {
-            G::$M->next_result();
         }
 
         return $Model->{$Model->getPkey()};
@@ -115,4 +125,32 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
         return parent::update($Model);
     }
 
+    /**
+     * Delete data for passed model
+     *
+     * @param PassiveRecord $Model Model to delete, passed by reference
+     *
+     * @return bool|null True on success, False on failure, Null on invalid attempt
+     */
+    public function delete(PassiveRecord &$Model) {
+        if (!is_a($Model, Node::class)) {
+            return parent::delete($Model);
+        }
+
+        // If the PKey is not set, what would we delete?
+        if (null === $Model->{$Model->getPkey()}) {
+            return null;
+        }
+
+        // `usp_Tree_delete`(IN old_node_Id int, IN _login_id int, IN recursive bool)
+        $query = sprintf("CALL `usp_Tree_delete` (%d, %d, %d)",
+            $Model->node_id,
+            $Model->creator_id,
+            static::$nextDeleteRecursive ? 1 : 0
+        );
+
+        static::$nextDeleteRecursive = false;
+
+        return G::$M->query($query);
+    }
 }

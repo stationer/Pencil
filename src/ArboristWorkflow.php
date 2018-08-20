@@ -13,8 +13,11 @@ namespace Stationer\Pencil;
 
 use Stationer\Graphite\G;
 use Stationer\Graphite\data\DataBroker;
+use Stationer\Pencil\data\TreeMySQLDataProvider;
 use Stationer\Pencil\models\Node;
-use Stationer\Pencil\reports\NodeParentByPathReport;
+use Stationer\Pencil\models\Tag;
+use Stationer\Pencil\reports\AncestorsByPathReport;
+use Stationer\Pencil\reports\DescendantsByPathReport;
 
 /**
  * ArboristWorkflow - A workflow for handling trees
@@ -33,7 +36,7 @@ class ArboristWorkflow {
     protected $path = '/';
     /** @var Node[] */
     protected $Nodes = [];
-    /** @var array */
+    /** @var array [path => node_id] */
     protected $pathCache = ['' => 1];
     /** @var DataBroker */
     protected $DB;
@@ -62,6 +65,15 @@ class ArboristWorkflow {
     }
 
     /**
+     * Returns the current root path
+     *
+     * @return string
+     */
+    public function getRoot() {
+        return $this->root;
+    }
+
+    /**
      * Set the current path, relative to root path
      *
      * @param string $path New current path
@@ -71,6 +83,49 @@ class ArboristWorkflow {
     public function setPath(string $path) {
         $this->path  = \fakepath($path, '/');
         $this->Nodes = [];
+
+        return $this;
+    }
+
+    /**
+     * Returns the current relative path
+     *
+     * @return string
+     */
+    public function getPath() {
+        return $this->path;
+    }
+
+    /**
+     * Returns the current absolute path
+     *
+     * @return string
+     */
+    public function getFullPath() {
+        return '/'.trim($this->root.$this->path, '/');
+    }
+
+    /**
+     * Load a node by ID, set it as current Node
+     *
+     * @return $this
+     */
+    public function loadID(int $node_id) {
+        /** @var Node $Node */
+        $Node = $this->DB->byPK(Node::class, $node_id);
+        if (empty($Node)) {
+            return $this;
+        }
+
+        // Ensure node is within current root
+        if (0 !== strpos($Node->path, $this->root)) {
+            return $this;
+        }
+
+        // OK, we found a Node and it's under our root.  Use it.
+        $this->path                   = $Node->path;
+        $this->pathCache[$Node->path] = $Node->node_id;
+        $this->Nodes                  = [$Node];
 
         return $this;
     }
@@ -106,7 +161,7 @@ class ArboristWorkflow {
         if (null !== $path) {
             $this->setPath($path);
         }
-        $path = $this->root.\fakepath($this->path);
+        $path = $this->getFullPath();
 
         // If we have the current path's node_id cached, use it
         if (isset($this->pathCache[$path])) {
@@ -142,7 +197,42 @@ class ArboristWorkflow {
         if (null !== $path) {
             $this->setPath($path);
         }
-        $this->Nodes = $this->DB->fetch(NodeParentByPathReport::class, ['path' => $this->root.$this->path]) ?: [];
+        $this->Nodes = $this->DB->fetch(AncestorsByPathReport::class, ['path' => $this->getFullPath()]) ?: [];
+        return $this;
+    }
+
+    /**
+     * Load Nodes containing the current path.
+     *
+     * @param string $path Optional new current path
+     *
+     * @return $this
+     */
+    public function descendants(string $path = null) {
+        if (null !== $path) {
+            $this->setPath($path);
+        }
+        $this->Nodes = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->getFullPath()]) ?: [];
+
+        return $this;
+    }
+
+    /**
+     * Load Nodes containing the current path.
+     *
+     * @param string $tag  Single tag to search for under the current path
+     * @param string $path Optional new current path
+     *
+     * @return $this
+     */
+    public function tagged(string $tag, string $path = null) {
+        if (null !== $path) {
+            $this->setPath($path);
+        }
+        $this->Nodes = $this->DB->fetch(DescendantsByPathReport::class, [
+            'path' => $this->getFullPath(),
+            'tag' => $tag,
+        ]) ?: [];
 
         return $this;
     }
@@ -158,7 +248,7 @@ class ArboristWorkflow {
         if (null !== $path) {
             $this->setPath($path);
         }
-        $path = $this->root.\fakepath($this->path);
+        $path = $this->getFullPath();
 
         // If we already have the node_id cached, load it.
         if (isset($this->pathCache[$path])) {
@@ -240,7 +330,10 @@ class ArboristWorkflow {
      *
      * return $this
      */
-    public function loadFiles() {
+    public function loadContent() {
+        if (empty($this->Nodes)) {
+            $this->load();
+        }
         if (empty($this->Nodes)) {
             return $this;
         }
@@ -274,7 +367,24 @@ class ArboristWorkflow {
      * @return $this
      */
     public function tag(string $tag) {
-        trigger_error("Unfinished function ".__METHOD__);
+        $Tag = G::build(Tag::class, ['label' => $tag]);
+        $this->DB->fill($Tag);
+        if (0 == $Tag->tag_id) {
+            $this->DB->insert($Tag);
+        }
+        if (0 == $Tag->tag_id) {
+            return $this;
+        }
+
+        // TODO: Make a better way to do this
+        $query = "
+INSERT INTO `".G_DB_TABL."Node_Tag` (`tag_id`, `node_id`, `created_uts`)
+VALUES ";
+        $values = [];
+        foreach ($this->Nodes as $Node) {
+            $values[] = sprintf("('%d', '%d', '%d')", $Tag->tag_id, $Node->node_id, NOW);
+        }
+        G::$M->query($query.implode(', ', $values));
 
         return $this;
     }
@@ -287,65 +397,117 @@ class ArboristWorkflow {
      * @return $this
      */
     public function untag(string $tag) {
-        trigger_error("Unfinished function ".__METHOD__);
+        // Fetch the tag
+        $Tag = $this->DB->fetch(Tag::class, ['label' => $tag]);
+        // If we didn't find the tag, we're done
+        if (empty($Tag)) {
+            return $this;
+        }
+        $Tag = reset($Tag);
+
+        // TODO: Make a better way to do this
+        $query = "
+DELETE FROM `".G_DB_TABL."Node_Tag`
+WHERE `tag_id` = '".((int)$Tag->tag_id)."'
+  AND `node_id` IN (".implode(',', array_filter_ids(array_column($this->Nodes, 'node_id'))).")
+";
+        G::$M->query($query);
 
         return $this;
     }
 
     /**
+     * Move current node
+     *
+     * @param string|int $newParent Path or node_id of new parent
+     *
+     * @return $this
+     */
+    public function move($newParent) {
+        // Prepare current Node(s)
+        if (empty($this->Nodes)) {
+            $this->load();
+        }
+        // Prepare destination Node
+        if (is_numeric($newParent)) {
+            $Parent = $this->getById($newParent);
+        } else {
+            $Parent = $this->getByPath($newParent);
+        }
+        if (!is_a($Parent, Node::class)) {
+            return $this;
+        }
+        foreach ($this->Nodes as $Child) {
+            if (!is_a($Child, Node::class)) {
+                continue;
+            }
+
+            $Child->parent_id = $Parent->node_id;
+            $this->DB->update($Child);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Delete the current Node(s)
+     *
+     * @param string $path      Optional new current path
+     * @param bool   $recursive Whether deletes should include nodes with children
+     *
+     * @return $this
+     */
+    public function delete(string $path = null, bool $recursive = false) {
+        if (null !== $path) {
+            $this->load($path);
+        }
+        if (empty($this->Nodes)) {
+            $this->load();
+        }
+        foreach ($this->Nodes as $key => $Node) {
+            TreeMySQLDataProvider::$nextDeleteRecursive = true;
+            $result                                     = $this->DB->delete($Node);
+            if (true === $result) {
+                unset($this->Nodes[$key]);
+            }
+        }
+
+        return $this;
+    }
+
+    public function copy($newLabel) {
+
+    }
+
+    /**
      * Simply return the current Nodes array
+     *
+     * @param int $count How many nodes to return, null for all
      *
      * @return Node[]
      */
-    public function get() {
-        return $this->Nodes;
+    public function get(int $count = null) {
+        return array_slice($this->Nodes, 0, $count);
+    }
+
+    /**
+     * Simply return the first Node
+     *
+     * @return Node
+     */
+    public function first() {
+        return reset($this->Nodes);
     }
 
     /**
      * Fetch the tree Node corresponding to the specified path
      *
-     * @param string $path   Path to seek
-     * @param bool   $create Whether to create the Node when not found
+     * @param string $path Path to seek
      *
      * @return Node|bool
      */
-    public function getByPath(string $path, bool $create = false) {
-        $this->load($path);
-        if (!empty($this->Nodes)) {
-            return reset($this->Nodes);
-        }
-
-        // If we didn't find the node, and we're not supposed to create it, fail
-        if (false === $create) {
-            return false;
-        }
-
-        $this->create($path);
-        if (!empty($this->Nodes)) {
-            return reset($this->Nodes);
-        }
-
-        return false;
-    }
-
-    /**
-     * Return array of Nodes directly included in the current path.
-     *
-     * @param bool $fetchFiles Whether to also fetch content files
-     *
-     * @return Node[]
-     */
-    public function getChildren($fetchFiles = false) {
-        if (null === $this->Node) {
-            $this->Node = $this->getByPath($this->path);
-        }
-        $children = $this->DB->fetch(Node::class, ['parent_id' => $this->Node->node_id]);
-
-        if ($fetchFiles) {
-            $this->getFilesForNodes($children);
-        }
-
-        return $children;
+    public function getByPath(string $path) {
+        return $this->DB->fetch(Node::class, ['path' => $this->getFullPath()]);
     }
 
     /**
@@ -388,68 +550,8 @@ class ArboristWorkflow {
     }
 
     /**
-     * Move current node
+     * Given a list of Nodes, fetch and attach their respective content records
      *
-     * @param string|int $newParent Path or node_id of new parent
-     *
-     * @return bool
-     */
-    public function move($newParent) {
-        if (null === $this->Node) {
-            $this->Node = $this->getByPath($this->path);
-        }
-        if (!is_a($this->Node, Node::class)) {
-            return false;
-        }
-
-        $Child = $this->Node;
-        if (is_numeric($newParent)) {
-            $Parent = $this->getById($newParent);
-        } else {
-            $Parent = $this->getByPath($newParent);
-        }
-        if (!is_a($Parent, Node::class)) {
-            return false;
-        }
-        $Child->parent_id = $Parent->node_id;
-
-        return true;
-    }
-
-    public function getContent() {
-
-
-    }
-
-    /**
-     * Delete the node at the current path
-     *
-     * @return bool
-     */
-    public function delete(string $path = null) {
-        // TODO: Handle recursive Delete
-        if (null !== $path) {
-            $this->setPath($path);
-        }
-        $this->Node = $this->getByPath($this->path, false);
-        $ChildNodes = $this->getChildren();
-        if (!empty($ChildNodes)) {
-            return false;
-        }
-        if ($this->Node != false) {
-            $this->DB->delete($this->Node);
-        }
-
-        $this->Node = null;
-
-        return true;
-    }
-
-    public function copy($newLabel) {
-
-    }
-
-    /**
      * @param $Nodes
      */
     public function getFilesForNodes(array $Nodes) {
@@ -472,5 +574,24 @@ class ArboristWorkflow {
                 $Nodes[$key]->File = $fetchList[$Node->contentType][$Node->content_id];
             }
         }
+    }
+
+    /**
+     * Produce a summary of nodes expressed as an array of paths
+     *
+     * @param array|null $Nodes
+     *
+     * @return array
+     */
+    public function getNodeSummary(array $Nodes = null) {
+        if (null === $Nodes) {
+            $Nodes = $this->Nodes;
+        }
+        $result = [];
+        foreach ($Nodes as $Node) {
+            $result[$Node->node_id] = $Node->path;
+        }
+
+        return $result;
     }
 }

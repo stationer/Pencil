@@ -1,0 +1,108 @@
+<?php
+/**
+ * P_TestController - Test Controller
+ *
+ * PHP version 7.0
+ *
+ * @package  Stationer\Pencil
+ * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
+ * @link     https://github.com/stationer/Pencil
+ */
+
+namespace Stationer\Pencil\controllers;
+
+use Stationer\Graphite\G;
+use Stationer\Graphite\View;
+use Stationer\Graphite\data\IDataProvider;
+use Stationer\Pencil\PencilController;
+use Stationer\Pencil\reports\DescendantsByPathReport;
+
+/**
+ * Class P_TestController
+ *
+ * @package  Stationer\Pencil\controllers
+ * @category Pencil
+ * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
+ * @link     https://github.com/stationer/Pencil
+ */
+class P_TestController extends PencilController {
+    /** @var string Default action */
+    protected $action = 'tree';
+
+    /**
+     * Controller constructor
+     *
+     * @param array         $argv Argument list passed from Dispatcher
+     * @param IDataProvider $DB   DataProvider to use with Controller
+     * @param View          $View Graphite View helper
+     */
+    public function __construct(array $argv = [], IDataProvider $DB = null, View $View = null) {
+        parent::__construct($argv, $DB, $View);
+    }
+
+    /**
+     * Page for listing all pages
+     *
+     * @param array $argv    Argument list passed from Dispatcher
+     * @param array $request Request_method-specific parameters
+     *
+     * @return View
+     */
+    public function do_tree(array $argv = [], array $request = []) {
+        if (!G::$S->roleTest($this->role)) {
+            return parent::do_403($argv);
+        }
+
+        $results = [];
+        // This should fail on a duplicate entry for key, if the root node exists already
+        $results[] = ['create root', G::$M->query("CALL `usp_Tree_insert`(0, '', 1)")];
+
+        // This block should delete the /test tree and recreate a /test node
+        $this->Tree->setRoot('');
+        $results[] = ['setRoot/getRoot', $this->Tree->getRoot()];
+        $this->Tree->setPath('/test');
+        $results[] = ['setPath/getPath', $this->Tree->getPath()];
+        $results[] = ['getFullPath', $this->Tree->getfullPath()];
+        $this->Tree->delete(null, true)->create();
+        $results[] = ['recreate', null];
+        $Nodes = $this->DB->fetch(DescendantsByPathReport::class, ['path' => '']);
+        $results[] = ['Nodes', array_column($Nodes, 'path')];
+
+        // This block should create a single node at /tree/node1
+        $this->Tree->setRoot('/test');
+        $results[] = ['setRoot/getRoot', $this->Tree->getRoot()];
+        $this->Tree->setPath('/node1');
+        $results[] = ['setPath/getPath', $this->Tree->getPath()];
+        $results[] = ['getFullPath', $this->Tree->getfullPath()];
+        $this->Tree->create();
+        $results[] = ['recreate', null];
+        $Nodes = $this->DB->fetch(DescendantsByPathReport::class, ['path' => '']);
+        $results[] = ['Nodes', array_column($Nodes, 'path')];
+
+        // This block should create a chain of nodes in one go
+        $this->Tree->create('/node2/3/4/5/6/7');
+        $results[] = ['create /node2/3/4/5/6/7', null];
+        $Nodes = $this->DB->fetch(DescendantsByPathReport::class, ['path' => '']);
+        $results[] = ['Nodes', $this->Tree->getNodeSummary($Nodes)];
+
+        // This block should tag the descendants of /node2
+        $this->Tree->descendants('/node2')->tag('test');
+        $results[] = ['tag', G::$M->getLastQuery()['rows']];
+        $Nodes     = $this->Tree->setPath('')->tagged('test')->get();
+        $results[] = ['Nodes', $this->Tree->getNodeSummary($Nodes)];
+
+        // This block should untag the descendants of /node2/3
+        $this->Tree->descendants('/node2/3')->untag('test');
+        $results[] = ['untag', G::$M->getLastQuery()['rows']];
+        $Nodes     = $this->Tree->setPath('')->tagged('test')->get();
+        $results[] = ['Nodes', $this->Tree->getNodeSummary($Nodes)];
+
+        // Finally, delete the test tree
+        $this->Tree->setRoot('')->delete('/test', true);
+        $results[] = ['delete', G::$M->getLastQuery()['rows']];
+
+        $this->View->results = $results;
+
+        return $this->View;
+    }
+}
