@@ -30,9 +30,9 @@ class Theme extends PassiveRecord {
     protected static $pkey = 'theme_id';
     protected static $query = '';
     protected static $vars = [
-        'theme_id'    => ['type' => 'i', 'min' => 0],
-        'created_uts' => ['type' => 'ts', 'min' => 0],
-        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW],
+        'theme_id'    => ['type' => 'i', 'min' => 0, 'guard' => true],
+        'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
+        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
 
         'footer'      => ['type' => 's', 'max' => 65535],
         'header'      => ['type' => 's', 'min' => 65535],

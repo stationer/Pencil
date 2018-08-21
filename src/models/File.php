@@ -29,9 +29,9 @@ class File extends PassiveRecord {
     protected static $pkey = 'file_id';
     protected static $query = '';
     protected static $vars = [
-        'file_id'     => ['type' => 'i', 'min' => 0],
-        'created_uts' => ['type' => 'ts', 'min' => 0],
-        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW],
+        'file_id'     => ['type' => 'i', 'min' => 0, 'guard' => true],
+        'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
+        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
 
         'type'        => ['type' => 's', 'max' => 30],
         'path'        => ['type' => 's', 'strict' => true, 'max' => 255],

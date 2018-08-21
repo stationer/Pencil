@@ -31,9 +31,9 @@ class Revision extends PassiveRecord {
     protected static $pkey = 'revision_id';
     protected static $query = '';
     protected static $vars = [
-        'revision_id' => ['type' => 'i', 'min' => 0],
-        'created_uts' => ['type' => 'ts', 'min' => 0],
-        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW],
+        'revision_id' => ['type' => 'i', 'min' => 0, 'guard' => true],
+        'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
+        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
 
         'revisedModel' => ['type' => 's', 'min' => 0, 'max' => 255],
         'revised_id'  => ['type' => 's', 'strict' => true, 'min' => 0, 'max' => 255],

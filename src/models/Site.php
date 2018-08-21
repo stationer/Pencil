@@ -30,9 +30,9 @@ class Site extends PassiveRecord {
     protected static $pkey = 'site_id';
     protected static $query = '';
     protected static $vars = [
-        'site_id'        => ['type' => 'i', 'min' => 0],
-        'created_uts'    => ['type' => 'ts', 'min' => 0],
-        'updated_dts'    => ['type' => 'dt', 'min' => NOW, 'def' => NOW],
+        'site_id'        => ['type' => 'i', 'min' => 0, 'guard' => true],
+        'created_uts'    => ['type' => 'ts', 'min' => 0, 'guard' => true],
+        'updated_dts'    => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
 
         'theme_id'       => ['type' => 'i', 'min' => 0],
         'defaultPage_id' => ['type' => 'i', 'min' => 0],

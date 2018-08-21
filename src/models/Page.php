@@ -29,9 +29,9 @@ class Page extends PassiveRecord {
     protected static $pkey = 'page_id';
     protected static $query = '';
     protected static $vars = [
-        'page_id'     => ['type' => 'i', 'min' => 0],
-        'created_uts' => ['type' => 'ts', 'min' => 0],
-        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW],
+        'page_id'     => ['type' => 'i', 'min' => 0, 'guard' => true],
+        'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
+        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
 
         'title'       => ['type' => 's', 'max' => 255],
         'template_id' => ['type' => 'i', 'strict' => true, 'min' => 0],

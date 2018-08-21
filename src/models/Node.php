@@ -47,11 +47,11 @@ class Node extends PassiveRecord {
     protected static $keys = [['left_index', 'right_index'], ['right_index', 'left_index'], '`path`(64)'];
     protected static $query = '';
     protected static $vars = [
-        'node_id'     => ['type' => 'i', 'min' => 0],
-        'created_uts' => ['type' => 'ts', 'min' => 0],
-        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW],
+        'node_id'     => ['type' => 'i', 'min' => 0, 'guard' => true],
+        'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
+        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
 
-        'parent_id'   => ['type' => 'i', 'min' => 0],
+        'parent_id'   => ['type' => 'i', 'min' => 0, 'guard' => true],
         'content_id'  => ['type' => 'i', 'min' => 0],
         'contentType' => ['type' => 's', 'strict' => true, 'max' => 255],
         'label'       => ['type' => 's', 'strict' => true, 'max' => 255],
@@ -63,7 +63,7 @@ class Node extends PassiveRecord {
         'featured'    => ['type' => 'b', 'def' => 0],
         'pathAlias'   => ['type' => 's', 'strict' => true, 'min' => 0, 'max' => 255],
         'ordinal'     => ['type' => 'i', 'min' => 0, 'max' => 65535],
-        'path'        => ['type' => 's', 'def' => '', 'min' => 0, 'max' => 65535],
+        'path'        => ['type' => 's', 'def' => '', 'min' => 0, 'max' => 65535, 'guard' => true],
         'left_index'  => ['type' => 'i', 'min' => 1, 'guard' => true],
         'right_index' => ['type' => 'i', 'min' => 1, 'guard' => true],
     ];

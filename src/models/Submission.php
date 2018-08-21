@@ -31,9 +31,9 @@ class Submission extends PassiveRecord {
     protected static $pkey = 'submission_id';
     protected static $query = '';
     protected static $vars = [
-        'submission_id' => ['type' => 'i', 'min' => 0],
-        'created_uts'   => ['type' => 'ts', 'min' => 0],
-        'updated_dts'   => ['type' => 'dt', 'min' => NOW, 'def' => NOW],
+        'submission_id' => ['type' => 'i', 'min' => 0, 'guard' => true],
+        'created_uts'   => ['type' => 'ts', 'min' => 0, 'guard' => true],
+        'updated_dts'   => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
 
         'form_id' => ['type' => 'i', 'min' => 0],
         'ip'      => ['type' => 'ip'],

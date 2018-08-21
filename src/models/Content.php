@@ -29,9 +29,9 @@ class Content extends PassiveRecord {
     protected static $pkey = 'content_id';
     protected static $query = '';
     protected static $vars = [
-        'content_id'  => ['type' => 'i', 'min' => 0],
-        'created_uts' => ['type' => 'ts', 'min' => 0],
-        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW],
+        'content_id'  => ['type' => 'i', 'min' => 0, 'guard' => true],
+        'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
+        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
 
         'title'       => ['type' => 's', 'strict' => true, 'max' => 255, 'def' => ''],
         'body'        => ['type' => 's', 'strict' => true, 'max' => 65535, 'def' => ''],
