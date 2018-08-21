@@ -13,6 +13,7 @@ namespace Stationer\Pencil\models;
 
 use Stationer\Graphite\data\PassiveRecord;
 
+
 /**
  * Class Node
  *
