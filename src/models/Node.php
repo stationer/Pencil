@@ -19,24 +19,26 @@ use Stationer\Graphite\data\PassiveRecord;
  * @package Stationer\Pencil\models
  * @author  Andrew Leach
  *
- * @property int    node_id
- * @property string created_uts
- * @property int    updated_dts
- * @property int    parent_id
- * @property int    content_id
- * @property string contentType
- * @property string label
- * @property int    creator_id
- * @property string keywords
- * @property string description
- * @property bool   published
- * @property bool   trashed
- * @property bool   featured
- * @property string pathAlias
- * @property int    ordinal
- * @property string path
- * @property int    left_index
- * @property int    right_index
+ * @property int           node_id
+ * @property string        created_uts
+ * @property int           updated_dts
+ * @property int           parent_id
+ * @property int           content_id
+ * @property string        contentType
+ * @property string        label
+ * @property int           creator_id
+ * @property string        keywords
+ * @property string        description
+ * @property bool          published
+ * @property bool          trashed
+ * @property bool          featured
+ * @property string        pathAlias
+ * @property int           ordinal
+ * @property string        path
+ * @property int           left_index
+ * @property int           right_index
+ *
+ * @property PassiveRecord $File
  */
 class Node extends PassiveRecord {
     protected static $table = G_DB_TABL.'Node';
@@ -66,5 +68,69 @@ class Node extends PassiveRecord {
         'right_index' => ['type' => 'i', 'min' => 1, 'guard' => true],
     ];
     /** @var PassiveRecord The record identified by contentType and content_id */
-    public $File;
+    protected $File;
+
+    /**
+     * Attach a record to this Node, set the content type and _id
+     *
+     * @param PassiveRecord|null $File Record to attach
+     *
+     * @return PassiveRecord|null Currently attached file, if attached
+     */
+    public function File(PassiveRecord $File = null) {
+        $argv = func_get_args();
+        if (count($argv)) {
+            $type = get_class($File);
+            $type = substr($type, strrpos($type, '\\') + 1);
+            $this->__set('contentType', $type);
+            $this->__set('content_id', $File->{$File->getPkey()});
+        }
+
+        return $this->File;
+    }
+
+    /**
+     * Scrub Node label to only word characters and {-, _, .} characters
+     *
+     * @return mixed
+     */
+    public function label() {
+        $argv = func_get_args();
+        if (count($argv)) {
+            $val = preg_replace('~[^-\w.]~', '-', $argv[0]);
+            $this->_s(__FUNCTION__, $val);
+        }
+
+        return $this->_s(__FUNCTION__);
+    }
+
+    /**
+     * Scrub Node type to only word characters
+     *
+     * @return mixed
+     */
+    public function contentType() {
+        $argv = func_get_args();
+        if (count($argv)) {
+            $val = preg_replace('~[^\w]~', '_', $argv[0]);
+            $this->_s(__FUNCTION__, $val);
+        }
+
+        return $this->_s(__FUNCTION__);
+    }
+
+    /**
+     * Scrub Node path to only word characters and {/, -, _, .} characters
+     *
+     * @return mixed
+     */
+    public function path() {
+        $argv = func_get_args();
+        if (count($argv)) {
+            $val = preg_replace('~[^-\w./]~', '-', $argv[0]);
+            $this->_s(__FUNCTION__, $val);
+        }
+
+        return $this->_s(__FUNCTION__);
+    }
 }

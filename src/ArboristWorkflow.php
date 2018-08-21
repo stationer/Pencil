@@ -275,11 +275,12 @@ class ArboristWorkflow {
     /**
      * Create a Node at the current path
      *
-     * @param string $path Optional new current path
+     * @param string $path   Optional new current path
+     * @param array  $values Optional attributes for created Node
      *
      * @return $this
      */
-    public function create(string $path = null) {
+    public function create(string $path = null, $values = []) {
         if (null !== $path) {
             $this->setPath($path);
         }
@@ -320,6 +321,14 @@ class ArboristWorkflow {
             $this->Nodes[] = $Node;
             // Update the parent_id for the next insert
             $parent_id = $this->pathCache[$progress] = $Node->node_id;
+        }
+
+        if (is_a($Node, Node::class) && $Node->path == $this->getFullPath()) {
+            $Node->setAll($values, true);
+            if (isset($values['File'])) {
+                $Node->File($values['File']);
+            }
+            $this->DB->update($Node);
         }
 
         return $this;
