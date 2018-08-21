@@ -55,9 +55,13 @@ class P_TestController extends PencilController {
 
         $results = [];
         // This should fail on a duplicate entry for key, if the root node exists already
-        $results[] = ['create root', G::$M->query("CALL `usp_Tree_insert`(0, '', 1)")];
-        while (G::$M->more_results()) {
-            G::$M->next_result();
+        $this->Tree->setRoot('');
+        $Nodes = $this->Tree->ancestors('/')->get();
+        if (empty($Nodes)) {
+            $this->Tree->createRootNode();
+            $results[] = ['create root', G::$M->getLastQuery()['rows']];
+        } else {
+            $results[] = ['found root', end($Nodes)->toArray()];
         }
 
         // This block should delete the /test tree and recreate a /test node

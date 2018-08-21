@@ -314,9 +314,19 @@ class ArboristWorkflow {
             $progress  = $Node->path;
             $parent_id = $Node->node_id;
         } else {
-            // TODO: Create root node and check whether root path is set
+            trigger_error('Tree Root Node not found, attempting to create. ' .
+                ' If this is your first run of Pencil, you can safely ignore this message.');
+            $this->createRootNode();
+
             $progress  = '';
             $parent_id = 1;
+        }
+        // If we have a specified root which is not found in the ancestors, fail hard
+        if ('/' != $this->getRoot() && 0 !== strpos($progress, $this->getRoot())) {
+            // TODO: Have a debate about Exceptions
+            trigger_error("Cannot create node outside of specified root: ".$this->getRoot()
+                . " while trying to create $path", E_USER_ERROR);
+            die;
         }
 
         // Climb the tree, creating as we go
@@ -403,7 +413,7 @@ class ArboristWorkflow {
 
         // TODO: Make a better way to do this
         $query = "
-INSERT INTO `".G_DB_TABL."Node_Tag` (`tag_id`, `node_id`, `created_uts`)
+INSERT IGNORE INTO `".G_DB_TABL."Node_Tag` (`tag_id`, `node_id`, `created_uts`)
 VALUES ";
         $values = [];
         foreach ($this->Nodes as $Node) {
@@ -618,5 +628,19 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
         }
 
         return $result;
+    }
+
+    /**
+     * Create the aboslute root node of the tree
+     *
+     * @return $this
+     */
+    public function createRootNode() {
+        G::$M->query("CALL `usp_Tree_insert`(0, '', 1)");
+        while (G::$M->more_results()) {
+            G::$M->next_result();
+        }
+
+        return $this;
     }
 }
