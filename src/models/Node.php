@@ -51,7 +51,7 @@ class Node extends PassiveRecord {
         'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
         'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
 
-        'parent_id'   => ['type' => 'i', 'min' => 0, 'guard' => true],
+        'parent_id'   => ['type' => 'i', 'min' => 0],
         'content_id'  => ['type' => 'i', 'min' => 0],
         'contentType' => ['type' => 's', 'strict' => true, 'max' => 255],
         'label'       => ['type' => 's', 'strict' => true, 'max' => 255],

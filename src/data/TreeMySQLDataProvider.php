@@ -77,6 +77,9 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
                 parent::update($Model);
             }
         }
+        if (!empty($row['new_path'])) {
+            $Model->path = $row['new_path'];
+        }
 
         if (is_object($result)) {
             $result->close();
@@ -117,6 +120,9 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
                 G::$M->escape_string($Model->label)
             );
             $result = G::$M->query($query);
+            while (G::$M->more_results()) {
+                G::$M->next_result();
+            }
             if (false === $result) {
                 return false;
             }
@@ -151,6 +157,11 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
 
         static::$nextDeleteRecursive = false;
 
-        return G::$M->query($query);
+        $result = G::$M->query($query);
+        while (G::$M->more_results()) {
+            G::$M->next_result();
+        }
+
+        return $result;
     }
 }

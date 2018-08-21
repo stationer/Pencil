@@ -187,7 +187,7 @@ class ArboristWorkflow {
     }
 
     /**
-     * Load Nodes containing the current path.
+     * Load Nodes containing the current path, including the current path
      *
      * @param string $path Optional new current path
      *
@@ -198,6 +198,21 @@ class ArboristWorkflow {
             $this->setPath($path);
         }
         $this->Nodes = $this->DB->fetch(AncestorsByPathReport::class, ['path' => $this->getFullPath()]) ?: [];
+        return $this;
+    }
+
+    /**
+     * Load Nodes containing the current path, but not the current path
+     *
+     * @param string $path Optional new current path
+     *
+     * @return $this
+     */
+    public function line(string $path = null) {
+        if (null !== $path) {
+            $this->setPath($path);
+        }
+        $this->Nodes = $this->DB->fetch(AncestorsByPathReport::class, ['line' => $this->getFullPath()]) ?: [];
         return $this;
     }
 
@@ -284,10 +299,10 @@ class ArboristWorkflow {
         if (null !== $path) {
             $this->setPath($path);
         }
-        $path = $this->path;
+        $path = $this->getFullPath();
 
         // Get ancestors to requested path, sorted by deepest first
-        $AncestorNodes = $this->ancestors()->get();
+        $AncestorNodes = $this->line()->get();
 
         // If No nodes came back, we are starting from the bottom
         if (!empty($AncestorNodes)) {
@@ -299,13 +314,14 @@ class ArboristWorkflow {
             $progress  = $Node->path;
             $parent_id = $Node->node_id;
         } else {
+            // TODO: Create root node and check whether root path is set
             $progress  = '';
             $parent_id = 1;
         }
-        $progress = substr($progress, strlen($this->root));
 
         // Climb the tree, creating as we go
-        $labels = explode('/', trim(substr($path, strlen($progress)), '/'));
+        $progress = substr($progress, strlen($this->root));
+        $labels = explode('/', trim(substr($path, strlen($this->root)+strlen($progress)), '/'));
         foreach ($labels as $label) {
             $progress .= "/$label";
             // Instantiate the next child node

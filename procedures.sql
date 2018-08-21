@@ -25,8 +25,8 @@ BEGIN
         IF @@LAST_INSERT_ID > 0 AND new_parent_id > 0 THEN -- UPDATE the traversal indexes
              UPDATE Node SET `left_index`  = `left_index`  + 2 WHERE `node_id` != @@LAST_INSERT_ID AND `left_index`  >= new_left_index;
              UPDATE Node SET `right_index` = `right_index` + 2 WHERE `node_id` != @@LAST_INSERT_ID AND `right_index` >= new_left_index;
-             SELECT @@LAST_INSERT_ID;
         END IF;
+        SELECT @@LAST_INSERT_ID, new_path;
     END IF;
     COMMIT;
 END
