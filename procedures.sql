@@ -10,13 +10,13 @@ BEGIN
     IF new_parent_id > 0 THEN
         SELECT `right_index` INTO new_left_index FROM `Node` WHERE `node_id` = new_parent_id;
         SELECT CONCAT(GROUP_CONCAT(`label` ORDER BY `left_index` ASC SEPARATOR '/'), '/', new_label) INTO new_path
-          FROM `Node` WHERE `left_index`<=new_left_index AND `right_index` >=new_left_index;
+          FROM `Node` WHERE `left_index` <= new_left_index AND `right_index` >= new_left_index;
     ELSE -- We're inserting the first node
         SELECT max( `right_index` ) + 1 INTO new_left_index FROM Node;
         IF new_left_index IS NULL THEN
             SET new_left_index = 1;
         END IF;
-        SET new_path=new_label;
+        SET new_path = new_label;
     END IF;
 
     IF new_left_index IS NOT NULL AND new_path IS NOT NULL THEN
@@ -26,7 +26,7 @@ BEGIN
              UPDATE Node SET `left_index`  = `left_index`  + 2 WHERE `node_id` != @@LAST_INSERT_ID AND `left_index`  >= new_left_index;
              UPDATE Node SET `right_index` = `right_index` + 2 WHERE `node_id` != @@LAST_INSERT_ID AND `right_index` >= new_left_index;
         END IF;
-        SELECT @@LAST_INSERT_ID, new_path;
+        SELECT @@LAST_INSERT_ID, new_parent_id, new_path, new_left_index, new_left_index + 1 as new_right_index;
     END IF;
     COMMIT;
 END
@@ -80,12 +80,12 @@ BEGIN
                  DECLARE p_path, old_path_len mediumtext;
                  SELECT path,   LENGTH(old_path)+1
                    INTO p_path, old_path_len
-                   FROM Node WHERE node_id=new_parent_id;
+                   FROM Node WHERE node_id = new_parent_id;
                  UPDATE Node SET path = CONCAT(p_path, '/', new_label, SUBSTRING(path, old_path_len))
                   WHERE left_index >= old_lef AND right_index <= old_rig;
                 END;
             END IF;
-            IF old_parent_id!=new_parent_id THEN -- UPDATE the affected left/right indexes
+            IF old_parent_id != new_parent_id THEN -- UPDATE the affected left/right indexes
                 BEGIN
                  DECLARE p_lef, p_rig INT;
                  SELECT right_index, left_index INTO p_rig, p_lef FROM Node WHERE node_id = new_parent_id;
@@ -94,9 +94,9 @@ BEGIN
                  UPDATE Node SET `right_index` = `right_index` +@gapSize WHERE `right_index` >= p_rig;
                  UPDATE Node SET parent_id = new_parent_id WHERE node_id = _node_Id;
                  IF p_rig<old_rig THEN
-                  SET @newLeft=old_lef+@gapSize;
+                  SET @newLeft = old_lef+@gapSize;
                  ELSE
-                  SET @newLeft=old_lef;
+                  SET @newLeft = old_lef;
                  END IF;
                  UPDATE Node SET `left_index`  = `left_index`+(p_rig-@newLeft), `right_index` = `right_index`+(p_rig-@newLeft)
                   WHERE `left_index` >= @newLeft AND `left_index` < @newLeft + @gapSize-1;
@@ -108,7 +108,7 @@ BEGIN
         END IF;
     END IF;
     COMMIT;
-    SELECT ROW_COUNT();
+    SELECT ROW_COUNT(), path, left_index, right_index FROM Node WHERE node_id = _node_id;
 END//
 
 delimiter ;

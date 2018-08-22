@@ -219,15 +219,19 @@ class ArboristWorkflow {
     /**
      * Load Nodes containing the current path.
      *
-     * @param string $path Optional new current path
+     * @param string $path    Optional new current path
+     * @param array  $filters Optional additional filters
+     * @see DescendantsByPathReport
      *
      * @return $this
      */
-    public function descendants(string $path = null) {
+    public function descendants(string $path = null, array $filters = []) {
         if (null !== $path) {
             $this->setPath($path);
         }
-        $this->Nodes = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->getFullPath()]) ?: [];
+
+        $filters['path'] = $this->getFullPath();
+        $this->Nodes = $this->DB->fetch(DescendantsByPathReport::class, $filters) ?: [];
 
         return $this;
     }
@@ -241,6 +245,7 @@ class ArboristWorkflow {
      * @return $this
      */
     public function tagged(string $tag, string $path = null) {
+        return $this->descendants($path, ['tag' => $tag]);
         if (null !== $path) {
             $this->setPath($path);
         }
@@ -338,6 +343,7 @@ class ArboristWorkflow {
             $Node = G::build(Node::class, ['label' => $label, 'parent_id' => $parent_id]);
             // Insert the Node
             $result = $this->DB->insert($Node);
+            // TODO Elegantly handle duplicate parent_id-label pairs
             // If $result is still false, Fail
             if (false === $result) {
                 $this->Nodes[] = false;
@@ -464,12 +470,15 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
             $this->load();
         }
         // Prepare destination Node
-        if (is_numeric($newParent)) {
+        if (is_a($newParent, Node::class)) {
+            $Parent = $newParent;
+        } elseif (is_numeric($newParent)) {
             $Parent = $this->getById($newParent);
         } else {
             $Parent = $this->getByPath($newParent);
         }
         if (!is_a($Parent, Node::class)) {
+            trigger_error("Invalid parent specified in ".__METHOD__);
             return $this;
         }
         foreach ($this->Nodes as $Child) {
@@ -479,6 +488,30 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
 
             $Child->parent_id = $Parent->node_id;
             $this->DB->update($Child);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Update current nodes with passed values
+     *
+     * @param string|null $path
+     * @param             $values
+     *
+     * @return $this
+     */
+    public function update(string $path = null, $values) {
+        if (null !== $path) {
+            $this->load($path);
+        }
+        if (empty($this->Nodes)) {
+            $this->load();
+        }
+
+        foreach ($this->Nodes as $Node) {
+            $Node->setAll($values, true);
+            $this->DB->update($Node);
         }
 
         return $this;
@@ -542,7 +575,12 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
      * @return Node|bool
      */
     public function getByPath(string $path) {
-        return $this->DB->fetch(Node::class, ['path' => $this->getFullPath()]);
+        $result = $this->DB->fetch(Node::class, ['path' => $this->getRoot().$path], [], 1);
+        if (false !== $result) {
+            return array_pop($result);
+        }
+
+        return false;
     }
 
     /**
@@ -581,6 +619,10 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
      * @return Node{}|bool
      */
     public function getByContent(string $type, int $id = null) {
+        $pos = strrpos($type, '\\');
+        if (false !== $pos) {
+            $type = substr($type, $pos + 1);
+        }
         return $this->DB->fetch(Node::class, ['content_id' => $id, 'contentType' => $type]);
     }
 
@@ -588,6 +630,8 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
      * Given a list of Nodes, fetch and attach their respective content records
      *
      * @param $Nodes
+     *
+     * @return Node[]
      */
     public function getFilesForNodes(array $Nodes) {
         if (!empty($Nodes)) {
@@ -609,6 +653,8 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
                 $Nodes[$key]->File = $fetchList[$Node->contentType][$Node->content_id];
             }
         }
+
+        return $Nodes;
     }
 
     /**

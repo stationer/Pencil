@@ -72,7 +72,7 @@ class P_TestController extends PencilController {
         $results[] = ['getFullPath', $this->Tree->getfullPath()];
         $this->Tree->delete(null, true)->create();
         $results[] = ['recreate', null];
-        $Nodes = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->Tree->getRoot()]);
+        $Nodes     = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->Tree->getRoot()]);
         $results[] = ['Nodes', array_column($Nodes, 'path')];
 
         // This block should create a single node at /tree/node1
@@ -82,11 +82,11 @@ class P_TestController extends PencilController {
         $results[] = ['setPath/getPath', $this->Tree->getPath()];
         $results[] = ['getFullPath', $this->Tree->getfullPath()];
         $this->Tree->create();
-        $results[] = ['recreate', null];
-        $Nodes = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->Tree->getRoot()]);
+        $results[] = ['recreate', $this->Tree->first()->toArray()];
+        $Nodes     = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->Tree->getRoot()]);
         $results[] = ['Nodes under '.$this->Tree->getRoot(), array_column($Nodes, 'path')];
 
-         // This block should create a single node at /tree/node22
+        // This block should create a single node at /tree/node22
         $this->Tree->setRoot('/test');
         $results[] = ['setRoot/getRoot', $this->Tree->getRoot()];
         $this->Tree->setPath('/node22');
@@ -94,13 +94,13 @@ class P_TestController extends PencilController {
         $results[] = ['getFullPath', $this->Tree->getfullPath()];
         $this->Tree->create();
         $results[] = ['recreate', null];
-        $Nodes = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->Tree->getRoot()]);
+        $Nodes     = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->Tree->getRoot()]);
         $results[] = ['Nodes under '.$this->Tree->getRoot(), array_column($Nodes, 'path')];
 
         // This block should create a chain of nodes in one go
         $this->Tree->create('/node2/3/4/5/6/7');
         $results[] = ['create /node2/3/4/5/6/7', null];
-        $Nodes = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->Tree->getRoot()]);
+        $Nodes     = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->Tree->getRoot()]);
         $results[] = ['Nodes under '.$this->Tree->getRoot(), $this->Tree->getNodeSummary($Nodes)];
 
         // This block should tag the descendants of /node2
@@ -123,10 +123,18 @@ class P_TestController extends PencilController {
         $Nodes     = $this->Tree->line('/node2/3/4/5')->get();
         $results[] = ['Nodes above and including '.$this->Tree->getPath(), $this->Tree->getNodeSummary($Nodes)];
 
+        // This block tests case-insensitivity
+        $Nodes     = $this->Tree->load('/NodE2')->get();
+        $results[] = ['Case-insensitively load /NodE2', $this->Tree->getNodeSummary($Nodes)];
+
+        // This block tests move
+        $Nodes     = $this->Tree->descendants('/node2/3')->move('/node1')->get();
+        $results[] = ['Move nodes to /node1', $this->Tree->getNodeSummary($Nodes)];
+
 
         // Finally, delete the test tree
-        //$this->Tree->setRoot('')->delete('/test', true);
-        //$results[] = ['delete', G::$M->getLastQuery()['rows']];
+        $this->Tree->setRoot('')->delete('/test', true);
+        $results[] = ['delete', G::$M->getLastQuery()['rows']];
 
         $this->View->results = $results;
 

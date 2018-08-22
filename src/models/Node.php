@@ -84,6 +84,7 @@ class Node extends PassiveRecord {
             $type = substr($type, strrpos($type, '\\') + 1);
             $this->__set('contentType', $type);
             $this->__set('content_id', $File->{$File->getPkey()});
+            $this->File = $File;
         }
 
         return $this->File;

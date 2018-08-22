@@ -25,8 +25,15 @@ use Stationer\Pencil\models\Node;
 class AncestorsByPathReport extends Report {
     protected static $query = "";
     protected static $vars = [
-        'path' => ['type' => 's', 'sql' => "'%s' LIKE CONCAT(t.`path`, '/%%')"],
-        'line' => ['type' => 's', 'sql' => "('%1\$s' = t.`path` OR '%1\$s/' LIKE CONCAT(t.`path`, '%%'))"],
+        'path'        => ['type' => 's', 'sql' => "'%s' LIKE CONCAT(t.`path`, '/%%')"],
+        'line'        => ['type' => 's', 'sql' => "('%1\$s' = t.`path` OR '%1\$s/' LIKE CONCAT(t.`path`, '%%'))"],
+        'tag'         => ['type' => 's', 'sql' => "t2.`label` = '%s'"],
+        'label'       => ['type' => 's', 'sql' => "t.`label` = '%s'"],
+        'contentType' => ['type' => 's', 'sql' => "t.`contentType` = '%s'"],
+        'content_id'  => ['type' => 'i', 'sql' => "t.`content_id` = '%d'"],
+        'published'   => ['type' => 'b', 'sql' => "t.`published` = b'%d'"],
+        'trashed'     => ['type' => 'b', 'sql' => "t.`trashed` = b'%d'"],
+        'featured'    => ['type' => 'b', 'sql' => "t.`featured` = b'%d'"],
     ];
 
     public function __construct($a = null, bool $b = null) {

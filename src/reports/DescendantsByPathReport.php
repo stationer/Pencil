@@ -26,13 +26,19 @@ use Stationer\Pencil\models\Tag;
 class DescendantsByPathReport extends Report {
     protected static $query = "";
     protected static $vars = [
-        'path' => ['type' => 's', 'sql' => "t.`path` LIKE '%s/%%'"],
-        'tag'  => ['type' => 's', 'sql' => "t2.`label` = '%s'"],
+        'path'        => ['type' => 's', 'sql' => "t.`path` LIKE '%s/%%'"],
+        'tag'         => ['type' => 's', 'sql' => "t2.`label` = '%s'"],
+        'label'       => ['type' => 's', 'sql' => "t.`label` = '%s'"],
+        'contentType' => ['type' => 's', 'sql' => "t.`contentType` = '%s'"],
+        'content_id'  => ['type' => 'i', 'sql' => "t.`content_id` = '%d'"],
+        'published'   => ['type' => 'b', 'sql' => "t.`published` = b'%d'"],
+        'trashed'     => ['type' => 'b', 'sql' => "t.`trashed` = b'%d'"],
+        'featured'    => ['type' => 'b', 'sql' => "t.`featured` = b'%d'"],
     ];
 
     public function __construct($a = null, bool $b = null) {
         $fields = array_keys(Node::getFieldList());
-        $table = Node::getTable();
+        $table  = Node::getTable();
         $joiner = Node::getTable('Tag');
 
         static::$query = "

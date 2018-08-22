@@ -79,6 +79,10 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
         }
         if (!empty($row['new_path'])) {
             $Model->path = $row['new_path'];
+            $Model->parent_id = $row['new_parent_id'];
+            $Model->left_index = $row['new_left_index'];
+            $Model->right_index = $row['new_right_index'];
+            $Model->undiff(['parent_id', 'label', 'path', 'left_index', 'right_index']);
         }
 
         if (is_object($result)) {
@@ -100,6 +104,7 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
             return parent::insert($Model);
         }
 
+        /** @var Node $Model */
         // If the PKey is not set, what would we update?
         if (null === $Model->{$Model->getPkey()}) {
             return null;
@@ -126,6 +131,11 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
             if (false === $result) {
                 return false;
             }
+            $row = $result->fetch_assoc();
+            $Model->path = $row['path'];
+            $Model->left_index = $row['left_index'];
+            $Model->right_index = $row['right_index'];
+            $Model->undiff(['parent_id', 'label', 'path', 'left_index', 'right_index']);
         }
 
         return parent::update($Model);
