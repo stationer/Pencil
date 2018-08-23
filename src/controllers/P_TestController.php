@@ -82,7 +82,7 @@ class P_TestController extends PencilController {
         $results[] = ['setPath/getPath', $this->Tree->getPath()];
         $results[] = ['getFullPath', $this->Tree->getfullPath()];
         $this->Tree->create();
-        $results[] = ['recreate', $this->Tree->first()->toArray()];
+        $results[] = ['recreate', $this->Tree->getFirst()->toArray()];
         $Nodes     = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->Tree->getRoot()]);
         $results[] = ['Nodes under '.$this->Tree->getRoot(), array_column($Nodes, 'path')];
 
@@ -131,6 +131,30 @@ class P_TestController extends PencilController {
         $Nodes     = $this->Tree->descendants('/node2/3')->move('/node1')->get();
         $results[] = ['Move nodes to /node1', $this->Tree->getNodeSummary($Nodes)];
 
+        // Delete the test nodes, but not the test root
+        $this->Tree->setPath('')->descendants()->delete(null, true);
+        $results[] = ['delete', G::$M->getLastQuery()['rows']];
+        $Nodes = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->Tree->getRoot()]);
+        $results[] = ['Nodes under '.$this->Tree->getRoot(), $this->Tree->getNodeSummary($Nodes)];
+
+        // This block tests the Ancestor Report
+        $this->Tree->create('/line1')->create('/line2/line3')->create('/line4')->create('/line2.line4');
+        $Nodes     = $this->Tree->ancestors('/line1')->get();
+        $results[] = ['Ancestor Test of Line1', $this->Tree->getNodeSummary($Nodes)];
+        $Nodes     = $this->Tree->ancestors('/line2')->get();
+        $results[] = ['Ancestor Test of Line2', $this->Tree->getNodeSummary($Nodes)];
+        $Nodes     = $this->Tree->line('/line2')->get();
+        $results[] = ['Line Test of Line2', $this->Tree->getNodeSummary($Nodes)];
+        $Nodes     = $this->Tree->ancestors('/line2/line3')->get();
+        $results[] = ['Ancestor Test of Line3', $this->Tree->getNodeSummary($Nodes)];
+        $Nodes     = $this->Tree->line('/line2/line3')->get();
+        $results[] = ['Line Test of Line3', $this->Tree->getNodeSummary($Nodes)];
+        $Nodes     = $this->Tree->descendants('/line1')->get();
+        $results[] = ['Descendents Test of Line1', $this->Tree->getNodeSummary($Nodes)];
+        $Nodes     = $this->Tree->descendants('/line2')->get();
+        $results[] = ['Descendents Test of Line2', $this->Tree->getNodeSummary($Nodes)];
+        $Nodes = $this->DB->fetch(DescendantsByPathReport::class, ['path' => $this->Tree->getRoot()]);
+        $results[] = ['Nodes under '.$this->Tree->getRoot(), $this->Tree->getNodeSummary($Nodes)];
 
         // Finally, delete the test tree
         $this->Tree->setRoot('')->delete('/test', true);

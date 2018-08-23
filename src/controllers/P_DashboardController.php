@@ -55,7 +55,7 @@ class P_DashboardController extends PencilController {
 
 
         // If the site-root doesn't have a contentType, it didn't exist, so create Site record, also
-        $SiteNode = $this->Tree->create('')->first();
+        $SiteNode = $this->Tree->create('')->getFirst();
         if (empty($SiteNode->contentType)) {
             /** @var Site $Site */
             $Site = G::build(Site::class);

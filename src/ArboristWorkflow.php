@@ -108,6 +108,8 @@ class ArboristWorkflow {
     /**
      * Load a node by ID, set it as current Node
      *
+     * @param int $node_id ID of Node to load
+     *
      * @return $this
      */
     public function loadID(int $node_id) {
@@ -563,8 +565,17 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
      *
      * @return Node
      */
-    public function first() {
+    public function getFirst() {
         return reset($this->Nodes);
+    }
+
+    /**
+     * Simply return the first Node
+     *
+     * @return Node
+     */
+    public function getLast() {
+        return end($this->Nodes);
     }
 
     /**
