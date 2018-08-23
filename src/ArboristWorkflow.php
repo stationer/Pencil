@@ -394,6 +394,7 @@ class ArboristWorkflow {
             }
             $fetchList[$type] = $this->DB->byPK('\\Stationer\\Pencil\\models\\'.$type, array_keys($ids));
         }
+
         // Add the records to their Nodes
         foreach ($this->Nodes as $key => $Node) {
             $this->Nodes[$key]->File = $fetchList[$Node->contentType][$Node->content_id];
@@ -624,16 +625,18 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
     /**
      * Get Nodes by Content type and Id
      *
-     * @param string $type Type of content to seek
-     * @param int    $id   Optional content_id to seek
+     * @param string $type Class of content to seek
+     * @param int    $id                 Optional content_id to seek
      *
-     * @return Node{}|bool
+     * @return Node[]|bool
      */
+
     public function getByContent(string $type, int $id = null) {
         $pos = strrpos($type, '\\');
         if (false !== $pos) {
             $type = substr($type, $pos + 1);
         }
+
         return $this->DB->fetch(Node::class, ['content_id' => $id, 'contentType' => $type]);
     }
 
@@ -652,6 +655,7 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
             foreach ($Nodes as $Node) {
                 $fetchList[$Node->contentType][$Node->content_id] = null;
             }
+
             // Fetch all records for each type
             foreach ($fetchList as $type => $ids) {
                 if ('' == $type) {

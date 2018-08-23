@@ -10,6 +10,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require-dev": {
+    "larapack/dd": "^1.1"
   },
   "autoload": {
     "psr-4": {
