@@ -164,4 +164,12 @@ class P_TestController extends PencilController {
 
         return $this->View;
     }
+
+    public function do_quill() {
+
+        if($this->method === "POST") {
+            dd($request);
+        }
+
+    }
 }

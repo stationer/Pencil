@@ -57,9 +57,9 @@ class P_PageController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Pages['Public']  = $this->Tree->setPath(self::WEBROOT)->children()->loadContent()->get();
-        $Pages['Landing'] = $this->Tree->setPath(self::LANDING)->children()->loadContent()->get();
-        $Pages['Error']   = $this->Tree->setPath(self::ERROR)->children()->loadContent()->get();
+        $Pages['Public']  = $this->Tree->setPath(self::WEBROOT)->children()->get();
+        $Pages['Landing'] = $this->Tree->setPath(self::LANDING)->children()->get();
+        $Pages['Error']   = $this->Tree->setPath(self::ERROR)->children()->get();
 
         $this->View->Pages = $Pages;
 
@@ -87,10 +87,11 @@ class P_PageController extends PencilController {
             $Page->template_id = 1;
             $Page->created_uts = strtotime('now');
             $result = $this->DB->insert($Page);
-            $Node->label = $request['label'];
+
             if (false !== $result) {
-                $this->Tree->create(PencilController::WEBROOT.'/'.$Node->label, [
+                $Node = $this->Tree->create(PencilController::WEBROOT.'/'.$Node->label, [
                     'File' => $Page,
+                    'label' => $request['label'],
                     'creator_id' => G::$S->Login->login_id,
                     'published' => isset($request['published']),
                     'description' => $request['description'],
@@ -102,7 +103,7 @@ class P_PageController extends PencilController {
                 $Node = $this->Tree->getFirst();
                 if (is_a($Node, Node::class)) {
                     G::msg("The page has been successfully created", 'success');
-                    $this->_redirect('/P_Page/edit/'.$Page->page_id);
+                    $this->_redirect('/P_Page/edit/'.$Node->node_id);
                 }
 
             }
@@ -126,7 +127,8 @@ class P_PageController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Node = $this->Tree->setPath(self::WEBROOT)->loadFiles()->get();
+        $Node = $Node = $this->Tree->loadID($argv[1])
+            ->getFirst();
 
         if ('POST' === $this->method) {
             $Node->label       = $request['node_label'];
@@ -135,9 +137,6 @@ class P_PageController extends PencilController {
             $Node->featured    = $request['featured'];
             $Node->keywords    = $request['keywords'];
             $Node->description = $request['description'];
-
-            $Node->File->title = $request['title'];
-            $Node->File->body  = $request['body'];
 
             $result  = $this->DB->save($Node);
             $result2 = $this->DB->save($Node->File);

@@ -1,8 +1,8 @@
 <?php echo $View->render('header'); ?>
+<div class="container">
+    <h1 class="page-title">Add Page</h1>
 
-    <h1 class="page-title">Edit Page</h1>
-
-    <form action="/P_Page/edit/<?php echo $Page->node_id; ?>" method="post">
+    <form action="/P_Page/add/" method="post">
         <div class="form-group">
             <label for="keywords">Keywords</label>
             <input type="text" name="keywords" class="form-control" value="<?php echo $Node->keywords ?? ''; ?>">
@@ -45,5 +45,5 @@
 
         <button type="submit" class="btn btn-primary">Update Page.</button>
     </form>
-
+</div>
 <?php echo $View->render('footer');
