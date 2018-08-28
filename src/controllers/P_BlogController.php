@@ -54,7 +54,7 @@ class P_BlogController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Articles = $this->Tree->setPath(self::BLOG)->getChildren();
+        $Articles = $this->Tree->setPath(self::BLOG)->children()->get();
 
         $this->View->Articles = $Articles;
 
