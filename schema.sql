@@ -104,6 +104,7 @@ CREATE TABLE IF NOT EXISTS `Site` (
     `site_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
     `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `title` varchar(255) NOT NULL,
     `theme_id` int(10) unsigned NOT NULL DEFAULT 0,
     `defaultPage_id` int(10) unsigned NOT NULL DEFAULT 0,
     KEY (`updated_dts`),
@@ -159,9 +160,10 @@ CREATE TABLE IF NOT EXISTS `Theme` (
     `theme_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
     `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `document` text NOT NULL,
     `footer` text NOT NULL,
-    `header` longtext NOT NULL,
-    `css` longtext NOT NULL,
+    `header` text NOT NULL,
+    `css` text NOT NULL,
     KEY (`updated_dts`),
     PRIMARY KEY(`theme_id`)
 );

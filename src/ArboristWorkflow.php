@@ -204,6 +204,38 @@ class ArboristWorkflow {
     }
 
     /**
+     * Reduce the current Nodes to only the first Node
+     *
+     * @param string $path Optional new current path
+     *
+     * @return $this
+     */
+    public function first(string $path = null) {
+        if (null !== $path) {
+            $this->setPath($path);
+        }
+        $this->Nodes = [reset($this->Nodes)];
+
+        return $this;
+    }
+
+    /**
+     * Reduce the current Nodes to only the first Node
+     *
+     * @param string $path Optional new current path
+     *
+     * @return $this
+     */
+    public function last(string $path = null) {
+        if (null !== $path) {
+            $this->setPath($path);
+        }
+        $this->Nodes = [end($this->Nodes)];
+
+        return $this;
+    }
+
+    /**
      * Load Nodes containing the current path, but not the current path
      *
      * @param string $path Optional new current path

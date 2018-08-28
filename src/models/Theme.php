@@ -34,6 +34,7 @@ class Theme extends PassiveRecord {
         'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
         'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
 
+        'document'    => ['type' => 's', 'max' => 65535],
         'footer'      => ['type' => 's', 'max' => 65535],
         'header'      => ['type' => 's', 'max' => 65535],
         'css'         => ['type' => 's', 'max' => 65535],

@@ -14,7 +14,6 @@ namespace Stationer\Pencil\controllers;
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
-use Stationer\Pencil\ArboristWorkflow;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\models\Theme;
 use Stationer\Pencil\PencilController;

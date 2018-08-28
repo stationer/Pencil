@@ -80,12 +80,16 @@ class Node extends PassiveRecord {
     public function File(PassiveRecord $File = null) {
         $argv = func_get_args();
         if (count($argv)) {
-            $type = get_class($File);
-            $type = substr($type, strrpos($type, '\\') + 1);
-            $this->File = $File;
-            $this->__set('contentType', $type);
-            $this->__set('content_id', $File->{$File->getPkey()});
-            $this->File = $File;
+            $this->File = null;
+            $this->__set('contentType', '');
+            $this->__set('content_id', 0);
+            if ($File !== null) {
+                $type = get_class($File);
+                $type = substr($type, strrpos($type, '\\') + 1);
+                $this->__set('contentType', $type);
+                $this->__set('content_id', $File->{$File->getPkey()});
+                $this->File = $File;
+            }
         }
 
         return $this->File;

@@ -25,6 +25,11 @@ echo $View->render('header'); ?>
         </div>
 
         <div class="form-group">
+            <label for="header">Theme Root Document</label>
+            <textarea class="form-control" name="document"><?php echo $Node->File->document; ?></textarea>
+        </div>
+
+        <div class="form-group">
             <label for="header">Theme Header</label>
             <textarea class="form-control" name="header"><?php echo $Node->File->header; ?></textarea>
         </div>

@@ -26,6 +26,25 @@ echo $View->render('header'); ?>
         </div>
 
         <div class="form-group">
+            <label for="header">Theme Root Document</label>
+            <textarea class="form-control" name="document"><?php echo $Theme->document ?: '<!doctype html>
+<html lang="en-US">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>[page.title] - [site.title]</title>
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="[theme.css_url]">
+</head>
+<body class="[page.bodyClass]">
+[theme.header]
+[page.template]
+[theme.footer]
+</body>
+</html>'; ?></textarea>
+        </div>
+
+        <div class="form-group">
             <label for="header">Theme Header</label>
             <textarea class="form-control" name="header"><?php echo $Theme->header; ?></textarea>
         </div>
