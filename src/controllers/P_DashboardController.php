@@ -53,18 +53,25 @@ class P_DashboardController extends PencilController {
             return parent::do_403($argv);
         }
 
-
         // If the site-root doesn't have a contentType, it didn't exist, so create Site record, also
         $SiteNode = $this->Tree->create('')->getFirst();
         if (empty($SiteNode->contentType)) {
             /** @var Site $Site */
             $Site = G::build(Site::class);
+            $Site->created_uts = NOW;
             $this->DB->insert($Site);
             $SiteNode->contentType = Site::getTable();
             $SiteNode->content_id  = $Site->site_id;
         } else {
             $Site = $this->DB->byPK(Site::class, $SiteNode->content_id);
         }
+
+        if ('POST' == $this->method) {
+            $Site->theme_id = $request['theme_id'];
+            $Site->defaultPage_id = $request['defaultPage_id'];
+            $this->DB->save($Site);
+        }
+
         // Ensure other key nodes exist
         $this->Tree->create(self::WEBROOT);
         $this->Tree->create(self::BLOG);
