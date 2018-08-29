@@ -58,18 +58,24 @@ class P_DashboardController extends PencilController {
         if (empty($SiteNode->contentType)) {
             /** @var Site $Site */
             $Site = G::build(Site::class);
-            $Site->created_uts = NOW;
             $this->DB->insert($Site);
             $SiteNode->contentType = Site::getTable();
             $SiteNode->content_id  = $Site->site_id;
+            $this->DB->update($SiteNode);
         } else {
             $Site = $this->DB->byPK(Site::class, $SiteNode->content_id);
         }
 
         if ('POST' == $this->method) {
+            $Site->title = $request['title'];
             $Site->theme_id = $request['theme_id'];
             $Site->defaultPage_id = $request['defaultPage_id'];
-            $this->DB->save($Site);
+            $result = $this->DB->save($Site);
+            if (false !== $result) {
+                G::msg('Saved Site Settings.');
+            } else {
+                G::msg('Failed to save site settings!', 'error');
+            }
         }
 
         // Ensure other key nodes exist
@@ -83,11 +89,11 @@ class P_DashboardController extends PencilController {
         $this->Tree->create(self::ERROR);
         $this->Tree->create(self::THEMES);
 
-        // Get Themes
-        $Themes = $this->Tree->setPath(self::THEMES)->descendants()->get();
+        // Get Themes without Files
+        $Themes = $this->Tree->descendants(self::THEMES, ['contentType' => 'Theme'])->get();
 
-        // Get Pages
-        $Pages = $this->Tree->setPath(self::WEBROOT)->descendants()->get();
+        // Get Pages with Files
+        $Pages = $this->Tree->descendants(self::WEBROOT, ['contentType' => 'Page'])->loadContent()->get();
 
         $this->View->Themes   = $Themes;
         $this->View->Pages    = $Pages;

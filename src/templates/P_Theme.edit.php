@@ -5,11 +5,6 @@ echo $View->render('header'); ?>
 
     <form action="/P_Theme/edit/<?php echo $Node->node_id; ?>" method="POST">
         <div class="form-group">
-            <label for="title">Label</label>
-            <input class="form-control" type="text" name="label" value="<?php echo $Node->label ?? ''; ?>">
-        </div>
-
-        <div class="form-group">
             <label for="published">Published</label>
             <input class="form-control" type="checkbox" name="published" <?php echo $Node->published ? 'checked="checked"':''; ?>>
         </div>

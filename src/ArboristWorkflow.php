@@ -417,6 +417,9 @@ class ArboristWorkflow {
         // Group the content_ids for quicker fetching
         /** @var Node $Node */
         foreach ($this->Nodes as $Node) {
+            if (false === $Node) {
+                break;
+            }
             $fetchList[$Node->contentType][$Node->content_id] = null;
         }
         // Fetch all records for each type
@@ -429,6 +432,9 @@ class ArboristWorkflow {
 
         // Add the records to their Nodes
         foreach ($this->Nodes as $key => $Node) {
+            if (false === $Node) {
+                break;
+            }
             $this->Nodes[$key]->File = $fetchList[$Node->contentType][$Node->content_id];
         }
 
@@ -619,7 +625,7 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
      * @return Node|bool
      */
     public function getByPath(string $path) {
-        $result = $this->DB->fetch(Node::class, ['path' => $this->getRoot().$path], [], 1);
+        $result = $this->DB->fetch(Node::class, ['path' => $this->getFullPath()], [], 1);
         if (false !== $result) {
             return array_pop($result);
         }
@@ -647,7 +653,7 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
      */
     public function getByURL(string $url) {
         $result = $this->DB->fetch(Node::class, ['pathAlias' => $url]);
-        if (false !== $result) {
+        if (false !== $result && !empty($result)) {
             return array_pop($result);
         }
 

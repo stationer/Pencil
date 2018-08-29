@@ -253,4 +253,16 @@ if (!isset($_bodyClass)) {
 
             </div> <!-- / .container-fluid -->
         </nav>
+        <section class="messages">
+            <?php if (0 < $v = count($a = G::msg())) { ?>
+                <details id="msg" open="open">
+                    <summary><?php echo $v; ?> Messages:</summary>
+                    <ul>
+                        <?php foreach ($a as $v) { ?>
+                            <li class="<?php echo $v[1]; ?>"><?php echo $v[0]; ?></li>
+                        <?php } ?>
+                    </ul>
+                </details>
+            <?php } ?>
+        </section>
         <main class="main">

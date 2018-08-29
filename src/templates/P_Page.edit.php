@@ -3,7 +3,6 @@
 <main class="content" style="padding:20px;">
     <div class="container">
         <h1 class="page-title">Edit Page</h1>
-        <?php d($Page); ?>
         <form action="/P_Page/edit/<?php echo $Page->node_id; ?>" method="post">
             <div class="form-group">
                 <label for="title">Title</label>

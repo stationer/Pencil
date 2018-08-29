@@ -14,11 +14,6 @@
         </div>
 
         <div class="form-group">
-            <label for="trashed">Trashed</label>
-            <input type="checkbox" name="trashed" <?php echo $Node->trashed ? 'checked="checked"': ''; ?>>
-        </div>
-
-        <div class="form-group">
             <label for="featured">Featured</label>
             <input type="checkbox" name="featured" <?php echo $Node->featured ? 'checked="checked"': ''; ?>>
         </div>
@@ -43,7 +38,7 @@
             <textarea name="body" class="form-control" ></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary">Update Page.</button>
+        <button type="submit" class="btn btn-primary">Add Page</button>
     </form>
 </div>
 <?php echo $View->render('footer');

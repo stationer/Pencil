@@ -34,17 +34,6 @@ class P_RenderController extends PencilController {
     protected $action = 'page';
 
     /**
-     * Controller constructor
-     *
-     * @param array         $argv Argument list passed from Dispatcher
-     * @param IDataProvider $DB   DataProvider to use with Controller
-     * @param View          $View Graphite View helper
-     */
-    public function __construct(array $argv = [], IDataProvider $DB = null, View $View = null) {
-        parent::__construct($argv, $DB, $View);
-    }
-
-    /**
      * List available themes
      *
      * @param array $argv    Argument list passed from Dispatcher
@@ -58,18 +47,26 @@ class P_RenderController extends PencilController {
         }
 
         // TODO: Tie this into the dispatcher as a 404 handler
-        $url = $argv['url'];
-        $Nodes = $this->Tree->getByURL($url);
-        $Nodes = [reset($Nodes)];
-        $Nodes = $this->Tree->getFilesForNodes($Nodes);
-        $Node = reset($Nodes);
+        $SiteNode = $this->Tree->load('')->loadContent()->getFirst();
+        $url = $argv['url'] ?? '/';
+        if ('/' == $url) {
+            $Node = $this->Tree->descendants('/', [
+                'contentType' => 'Page',
+                'node_id' => $SiteNode->File->defaultPage_id,
+                ])->first()->loadContent()->getFirst();
+        } else {
+            $Nodes = $this->Tree->getByURL($url);
+            $Nodes = [reset($Nodes)];
+            $Nodes = $this->Tree->getFilesForNodes($Nodes);
+            $Node = reset($Nodes);
+        }
 
+        /** @var PaperWorkflow $Paper */
         $Paper = G::build(PaperWorkflow::class, $this->Tree);
-        $Paper->render($Node);
+        $result = $Paper->render($Node);
 
-
-        $this->View->Nodes = $Nodes;
-
-        return $this->View;
+        echo $result;
+        die;
+        croak(htmlspecialchars($result));
     }
 }

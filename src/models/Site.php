@@ -21,9 +21,9 @@ use Stationer\Graphite\data\PassiveRecord;
  * @property int    site_id
  * @property string created_uts
  * @property int    updated_dts
+ * @property string title
  * @property int    theme_id
  * @property int    defaultPage_id
- * @property string options
  */
 class Site extends PassiveRecord {
     protected static $table = G_DB_TABL . 'Site';

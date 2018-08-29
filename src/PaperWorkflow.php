@@ -56,21 +56,29 @@ class PaperWorkflow {
                 $SiteNode = $this->Tree->load('')->loadContent()->getFirst();
                 $Theme    = $this->Tree->descendants(PencilController::THEMES, [
                     'contentType' => 'Theme',
-                    'content_id'  => $SiteNode->File->theme_id,
-                    'published'   => true,
-                    'trashed'     => false,
+                    'node_id'     => $SiteNode->File->theme_id,
+//                    'published'   => true,
+//                    'trashed'     => false,
                 ])->first()->loadContent()->getFirst();
-
-                $result = $Theme->document;
-                $this->mergeCodes($result);
+                $result = $Theme->File->document;
+                $objects = ['page' => $Node->File, 'site' => $SiteNode->File, 'theme' => $Theme->File];
+                do {
+                    $codes = $this->mergeCodes($result);
+                    foreach ($codes as $code) {
+                        $result = str_replace($code[0], $objects[$code[1]][$code[2]], $result);
+                    }
+                } while (!empty($codes));
+                break;
+            default:
+                break;
         }
 
         return $result;
     }
 
     public function mergeCodes($document) {
-        $codes = preg_match('~\[(\w+)\.(\w+)\]~', $document);
+        preg_match_all('~\[(\w+)\.(\w+)\]~', $document, $matches, PREG_SET_ORDER);
 
-        G::croak($codes);
+        return $matches;
     }
 }
