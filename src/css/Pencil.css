@@ -11897,3 +11897,36 @@ small {
 .bg-dark {
     background: #234 !important;
 }
+
+
+details.G__croak {
+    border: 1px solid grey;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    padding: 4px;
+    margin: 2px;
+    background-color: #999;
+}
+
+details.G__croak > hr {
+    margin: -4px;
+    border: 1px solid grey;
+
+}
+details.G__croak > pre {
+    padding: 10px;
+}
+
+details.G__croak details {
+    background-color: #bbb;
+}
+details.G__croak details details {
+    background-color: #ddd;
+}
+details.G__croak details details details {
+    background-color: #eee;
+}
+details.G__croak details details details details {
+    background-color: #e8e8e8;
+}

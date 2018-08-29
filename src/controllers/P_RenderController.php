@@ -48,25 +48,23 @@ class P_RenderController extends PencilController {
 
         // TODO: Tie this into the dispatcher as a 404 handler
         $SiteNode = $this->Tree->load('')->loadContent()->getFirst();
-        $url = $argv['url'] ?? '/';
+        $url      = $_SERVER['REQUEST_URI'] ?? '/';
         if ('/' == $url) {
             $Node = $this->Tree->descendants('/', [
                 'contentType' => 'Page',
-                'node_id' => $SiteNode->File->defaultPage_id,
-                ])->first()->loadContent()->getFirst();
+                'node_id'     => $SiteNode->File->defaultPage_id,
+            ])->first()->loadContent()->getFirst();
         } else {
-            $Nodes = $this->Tree->getByURL($url);
-            $Nodes = [reset($Nodes)];
-            $Nodes = $this->Tree->getFilesForNodes($Nodes);
-            $Node = reset($Nodes);
+            $Node = $this->Tree->getByURL($url);
+            $Nodes = $this->Tree->getFilesForNodes([$Node]);
+            $Node  = reset($Nodes);
         }
 
         /** @var PaperWorkflow $Paper */
-        $Paper = G::build(PaperWorkflow::class, $this->Tree);
+        $Paper  = G::build(PaperWorkflow::class, $this->Tree);
         $result = $Paper->render($Node);
 
         echo $result;
         die;
-        croak(htmlspecialchars($result));
     }
 }

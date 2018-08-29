@@ -100,6 +100,7 @@ if (!isset($_bodyClass)) {
                             <a data-toggle="collapse" href="#subnav-menu-addpages" role="button" aria-expanded="false" aria-controls="collapseExample">
                                 Add New Page
                             </a>
+
                             <div class="collapse" id="subnav-menu-addpages">
                                 <ul class="subnav list-unstyled">
                                     <li class="subnav-link-item">
@@ -107,6 +108,9 @@ if (!isset($_bodyClass)) {
                                     </li>
                                     <li class="subnav-link-item">
                                         <a href="#">From Component</a>
+                                    </li>
+                                    <li class="subnav-link-item">
+                                        <a href="/P_Page/add">(advanced)</a>
                                     </li>
                                 </ul>
                             </div>

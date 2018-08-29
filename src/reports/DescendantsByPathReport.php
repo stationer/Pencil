@@ -31,6 +31,7 @@ class DescendantsByPathReport extends Report {
         'label'       => ['type' => 's', 'sql' => "t.`label` = '%s'"],
         'contentType' => ['type' => 's', 'sql' => "t.`contentType` = '%s'"],
         'content_id'  => ['type' => 'i', 'sql' => "t.`content_id` = '%d'"],
+        'node_id'     => ['type' => 'i', 'sql' => "t.`node_id` = '%d'"],
         'published'   => ['type' => 'b', 'sql' => "t.`published` = b'%d'"],
         'trashed'     => ['type' => 'b', 'sql' => "t.`trashed` = b'%d'"],
         'featured'    => ['type' => 'b', 'sql' => "t.`featured` = b'%d'"],

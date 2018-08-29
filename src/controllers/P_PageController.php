@@ -79,20 +79,26 @@ class P_PageController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $this->View->Page = $Page = G::build(Page::class);
-        $this->View->Node = $Node = G::build(Node::class);
+        $Page = G::build(Page::class);
+        $Node = G::build(Node::class);
+        // Get the list of Template Nodes, without the Templates
+        $Templates = $this->Tree->descendants(PencilController::TEMPLATES, [
+            'contentType' => 'Template',
+        ])->get();
 
         if ('POST' === $this->method) {
             $Page->title = $request['title'];
-            $Page->template_id = 1;
-            $Page->created_uts = strtotime('now');
+            if (isset($Templates[$request['template_id'] ?? null])) {
+                $Page->template_id = $request['template_id'];
+            }
             $result = $this->DB->insert($Page);
 
             if (false !== $result) {
-                $Node = $this->Tree->create(PencilController::WEBROOT.'/'.$Node->label, [
+                $Node->label = $request['label'] ?: $request['title'];
+                $this->Tree->create(PencilController::WEBROOT.'/'.$Node->label, [
                     'File' => $Page,
-                    'label' => $request['label'],
-                    'creator_id' => G::$S->Login->login_id,
+                    'label' => $Node->label,
+                    'creator_id' => G::$S->Login->login_id ?? 0,
                     'published' => isset($request['published']),
                     'description' => $request['description'],
                     'trashed' => isset($request['trashed']),
@@ -100,16 +106,20 @@ class P_PageController extends PencilController {
                     'keywords' => $request['keywords']
                 ]);
 
-                $Node = $this->Tree->getFirst();
+                $Node = $this->Tree->setPath(PencilController::WEBROOT.'/'.$Node->label)->load()->getFirst();
                 if (is_a($Node, Node::class)) {
                     G::msg("The page has been successfully created", 'success');
                     $this->_redirect('/P_Page/edit/'.$Node->node_id);
                 }
-
             }
 
             G::msg("There was a problem creating this page.", 'error');
         }
+
+        $this->View->Templates = $Templates;
+        $this->View->Page = $Page;
+        $this->View->Node = $Node;
+
 
         return $this->View;
     }
@@ -127,18 +137,31 @@ class P_PageController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Node = $Node = $this->Tree->loadID($argv[1])
-            ->getFirst();
+        //$Node = $this->Tree->loadID($argv[1])->getFirst();
+        // Get the Page's Node, with the Page record
+        $Node = $this->Tree->descendants('', [
+            'contentType' => 'Page',
+            'node_id' => $argv[1],
+        ])->loadContent()->getFirst();
+
+        // Get the list of Template Nodes, without the Templates
+        $Templates = $this->Tree->descendants(PencilController::TEMPLATES, [
+            'contentType' => 'Template',
+        ])->get();
 
         if ('POST' === $this->method) {
             $Node->label       = $request['node_label'];
-            $Node->published   = $request['published'];
-            $Node->trashed     = $request['trashed'];
-            $Node->featured    = $request['featured'];
+            $Node->published   = $request['published'] ?? 0;
+            $Node->trashed     = $request['trashed'] ?? 0;
+            $Node->featured    = $request['featured'] ?? 0;
             $Node->keywords    = $request['keywords'];
             $Node->description = $request['description'];
-
             $result  = $this->DB->save($Node);
+
+            $Node->File->title = $request['title'];
+            if (isset($Templates[$request['template_id'] ?? null])) {
+                $Node->File->template_id = $request['template_id'];
+            }
             $result2 = $this->DB->save($Node->File);
 
             if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
@@ -148,6 +171,7 @@ class P_PageController extends PencilController {
             }
         }
 
+        $this->View->Templates = $Templates;
         $this->View->Page = $Node;
 
         return $this->View;

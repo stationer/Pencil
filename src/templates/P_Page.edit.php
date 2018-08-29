@@ -6,12 +6,19 @@
         <form action="/P_Page/edit/<?php echo $Page->node_id; ?>" method="post">
             <div class="form-group">
                 <label for="title">Title</label>
-                <input type="text" name="title" class="form-control" value="<?php echo $Page->File->title ?? 'No Title'; ?>">
+                <input type="text" name="title" class="form-control" value="<?php echo $Page->File->title ?: 'No Title'; ?>">
             </div>
 
             <div class="form-group">
-                <label for="body">Body</label>
-                <textarea name="body" class="form-control" ><?php echo $Page->File->body ?? ''; ?></textarea>
+                <label for="template_id">Template</label>
+                <select name="template_id" class="form-control">
+                    <option value="">--- Select a Template ---</option>
+                    <?php foreach ($Templates as $Template) : ?>
+                        <option value="<?php echo $Template->node_id; ?>" <?php
+                        echo $Template->node_id == $Page->File->template_id ? 'selected' : '';
+                        ?>><?php echo $Template->path; ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
             <div class="form-group">
@@ -44,9 +51,9 @@
                 <input type="checkbox" name="featured" class="form-control" <?php echo 1 == $Page->featured ? 'checked="checked"': ''; ?>>
             </div>
 
-            <button type="submit" class="btn btn-primary">Update Page.</button>
+            <button type="submit" class="btn btn-primary">Update Page</button>
         </form>
     </div>
 </main>
 
-<?php echo $View->render('footer');
+<?php croak($Page);echo $View->render('footer');

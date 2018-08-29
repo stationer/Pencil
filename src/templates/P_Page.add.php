@@ -4,6 +4,30 @@
 
     <form action="/P_Page/add/" method="post">
         <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" name="title" class="form-control"
+                   value="<?php echo $Page->title ?: 'No Title'; ?>">
+        </div>
+
+        <div class="form-group">
+            <label for="template_id">Template</label>
+            <select name="template_id" class="form-control">
+                <option value="">--- Select a Template ---</option>
+                <?php foreach ($Templates as $Template) : ?>
+                    <option value="<?php echo $Template->node_id; ?>" <?php
+                    echo $Template->node_id == $Page->template_id ? 'selected' : '';
+                    ?>><?php echo $Template->path; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="label">Label</label>
+            <input type="text" name="label" class="form-control"
+                   value="<?php echo $Node->label; ?>">
+        </div>
+
+        <div class="form-group">
             <label for="keywords">Keywords</label>
             <input type="text" name="keywords" class="form-control" value="<?php echo $Node->keywords ?? ''; ?>">
         </div>
@@ -26,16 +50,6 @@
         <div class="form-group">
             <label for="trashed">Trashed</label>
             <input type="checkbox" name="trashed" <?php echo $Node->trashed ? 'checked="checked"': ''; ?>>
-        </div>
-
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" name="title" class="form-control">
-        </div>
-
-        <div class="form-group">
-            <label for="body">Body</label>
-            <textarea name="body" class="form-control" ></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Add Page</button>

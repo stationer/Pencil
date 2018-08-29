@@ -21,3 +21,4 @@ G::$G['namespaces'][] = '\\Stationer\\Pencil\\reports\\';
 G::$G['namespaces'][] = '\\Stationer\\Pencil\\controllers\\';
 
 G::$G['db']['ProviderDict'][\Stationer\Pencil\models\Node::class] = \Stationer\Pencil\data\TreeMySQLDataProvider::class;
+G::$G['CON']['controller404'] = 'P_Render';

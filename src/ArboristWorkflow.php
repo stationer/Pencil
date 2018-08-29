@@ -625,7 +625,7 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
      * @return Node|bool
      */
     public function getByPath(string $path) {
-        $result = $this->DB->fetch(Node::class, ['path' => $this->getFullPath()], [], 1);
+        $result = $this->DB->fetch(Node::class, ['path' => '/'.trim($this->root.$path, '/')], [], 1);
         if (false !== $result) {
             return array_pop($result);
         }
@@ -691,6 +691,9 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
             // Group the content_ids for quicker fetching
             /** @var Node $Node */
             foreach ($Nodes as $Node) {
+                if (false === $Node) {
+                    break;
+                }
                 $fetchList[$Node->contentType][$Node->content_id] = null;
             }
 
@@ -703,6 +706,9 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
             }
             // Add the records to their Nodes
             foreach ($Nodes as $key => $Node) {
+                if (false === $Node) {
+                    break;
+                }
                 $Nodes[$key]->File = $fetchList[$Node->contentType][$Node->content_id];
             }
         }
