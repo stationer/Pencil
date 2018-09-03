@@ -159,6 +159,7 @@ class P_PageController extends PencilController {
             $result  = $this->DB->save($Node);
 
             $Node->File->title = $request['title'];
+            $Node->File->body  = $request['body'];
             if (isset($Templates[$request['template_id'] ?? null])) {
                 $Node->File->template_id = $request['template_id'];
             }

@@ -31,7 +31,7 @@ class Tag extends PassiveRecord {
     protected static $vars = [
         'tag_id'      => ['type' => 'i', 'min' => 0, 'guard' => true],
         'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
-        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
+        'updated_dts' => ['type' => 'dt', 'def' => NOW, 'guard' => true],
 
         'label'       => ['type' => 's', 'strict' => true, 'min' => 0, 'max' => 255],
         'type'        => ['type' => 's', 'strict' => true, 'min' => 0, 'max' => 255],

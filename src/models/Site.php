@@ -32,7 +32,7 @@ class Site extends PassiveRecord {
     protected static $vars = [
         'site_id'        => ['type' => 'i', 'min' => 0, 'guard' => true],
         'created_uts'    => ['type' => 'ts', 'min' => 0, 'guard' => true],
-        'updated_dts'    => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
+        'updated_dts'    => ['type' => 'dt', 'def' => NOW, 'guard' => true],
 
         'title'          => ['type' => 's', 'max' => 255],
         'theme_id'       => ['type' => 'i', 'min' => 0],

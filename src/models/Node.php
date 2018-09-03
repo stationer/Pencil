@@ -49,7 +49,7 @@ class Node extends PassiveRecord {
     protected static $vars = [
         'node_id'     => ['type' => 'i', 'min' => 0, 'guard' => true],
         'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
-        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
+        'updated_dts' => ['type' => 'dt', 'def' => NOW, 'guard' => true],
 
         'parent_id'   => ['type' => 'i', 'min' => 0],
         'content_id'  => ['type' => 'i', 'min' => 0],

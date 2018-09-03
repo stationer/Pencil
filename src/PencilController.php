@@ -45,6 +45,9 @@ abstract class PencilController extends Controller {
     /** @var ArboristWorkflow */
     protected $Tree;
 
+    /** @var WebsiteWorkflow */
+    protected $Website;
+
     /**
      * Controller constructor
      *
@@ -65,5 +68,6 @@ abstract class PencilController extends Controller {
         // Set the default root path to the current site.
         $root = '/sites/'.$_SERVER['SERVER_NAME'];
         $this->Tree->setRoot('')->create($root)->setRoot($root)->setPath('');
+        $this->Website = G::build(WebsiteWorkflow::class, $this->Tree, $this->DB);
     }
 }

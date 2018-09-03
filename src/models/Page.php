@@ -15,25 +15,28 @@ use Stationer\Graphite\data\PassiveRecord;
 
 /**
  * Class Page
+ *
  * @package Stationer\Pencil\models
- * @author Andrew Leach
+ * @author  Andrew Leach
  *
  * @property int    page_id
  * @property string created_uts
  * @property int    updated_dts
  * @property string title
+ * @property string body
  * @property int    template_id
  */
 class Page extends PassiveRecord {
-    protected static $table = G_DB_TABL . 'Page';
+    protected static $table = G_DB_TABL.'Page';
     protected static $pkey = 'page_id';
     protected static $query = '';
     protected static $vars = [
         'page_id'     => ['type' => 'i', 'min' => 0, 'guard' => true],
         'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
-        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
+        'updated_dts' => ['type' => 'dt', 'def' => NOW, 'guard' => true],
 
         'title'       => ['type' => 's', 'max' => 255],
+        'body'        => ['type' => 's', 'strict' => true, 'max' => 16777215, 'def' => ''],
         'template_id' => ['type' => 'i', 'strict' => true, 'min' => 0],
     ];
 }

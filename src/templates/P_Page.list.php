@@ -21,7 +21,7 @@ echo $View->render('header'); ?>
                     <td><input type="checkbox" name="input[]" /></td>
                     <td>
                         <a href="/P_Page/edit/<?php echo $Page->node_id; ?>">
-                            <?php echo $Page->File->title ?? 'No Title'; ?>
+                            <?php echo $Page->File->title ?: 'No Title'; ?>
                         </a>
                     </td>
                     <td><?php echo $Page->published ? 'Public' : 'Private'; ?></td>

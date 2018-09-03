@@ -30,7 +30,7 @@ class Form extends PassiveRecord {
     protected static $vars = [
         'form_id'     => ['type' => 'i', 'min' => 0, 'guard' => true],
         'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
-        'updated_dts' => ['type' => 'dt', 'min' => NOW, 'def' => NOW, 'guard' => true],
+        'updated_dts' => ['type' => 'dt', 'def' => NOW, 'guard' => true],
 
         'fields'      => ['type' => 's', 'max' => 65535],
     ];

@@ -51,6 +51,11 @@
                 <input type="checkbox" name="featured" class="form-control" <?php echo 1 == $Page->featured ? 'checked="checked"': ''; ?>>
             </div>
 
+            <div class="form-group">
+                <label for="body">Page Body / Content Map</label>
+                <textarea class="form-control" name="body"><?php echo $Page->File->body; ?></textarea>
+            </div>
+
             <button type="submit" class="btn btn-primary">Update Page</button>
         </form>
     </div>

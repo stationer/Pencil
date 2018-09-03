@@ -200,6 +200,7 @@ class ArboristWorkflow {
             $this->setPath($path);
         }
         $this->Nodes = $this->DB->fetch(AncestorsByPathReport::class, ['path' => $this->getFullPath()]) ?: [];
+
         return $this;
     }
 
@@ -247,6 +248,7 @@ class ArboristWorkflow {
             $this->setPath($path);
         }
         $this->Nodes = $this->DB->fetch(AncestorsByPathReport::class, ['line' => $this->getFullPath()]) ?: [];
+
         return $this;
     }
 
@@ -255,6 +257,7 @@ class ArboristWorkflow {
      *
      * @param string $path    Optional new current path
      * @param array  $filters Optional additional filters
+     *
      * @see DescendantsByPathReport
      *
      * @return $this
@@ -265,7 +268,7 @@ class ArboristWorkflow {
         }
 
         $filters['path'] = $this->getFullPath();
-        $this->Nodes = $this->DB->fetch(DescendantsByPathReport::class, $filters) ?: [];
+        $this->Nodes     = $this->DB->fetch(DescendantsByPathReport::class, $filters) ?: [];
 
         return $this;
     }
@@ -285,7 +288,7 @@ class ArboristWorkflow {
         }
         $this->Nodes = $this->DB->fetch(DescendantsByPathReport::class, [
             'path' => $this->getFullPath(),
-            'tag' => $tag,
+            'tag'  => $tag,
         ]) ?: [];
 
         return $this;
@@ -353,7 +356,7 @@ class ArboristWorkflow {
             $progress  = $Node->path;
             $parent_id = $Node->node_id;
         } else {
-            trigger_error('Tree Root Node not found, attempting to create. ' .
+            trigger_error('Tree Root Node not found, attempting to create. '.
                 ' If this is your first run of Pencil, you can safely ignore this message.');
             $this->createRootNode();
 
@@ -364,13 +367,13 @@ class ArboristWorkflow {
         if ('/' != $this->getRoot() && 0 !== strpos($progress, $this->getRoot())) {
             // TODO: Have a debate about Exceptions
             trigger_error("Cannot create node outside of specified root: ".$this->getRoot()
-                . " while trying to create $path", E_USER_ERROR);
+                ." while trying to create $path", E_USER_ERROR);
             die;
         }
 
         // Climb the tree, creating as we go
         $progress = substr($progress, strlen($this->root));
-        $labels = explode('/', trim(substr($path, strlen($this->root)+strlen($progress)), '/'));
+        $labels   = explode('/', trim(substr($path, strlen($this->root) + strlen($progress)), '/'));
         foreach ($labels as $label) {
             $progress .= "/$label";
             // Instantiate the next child node
@@ -459,7 +462,7 @@ class ArboristWorkflow {
         }
 
         // TODO: Make a better way to do this
-        $query = "
+        $query  = "
 INSERT IGNORE INTO `".G_DB_TABL."Node_Tag` (`tag_id`, `node_id`, `created_uts`)
 VALUES ";
         $values = [];
@@ -520,6 +523,7 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
         }
         if (!is_a($Parent, Node::class)) {
             trigger_error("Invalid parent specified in ".__METHOD__);
+
             return $this;
         }
         foreach ($this->Nodes as $Child) {
@@ -626,7 +630,7 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
      */
     public function getByPath(string $path) {
         $result = $this->DB->fetch(Node::class, ['path' => '/'.trim($this->root.$path, '/')], [], 1);
-        if (false !== $result) {
+        if (false !== $result && !empty($result)) {
             return array_pop($result);
         }
 
@@ -657,14 +661,24 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
             return array_pop($result);
         }
 
-        return $this->getByPath(PencilController::WEBROOT.$url);
+        $result = $this->getByPath(PencilController::WEBROOT.$url);
+        if (false !== $result && !empty($result)) {
+            return $result;
+        }
+
+        $result = $this->getByPath($url);
+        if (false !== $result && !empty($result)) {
+            return $result;
+        }
+
+        return false;
     }
 
     /**
      * Get Nodes by Content type and Id
      *
      * @param string $type Class of content to seek
-     * @param int    $id                 Optional content_id to seek
+     * @param int    $id   Optional content_id to seek
      *
      * @return Node[]|bool
      */

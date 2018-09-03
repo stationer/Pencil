@@ -16,6 +16,7 @@ use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
 use Stationer\Pencil\models\Site;
 use Stationer\Pencil\PencilController;
+use Stationer\Pencil\WebsiteWorkflow;
 
 /**
  * Class P_DashboardController
@@ -53,20 +54,11 @@ class P_DashboardController extends PencilController {
             return parent::do_403($argv);
         }
 
-        // If the site-root doesn't have a contentType, it didn't exist, so create Site record, also
-        $SiteNode = $this->Tree->create('')->getFirst();
-        if (empty($SiteNode->contentType)) {
-            /** @var Site $Site */
-            $Site = G::build(Site::class);
-            $this->DB->insert($Site);
-            $SiteNode->contentType = Site::getTable();
-            $SiteNode->content_id  = $Site->site_id;
-            $this->DB->update($SiteNode);
-        } else {
-            $Site = $this->DB->byPK(Site::class, $SiteNode->content_id);
-        }
+        $SiteNode = $this->Website->getSiteRoot();
 
         if ('POST' == $this->method) {
+            /** @var Site $Site */
+            $Site = $SiteNode->File;
             $Site->title = $request['title'];
             $Site->theme_id = $request['theme_id'];
             $Site->defaultPage_id = $request['defaultPage_id'];
@@ -78,17 +70,6 @@ class P_DashboardController extends PencilController {
             }
         }
 
-        // Ensure other key nodes exist
-        $this->Tree->create(self::WEBROOT);
-        $this->Tree->create(self::BLOG);
-        $this->Tree->create(self::COMPONENTS);
-        $this->Tree->create(self::TEMPLATES);
-        $this->Tree->create(self::FORMS);
-        $this->Tree->create(self::MEDIA);
-        $this->Tree->create(self::LANDING);
-        $this->Tree->create(self::ERROR);
-        $this->Tree->create(self::THEMES);
-
         // Get Themes without Files
         $Themes = $this->Tree->descendants(self::THEMES, ['contentType' => 'Theme'])->get();
 
@@ -97,7 +78,6 @@ class P_DashboardController extends PencilController {
 
         $this->View->Themes   = $Themes;
         $this->View->Pages    = $Pages;
-        $this->View->Site     = $Site;
         $this->View->SiteNode = $SiteNode;
 
         return $this->View;
@@ -117,5 +97,23 @@ class P_DashboardController extends PencilController {
         }
 
         return $this->View;
+    }
+
+    /**
+     * Page for viewing fancy graphs ;-)
+     *
+     * @param array $argv    Argument list passed from Dispatcher
+     * @param array $request Request_method-specific parameters
+     *
+     * @return View
+     */
+    public function do_devreset(array $argv = [], array $request = []) {
+        if (!G::$S->roleTest($this->role)) {
+            return parent::do_403($argv);
+        }
+
+        $this->Website->resetSite();
+
+        return $this->do_settings();
     }
 }

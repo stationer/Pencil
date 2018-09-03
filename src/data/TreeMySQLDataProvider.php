@@ -82,7 +82,8 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
             $Model->parent_id = $row['new_parent_id'];
             $Model->left_index = $row['new_left_index'];
             $Model->right_index = $row['new_right_index'];
-            $Model->undiff(['parent_id', 'label', 'path', 'left_index', 'right_index']);
+            $Model->created_uts = NOW;
+            $Model->undiff(['node_id', 'parent_id', 'label', 'path', 'left_index', 'right_index', 'created_uts']);
         }
 
         if (!empty($row['path'])) {
