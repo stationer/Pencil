@@ -1,4 +1,9 @@
-<?php echo $View->render('header'); ?>
+<?php
+/** @var \Stationer\Graphite\View $View */
+/** @var \Stationer\Pencil\models\Node[] $Nodes */
+
+echo $View->render('header');
+?>
 <div class="container">
     <h1>List Themes</h1>
 

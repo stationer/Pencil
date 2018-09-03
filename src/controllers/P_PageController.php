@@ -14,10 +14,8 @@ namespace Stationer\Pencil\controllers;
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Pencil\models\Node;
-use Stationer\Pencil\models\Content;
 use Stationer\Pencil\models\Page;
 use Stationer\Pencil\PencilController;
-use Stationer\Pencil\reports\AncestorsByPathReport;
 
 use Stationer\Graphite\data\IDataProvider;
 
@@ -158,12 +156,14 @@ class P_PageController extends PencilController {
             $Node->description = $request['description'];
             $result  = $this->DB->save($Node);
 
-            $Node->File->title = $request['title'];
-            $Node->File->body  = $request['body'];
+            /** @var Page $Page */
+            $Page &= $Node->File;
+            $Page->title = $request['title'];
+            $Page->body  = $request['body'];
             if (isset($Templates[$request['template_id'] ?? null])) {
-                $Node->File->template_id = $request['template_id'];
+                $Page->template_id = $request['template_id'];
             }
-            $result2 = $this->DB->save($Node->File);
+            $result2 = $this->DB->save($Page);
 
             if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
                 G::msg('The changes to this page have been successfully saved.', 'success');
@@ -174,22 +174,6 @@ class P_PageController extends PencilController {
 
         $this->View->Templates = $Templates;
         $this->View->Page = $Node;
-
-        return $this->View;
-    }
-
-    /**
-     * Search for a page or pages
-     *
-     * @param array $argv Argument list passed from Dispatcher
-     * @param array $request Request_method-specific parameters
-     *
-     * @return View
-     */
-    public function do_search(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest($this->role)) {
-            return parent::do_403($argv);
-        }
 
         return $this->View;
     }

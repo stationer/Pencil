@@ -9,6 +9,7 @@ use Stationer\Graphite\G;
 /** @var string $_loginURL URL of Login page */
 /** @var string $_logoutURL URL of Logout page */
 /** @var string $_siteName Name of site, used in header */
+/** @var string $_siteURL URL, used in header */
 /** @var string $_loginname Name of current user */
 /** @var int $_login_id ID of current user */
 if (!isset($_controller)) {
@@ -115,9 +116,6 @@ if (!isset($_bodyClass)) {
                                 </ul>
                             </div>
                         </li>
-                        <li class="subnav-link-item">
-                            <a href="#">Search</a>
-                        </li>
                     </ul>
                 </div>
             </li>
@@ -169,9 +167,6 @@ if (!isset($_bodyClass)) {
                         <li class="subnav-link-item">
                             <a href="/P_Blog/add">Add New Article</a>
                         </li>
-                        <li class="subnav-link-item">
-                            <a href="#">Search</a>
-                        </li>
                     </ul>
                 </div>
             </li>
@@ -186,9 +181,6 @@ if (!isset($_bodyClass)) {
                         </li>
                         <li class="subnav-link-item">
                             <a href="/P_Media/add">Add New Media</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="#">Search</a>
                         </li>
                     </ul>
                 </div>

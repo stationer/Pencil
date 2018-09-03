@@ -35,8 +35,8 @@ class Template extends PassiveRecord {
         'updated_dts' => ['type' => 'dt', 'def' => NOW, 'guard' => true],
 
         'type'        => ['type' => 'i', 'min' => 0],
-        'body'        => ['type' => 's', 'max' => 65535],
-        'css'         => ['type' => 's', 'max' => 65535],
+        'body'        => ['type' => 's', 'max' => 655350],
+        'css'         => ['type' => 's', 'max' => 655350],
     ];
 
     const PAGE = 1;

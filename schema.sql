@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `Content` (
     `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
     `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `title` varchar(255) NOT NULL DEFAULT '',
-    `body` text NOT NULL DEFAULT '',
+    `body` mediumtext NOT NULL DEFAULT '',
     KEY (`updated_dts`),
     PRIMARY KEY(`content_id`)
 );
@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS `Page` (
     `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
     `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `title` varchar(255) NOT NULL,
+    `body` mediumtext NOT NULL DEFAULT '',
     `template_id` int(10) unsigned NOT NULL DEFAULT 0,
     KEY (`updated_dts`),
     PRIMARY KEY(`page_id`)
@@ -90,9 +91,9 @@ CREATE TABLE IF NOT EXISTS `Revision` (
     `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
     `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `revisedModel` varchar(255) NOT NULL,
-    `revised_id` varchar(255) NOT NULL,
+    `revised_id` int(10) unsigned NOT NULL DEFAULT 0,
     `editor_id` int(10) unsigned NOT NULL DEFAULT 0,
-    `changes` longtext NOT NULL,
+    `changes` mediumtext NOT NULL,
     KEY (`updated_dts`),
     PRIMARY KEY(`revision_id`)
 );
@@ -147,8 +148,8 @@ CREATE TABLE IF NOT EXISTS `Template` (
     `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
     `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `type` int(10) unsigned NOT NULL DEFAULT 0,
-    `body` text NOT NULL,
-    `css` text NOT NULL,
+    `body` mediumtext NOT NULL,
+    `css` mediumtext NOT NULL,
     KEY (`updated_dts`),
     PRIMARY KEY(`template_id`)
 );
@@ -160,10 +161,10 @@ CREATE TABLE IF NOT EXISTS `Theme` (
     `theme_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
     `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `document` text NOT NULL,
-    `footer` text NOT NULL,
-    `header` text NOT NULL,
-    `css` text NOT NULL,
+    `document` mediumtext NOT NULL,
+    `footer` mediumtext NOT NULL,
+    `header` mediumtext NOT NULL,
+    `css` mediumtext NOT NULL,
     KEY (`updated_dts`),
     PRIMARY KEY(`theme_id`)
 );

@@ -1,4 +1,8 @@
-<?php echo $View->render('header'); ?>
+<?php
+/** @var \Stationer\Graphite\View $View */
+/** @var array $results */
+echo $View->render('header');
+?>
 
     <h1>Test Tree</h1>
 

@@ -16,7 +16,6 @@ use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
 use Stationer\Pencil\models\Site;
 use Stationer\Pencil\PencilController;
-use Stationer\Pencil\WebsiteWorkflow;
 
 /**
  * Class P_DashboardController

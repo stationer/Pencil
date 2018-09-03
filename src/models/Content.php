@@ -34,6 +34,6 @@ class Content extends PassiveRecord {
         'updated_dts' => ['type' => 'dt', 'def' => NOW, 'guard' => true],
 
         'title'       => ['type' => 's', 'strict' => true, 'max' => 255, 'def' => ''],
-        'body'        => ['type' => 's', 'strict' => true, 'max' => 16777215, 'def' => ''],
+        'body'        => ['type' => 's', 'strict' => true, 'max' => 655350, 'def' => ''],
     ];
 }

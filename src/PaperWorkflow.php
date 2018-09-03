@@ -11,13 +11,10 @@
 
 namespace Stationer\Pencil;
 
-use Stationer\Graphite\G;
-use Stationer\Graphite\data\DataBroker;
-use Stationer\Pencil\data\TreeMySQLDataProvider;
 use Stationer\Pencil\models\Node;
-use Stationer\Pencil\models\Tag;
-use Stationer\Pencil\reports\AncestorsByPathReport;
-use Stationer\Pencil\reports\DescendantsByPathReport;
+use Stationer\Pencil\models\Page;
+use Stationer\Pencil\models\Site;
+use Stationer\Pencil\models\Theme;
 
 /**
  * PaperWorkflow - A workflow for rendering content
@@ -53,10 +50,12 @@ class PaperWorkflow {
     public function render(Node $Node, $mode = 'html') {
         $result   = '';
         $SiteNode = $this->Tree->load('')->loadContent()->getFirst();
+        /** @var Site $Site */
+        $Site = $SiteNode->File;
         switch ($mode) {
             case 'html':
                 $pagePath = str_replace($this->Tree->getRoot(), '', $Node->path);
-                $objects = [
+                $objects  = [
                     'site' => array_merge($SiteNode->getAll(), $SiteNode->File->getAll(), ['path' => '/']),
                     'page' => array_merge($Node->getAll(), $Node->File->getAll(),
                         [
@@ -66,10 +65,12 @@ class PaperWorkflow {
                 ];
                 switch ($Node->contentType) {
                     case 'Page':
-                        if (0 < $Node->File->template_id) {
+                        /** @var Page $Page */
+                        $Page = $Node->File;
+                        if (0 < $Page->template_id) {
                             $Template = $this->Tree->descendants(PencilController::TEMPLATES, [
                                 'contentType' => 'Template',
-                                'node_id'     => $Node->File->template_id,
+                                'node_id'     => $Page->template_id,
 //                    'published'   => true,
 //                    'trashed'     => false,
                             ])->first()->loadContent()->getFirst();
@@ -84,21 +85,23 @@ class PaperWorkflow {
                                 ['path' => str_replace($this->Tree->getRoot(), '', $Template->path)]);
                         }
 
-                        $Theme    = $this->Tree->descendants(PencilController::THEMES, [
+                        $ThemeNode = $this->Tree->descendants(PencilController::THEMES, [
                             'contentType' => 'Theme',
-                            'node_id'     => $SiteNode->File->theme_id,
+                            'node_id'     => $Site->theme_id,
 //                    'published'   => true,
 //                    'trashed'     => false,
                         ])->first()->loadContent()->getFirst();
-                        if (false === $Theme) {
+                        if (false === $ThemeNode) {
                             trigger_error('Theme Node not found');
                             header("HTTP/1.0 500 Internal Server Error");
                             die;
                         }
-                        $objects['theme'] = array_merge($Theme->getAll(), $Theme->File->getAll(),
-                            ['path' => str_replace($this->Tree->getRoot(), '', $Theme->path)]);
+                        /** @var Theme $Theme */
+                        $Theme            = $ThemeNode->File;
+                        $objects['theme'] = array_merge($ThemeNode->getAll(), $Theme->getAll(),
+                            ['path' => str_replace($this->Tree->getRoot(), '', $ThemeNode->path)]);
 
-                        $result   = $Theme->File->document;
+                        $result = $Theme->document;
                         do {
                             $codes = $this->mergeCodes($result);
                             foreach ($codes as $code) {

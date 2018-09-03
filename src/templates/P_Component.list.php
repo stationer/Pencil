@@ -1,4 +1,8 @@
-<?php echo $View->render('header'); ?>
+<?php
+/** @var \Stationer\Graphite\View $View */
+/** @var \Stationer\Pencil\models\Template[] $Components */
+echo $View->render('header');
+?>
 
     <div class="container">
         <div class="row">

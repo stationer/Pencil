@@ -63,7 +63,7 @@ class Node extends PassiveRecord {
         'featured'    => ['type' => 'b', 'def' => 0],
         'pathAlias'   => ['type' => 's', 'strict' => true, 'min' => 0, 'max' => 255],
         'ordinal'     => ['type' => 'i', 'min' => 0, 'max' => 65535],
-        'path'        => ['type' => 's', 'def' => '', 'min' => 0, 'max' => 65535, 'guard' => true],
+        'path'        => ['type' => 's', 'def' => '', 'max' => 65535, 'guard' => true],
         'left_index'  => ['type' => 'i', 'min' => 1, 'guard' => true],
         'right_index' => ['type' => 'i', 'min' => 1, 'guard' => true],
     ];

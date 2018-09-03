@@ -283,15 +283,6 @@ class ArboristWorkflow {
      */
     public function tagged(string $tag, string $path = null) {
         return $this->descendants($path, ['tag' => $tag]);
-        if (null !== $path) {
-            $this->setPath($path);
-        }
-        $this->Nodes = $this->DB->fetch(DescendantsByPathReport::class, [
-            'path' => $this->getFullPath(),
-            'tag'  => $tag,
-        ]) ?: [];
-
-        return $this;
     }
 
     /**
@@ -392,7 +383,7 @@ class ArboristWorkflow {
             $parent_id = $this->pathCache[$progress] = $Node->node_id;
         }
 
-        if (is_a($Node, Node::class) && $Node->path == $this->getFullPath()) {
+        if (isset($Node) && is_a($Node, Node::class) && $Node->path == $this->getFullPath()) {
             $Node->setAll($values, true);
             if (isset($values['File'])) {
                 $Node->File($values['File']);
@@ -546,7 +537,7 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
      *
      * @return $this
      */
-    public function update(string $path = null, $values) {
+    public function update(string $path, $values) {
         if (null !== $path) {
             $this->load($path);
         }
@@ -578,7 +569,7 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
             $this->load();
         }
         foreach ($this->Nodes as $key => $Node) {
-            TreeMySQLDataProvider::$nextDeleteRecursive = true;
+            TreeMySQLDataProvider::$nextDeleteRecursive = $recursive;
             $result                                     = $this->DB->delete($Node);
             if (true === $result) {
                 unset($this->Nodes[$key]);

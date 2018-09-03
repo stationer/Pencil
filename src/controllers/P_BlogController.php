@@ -54,7 +54,12 @@ class P_BlogController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Articles = $this->Tree->setPath(self::BLOG)->children()->get();
+        if (isset($request['search'])) {
+            // TODO: the search thing
+            $Articles = [];
+        } else {
+            $Articles = $this->Tree->setPath(self::BLOG)->children()->get();
+        }
 
         $this->View->Articles = $Articles;
 
@@ -93,7 +98,7 @@ class P_BlogController extends PencilController {
             $result2 = $this->DB->insert($Node);
 
             // If successful redirect to the edit screen
-            if (in_array($result, [null,true]) && in_array($result2, [null,true])) {
+            if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
                 G::msg('The changes to this post have been successfully saved.', 'success');
                 $this->_redirect('/P_Blog/edit/'.$Node->node_id);
             } else {
@@ -117,39 +122,26 @@ class P_BlogController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Node = $this->Tree->setPath(self::BLOG)->loadFiles()->get();
+        $Node = $this->Tree->setPath(self::BLOG)->loadContent()->getFirst();
 
         if ('POST' === $this->method) {
-            $Node->label       = $request['node_label'];
+            $Node->label = $request['node_label'];
             $Node->setAll($request);
-            $Node->File->title    = $request['title'];
-            $Node->File->body     = $request['body'];
+            /** @var Content $Content */
+            $Content        = $Node->File;
+            $Content->title = $request['title'];
+            $Content->body  = $request['body'];
 
-            $result = $this->DB->save($Content);
-            $result2 = $this->DB->save($Node->File);
+            $result  = $this->DB->save($Content);
+            $result2 = $this->DB->save($Node);
 
-            if (in_array($result, [null,true]) && in_array($result2, [null,true])) {
+            if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
                 G::msg('The changes to this page have been successfully saved.', 'success');
             }
         }
 
-        $this->View->Post = $Node;
-
-        return $this->View;
-    }
-
-    /**
-     * Search blog posts
-     *
-     * @param array $argv    Argument list passed from Dispatcher
-     * @param array $request Request_method-specific parameters
-     *
-     * @return View
-     */
-    public function do_search(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest($this->role)) {
-            return parent::do_403($argv);
-        }
+        $this->View->Node    = $Node;
+        $this->View->Content = $Content;
 
         return $this->View;
     }

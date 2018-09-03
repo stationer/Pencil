@@ -1,4 +1,7 @@
-<?php echo $View->render('header'); ?>
+<?php
+/** @var \Stationer\Graphite\View $View */
+echo $View->render('header');
+?>
 <div class="container">
     <div class="row">
         <div class="col-md-12">

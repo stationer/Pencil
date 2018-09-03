@@ -1,5 +1,8 @@
-<?php echo $View->render('debug'); ?>
-<?php $_tail = $tail ?? ''; ?>
+<?php
+/** @var \Stationer\Graphite\View $View */
+$_tail = $tail ?? '';
+echo $View->render('debug');
+?>
 <div id="G__tail"><?php echo $_tail; ?></div>
 
 </main>

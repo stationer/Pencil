@@ -1,6 +1,11 @@
-<?php echo $View->render('header'); ?>
+<?php
+/** @var \Stationer\Graphite\View $View */
+/** @var \Stationer\Pencil\models\Content[] $Articles */
 
-<main class="content" style="padding:20px;">
+echo $View->render('header');
+?>
+
+    <main class="content" style="padding:20px;">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -18,7 +23,7 @@
                     <tbody>
                     <?php foreach($Articles as $Article) : ?>
                     <tr>
-                        <td><input type="checkbox" name="input[]" /></td>
+                        <td><input type="checkbox" name="input[]" title="" /></td>
                         <td>
                             <a href="/P_Blog/edit/<?php echo $Article->node_id; ?>">
                                 <?php echo $Article->File->title ?? 'No Title'; ?>

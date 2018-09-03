@@ -54,7 +54,12 @@ class P_ComponentController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Components = $this->Tree->setPath(self::COMPONENTS)->children()->loadContent()->get();
+        if (isset($request['search'])) {
+            // TODO: the search thing
+            $Components = [];
+        } else {
+            $Components = $this->Tree->setPath(self::COMPONENTS)->children()->loadContent()->get();
+        }
 
         $this->View->Components = $Components;
 

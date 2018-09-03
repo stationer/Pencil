@@ -157,6 +157,7 @@ class TreeMySQLDataProvider extends MySQLDataProvider {
         if (!is_a($Model, Node::class)) {
             return parent::delete($Model);
         }
+        /** @var Node $Model */
 
         // If the PKey is not set, what would we delete?
         if (null === $Model->{$Model->getPkey()}) {

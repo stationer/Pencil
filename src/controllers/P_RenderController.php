@@ -16,8 +16,6 @@ use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
 use Stationer\Pencil\models\Node;
-use Stationer\Pencil\models\Page;
-use Stationer\Pencil\models\Theme;
 use Stationer\Pencil\PaperWorkflow;
 use Stationer\Pencil\PencilController;
 
@@ -104,8 +102,14 @@ class P_RenderController extends PencilController {
     public function do_404(array $argv = [], array $request = []) {
         header("HTTP/1.0 404 File Not Found");
 
-        $this->Tree->load(PencilController::ERROR.'/404');
-        die('Requested Page Not Found');
+        /** @var Node $Node */
+        $Node = $this->Tree->load(PencilController::ERROR.'/404');
+        /** @var PaperWorkflow $Paper */
+        $Paper  = G::build(PaperWorkflow::class, $this->Tree);
+        $result = $Paper->render($Node);
+
+        echo $result;
+        die;
     }
     /**
      * Default action for handling 404 errors
@@ -118,7 +122,13 @@ class P_RenderController extends PencilController {
     public function do_500(array $argv = [], array $request = []) {
         header("HTTP/1.0 500 Internal Server Error");
 
-        $this->Tree->load(PencilController::ERROR.'/500');
-        die('Internal Server Error');
+        /** @var Node $Node */
+        $Node = $this->Tree->load(PencilController::ERROR.'/500');
+        /** @var PaperWorkflow $Paper */
+        $Paper  = G::build(PaperWorkflow::class, $this->Tree);
+        $result = $Paper->render($Node);
+
+        echo $result;
+        die;
     }
 }

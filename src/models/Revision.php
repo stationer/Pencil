@@ -15,8 +15,9 @@ use Stationer\Graphite\data\PassiveRecord;
 
 /**
  * Class Revision
+ *
  * @package Stationer\Pencil\models
- * @author Andrew Leach
+ * @author  Andrew Leach
  *
  * @property int    revision_id
  * @property string created_uts
@@ -27,7 +28,7 @@ use Stationer\Graphite\data\PassiveRecord;
  * @property string changes
  */
 class Revision extends PassiveRecord {
-    protected static $table = G_DB_TABL . 'Revision';
+    protected static $table = G_DB_TABL.'Revision';
     protected static $pkey = 'revision_id';
     protected static $query = '';
     protected static $vars = [
@@ -36,8 +37,8 @@ class Revision extends PassiveRecord {
         'updated_dts' => ['type' => 'dt', 'def' => NOW, 'guard' => true],
 
         'revisedModel' => ['type' => 's', 'min' => 0, 'max' => 255],
-        'revised_id'  => ['type' => 's', 'strict' => true, 'min' => 0, 'max' => 255],
-        'editor_id'   => ['type' => 'i', 'min' => 0],
-        'changes'     => ['type' => 's', 'strict' => true, 'min' => 65535],
+        'revised_id'   => ['type' => 'i', 'min' => 0],
+        'editor_id'    => ['type' => 'i', 'min' => 0],
+        'changes'      => ['type' => 's', 'strict' => true, 'max' => 655350],
     ];
 }

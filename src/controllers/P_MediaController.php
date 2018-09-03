@@ -52,7 +52,7 @@ class P_MediaController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Media = $this->Tree->setPath(self::MEDIA)->getChildren();
+        $Media = $this->Tree->setPath(self::MEDIA)->children()->get();
 
         $this->View->Media = $Media;
 
@@ -68,22 +68,6 @@ class P_MediaController extends PencilController {
      * @return View
      */
     public function do_add(array $argv = [], array $request = []) {
-        if (!G::$S->roleTest($this->role)) {
-            return parent::do_403($argv);
-        }
-
-        return $this->View;
-    }
-
-    /**
-     * Search media items
-     *
-     * @param array $argv    Argument list passed from Dispatcher
-     * @param array $request Request_method-specific parameters
-     *
-     * @return View
-     */
-    public function do_search(array $argv = [], array $request = []) {
         if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }

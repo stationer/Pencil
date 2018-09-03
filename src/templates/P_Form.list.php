@@ -1,4 +1,8 @@
-<?php echo $View->render('header'); ?>
+<?php
+/** @var \Stationer\Graphite\View $View */
+/** @var \Stationer\Pencil\models\Form[] $Forms */
+echo $View->render('header');
+?>
 
     <main class="content" style="padding:20px;">
         <div class="container">
@@ -18,7 +22,7 @@
                         <tbody>
                         <?php foreach($Forms as $Form) : ?>
                             <tr>
-                                <td><input type="checkbox" name="input[]" /></td>
+                                <td><input type="checkbox" name="input[]" title="" /></td>
                                 <td>
                                     <a href="/P_Blog/edit/<?php echo $Form->node_id; ?>">
                                         <?php echo $Form->label ?? 'No Title'; ?>

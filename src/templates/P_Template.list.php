@@ -1,6 +1,10 @@
-<?php echo $View->render('header'); ?>
+<?php
+/** @var \Stationer\Graphite\View $View */
+/** @var \Stationer\Pencil\models\Template[] $Templates */
+echo $View->render('header');
+?>
 
-<div class="container">
+    <div class="container">
     <h1>List Templates</h1>
 
     <table class="table table-striped">

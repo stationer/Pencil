@@ -1,17 +1,23 @@
-<?php echo $View->render('header'); ?>
+<?php
+/** @var \Stationer\Graphite\View $View */
+/** @var \Stationer\Pencil\models\Node $Node */
+/** @var \Stationer\Pencil\models\Content $Content */
+
+echo $View->render('header');
+?>
 
     <main class="content" style="padding:20px;">
         <h1 class="page-title">Edit Page</h1>
 
-        <form action="/P_Page/edit/<?php echo $Page->node_id; ?>" method="post">
+        <form action="/P_Page/edit/<?php echo $Node->node_id; ?>" method="post">
             <div class="form-group">
                 <label for="title">Title</label>
-                <input type="text" name="title" class="form-control" value="<?php echo $Content->title; ?>">
+                <input type="text" name="title" id="title" class="form-control" value="<?php echo $Content->title; ?>">
             </div>
 
             <div class="form-group">
                 <label for="body">Body</label>
-                <textarea name="body" class="form-control" ><?php echo $Content->body; ?></textarea>
+                <textarea name="body" id="body" class="form-control"><?php echo $Content->body; ?></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Update Page.</button>

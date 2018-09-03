@@ -1,6 +1,9 @@
-<?php echo $View->render('header'); ?>
+<?php
+/** @var \Stationer\Graphite\View $View */
+echo $View->render('header');
+?>
 
-<div class="container">
+    <div class="container">
     <h1>Add Form</h1>
 </div>
 

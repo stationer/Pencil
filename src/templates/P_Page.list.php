@@ -1,6 +1,9 @@
-<?php use Stationer\Graphite\G;
+<?php
+/** @var \Stationer\Graphite\View $View */
+/** @var \Stationer\Pencil\models\Page[] $Pages */
 
-echo $View->render('header'); ?>
+echo $View->render('header');
+?>
 
 <main class="content">
     <div class="container">
@@ -8,7 +11,7 @@ echo $View->render('header'); ?>
         <table class="table table-striped">
             <thead>
             <tr>
-                <th><input type="checkbox" name="input[]" /></th>
+                <th><input type="checkbox" name="input[]" id="input[]" title="" /></th>
                 <th>Title</th>
                 <th>Visibility</th>
                 <th>Date</th>
@@ -18,7 +21,7 @@ echo $View->render('header'); ?>
             <tbody>
             <?php foreach($Pages['Public'] as $Page) : ?>
                 <tr>
-                    <td><input type="checkbox" name="input[]" /></td>
+                    <td><input type="checkbox" name="input[]" id="input[]" title="" /></td>
                     <td>
                         <a href="/P_Page/edit/<?php echo $Page->node_id; ?>">
                             <?php echo $Page->File->title ?: 'No Title'; ?>
