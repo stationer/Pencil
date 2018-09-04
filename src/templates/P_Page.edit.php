@@ -58,7 +58,7 @@ echo $View->render('header');
 
             <div class="form-group">
                 <label for="body">Page Body / Content Map</label>
-                <textarea class="form-control" name="body" id="body"><?php echo $Page->File->body; ?></textarea>
+                <textarea class="form-control wysiwyg" name="body" id="body"><?php echo $Page->File->body; ?></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Update Page</button>

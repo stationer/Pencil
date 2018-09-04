@@ -50,12 +50,12 @@ echo $View->render('header');
 
         <div class="form-group">
             <label for="header">Theme Header</label>
-            <textarea class="form-control" name="header" id="header"><?php echo $Theme->header; ?></textarea>
+            <textarea class="form-control wysiwyg" name="header" id="header"><?php echo $Theme->header; ?></textarea>
         </div>
 
         <div class="form-group">
             <label for="footer">Theme Footer</label>
-            <textarea class="form-control" name="footer" id="footer"><?php echo $Theme->footer; ?></textarea>
+            <textarea class="form-control wysiwyg" name="footer" id="footer"><?php echo $Theme->footer; ?></textarea>
         </div>
 
         <div class="form-group">

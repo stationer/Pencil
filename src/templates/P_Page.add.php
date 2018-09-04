@@ -58,6 +58,11 @@ echo $View->render('header');
             <input type="checkbox" name="trashed" id="trashed" <?php echo $Node->trashed ? 'checked="checked"': ''; ?>>
         </div>
 
+        <div class="form-group">
+            <label for="body">Page Body / Content Map</label>
+            <textarea class="form-control wysiwyg" name="body" id="body"><?php echo $Page->File->body; ?></textarea>
+        </div>
+
         <button type="submit" class="btn btn-primary">Add Page</button>
     </form>
 </div>

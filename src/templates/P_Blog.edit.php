@@ -17,7 +17,7 @@ echo $View->render('header');
 
             <div class="form-group">
                 <label for="body">Body</label>
-                <textarea name="body" id="body" class="form-control"><?php echo $Content->body; ?></textarea>
+                <textarea name="body wysiwyg" id="body" class="form-control"><?php echo $Content->body; ?></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Update Page.</button>

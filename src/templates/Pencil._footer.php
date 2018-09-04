@@ -20,6 +20,10 @@ echo $View->render('debug');
 <script>
     feather.replace()
 </script>
+<script>
+    // Attach Quilljs to elements of choice
+    new Nib().dipByQuery('.wysiwyg');
+</script>
 </body>
 
 </html>

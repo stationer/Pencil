@@ -35,7 +35,7 @@ echo $View->render('header');
         </div>
         <div class="form-group">
             <label for="body">Template Body</label>
-            <textarea class="form-control" name="body" id="body"><?php echo $Node->File->body; ?></textarea>
+            <textarea class="form-control wysiwyg" name="body" id="body"><?php echo $Node->File->body; ?></textarea>
         </div>
 
         <div class="form-group">

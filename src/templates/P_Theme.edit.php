@@ -34,12 +34,12 @@ echo $View->render('header');
 
         <div class="form-group">
             <label for="header">Theme Header</label>
-            <textarea class="form-control" name="header" id="header"><?php echo $Node->File->header; ?></textarea>
+            <textarea class="form-control wysiwyg" name="header" id="header"><?php echo $Node->File->header; ?></textarea>
         </div>
 
         <div class="form-group">
             <label for="footer">Theme Footer</label>
-            <textarea class="form-control" name="footer" id="footer"><?php echo $Node->File->footer; ?></textarea>
+            <textarea class="form-control wysiwyg" name="footer" id="footer"><?php echo $Node->File->footer; ?></textarea>
         </div>
 
         <div class="form-group">
