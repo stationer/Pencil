@@ -14,6 +14,7 @@ namespace Stationer\Pencil\controllers;
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
+use Stationer\Pencil\NavigationWorkflow;
 use Stationer\Pencil\PencilController;
 use Stationer\Pencil\reports\DescendantsByPathReport;
 
@@ -165,6 +166,57 @@ class P_TestController extends PencilController {
         return $this->View;
     }
 
+    public function do_nav() {
+        $json = [
+            "links" => [
+                [
+                    "text" => "Pretty Link text",
+                    "url"  => "http=>//anyurl.com",
+                ],
+                [
+                    "text" => "Our Blog!",
+                    "path" => "/blog" // "path" implies tree node, but can fall back on server-relative URL
+                ],
+                [
+                    "text"    => "Our Blog!",
+                    "node_id" => "123" // node_id considered unchanging
+                ],
+                [
+                    "node_id" => "765" // when link text is missing, fetch from Node-File-title or Node-label
+                ],
+                [
+                    "text" => "Custom Controller",
+                    "url"  => "/Cont/action",
+                ],
+                [
+                    "text"  => "Linkless menu",
+                    "links" => [
+                        [
+                            "text" => "Login",
+                            "url"  => "/Account/login",
+                        ],
+                    ],
+                ],
+                [
+                    "text"    => "Link with menu",
+                    "node_id" => 1234, // Sub-menus have links optional
+                    "links"   => [
+                        [
+                            "text" => "Login",
+                            "url"  => "/Account/login",
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $json = json_encode($json);
+        croak($json);
+
+        $Nav = new NavigationWorkflow();
+
+        croak($Nav->render(($json)));
+        die($Nav->render(($json)));
+    }
     public function do_quill() {
 
         if($this->method === "POST") {
