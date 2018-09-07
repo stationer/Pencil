@@ -187,8 +187,8 @@ CREATE TABLE IF NOT EXISTS `Theme` (
 
 DROP TABLE IF EXISTS `Node_Tag`;
 CREATE TABLE IF NOT EXISTS `Node_Tag` (
-    `tag_id` int(11) NOT NULL,
-    `node_id` int(11) NOT NULL,
+    `tag_id` int(10) unsigned NOT NULL,
+    `node_id` int(10) unsigned NOT NULL,
     `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
     `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`tag_id`,`node_id`)
