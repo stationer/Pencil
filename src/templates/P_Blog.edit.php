@@ -1,7 +1,7 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Node $Node */
-/** @var \Stationer\Pencil\models\Content $Content */
+/** @var \Stationer\Pencil\models\Article $Content */
 
 echo $View->render('header');
 ?>

@@ -2,29 +2,31 @@
 -- Current Schema CREATE statements go here
 --
 
- -- \Stationer\Pencil\models\Content
-DROP TABLE IF EXISTS `Content`;
-CREATE TABLE IF NOT EXISTS `Content` (
-    `content_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+ -- \Stationer\Pencil\models\Article
+DROP TABLE IF EXISTS `Article`;
+CREATE TABLE IF NOT EXISTS `Article` (
+    `article_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
     `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `release_uts` int(10) unsigned NOT NULL DEFAULT 0,
+    `author_id` int(10) unsigned NOT NULL DEFAULT 0,
     `title` varchar(255) NOT NULL DEFAULT '',
     `body` mediumtext NOT NULL DEFAULT '',
     KEY (`updated_dts`),
-    PRIMARY KEY(`content_id`)
+    PRIMARY KEY(`article_id`)
 );
 
 
- -- \Stationer\Pencil\models\File
-DROP TABLE IF EXISTS `File`;
-CREATE TABLE IF NOT EXISTS `File` (
-    `file_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+ -- \Stationer\Pencil\models\Asset
+DROP TABLE IF EXISTS `Asset`;
+CREATE TABLE IF NOT EXISTS `Asset` (
+    `asset_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
     `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `type` varchar(30) NOT NULL,
     `path` varchar(255) NOT NULL,
     KEY (`updated_dts`),
-    PRIMARY KEY(`file_id`)
+    PRIMARY KEY(`asset_id`)
 );
 
 
@@ -152,6 +154,19 @@ CREATE TABLE IF NOT EXISTS `Template` (
     `css` mediumtext NOT NULL,
     KEY (`updated_dts`),
     PRIMARY KEY(`template_id`)
+);
+
+
+ -- \Stationer\Pencil\models\Text
+DROP TABLE IF EXISTS `Text`;
+CREATE TABLE IF NOT EXISTS `Text` (
+    `text_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
+    `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `mimeType` varchar(255) NOT NULL DEFAULT 'text/plain',
+    `body` mediumtext NOT NULL DEFAULT '',
+    KEY (`updated_dts`),
+    PRIMARY KEY(`text_id`)
 );
 
 

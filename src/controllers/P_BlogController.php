@@ -14,7 +14,7 @@ namespace Stationer\Pencil\controllers;
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
-use Stationer\Pencil\models\Content;
+use Stationer\Pencil\models\Article;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\PencilController;
 
@@ -82,7 +82,7 @@ class P_BlogController extends PencilController {
         $this->View->Page = $Node = G::build(Node::class);
 
         if ('POST' === $this->method) {
-            $Content           = G::build(Content::class);
+            $Content           = G::build(Article::class);
             $Node->label       = $request['node_label'];
             $Node->published   = $request['published'];
             $Node->trashed     = $request['trashed'];
@@ -127,7 +127,7 @@ class P_BlogController extends PencilController {
         if ('POST' === $this->method) {
             $Node->label = $request['node_label'];
             $Node->setAll($request);
-            /** @var Content $Content */
+            /** @var Article $Content */
             $Content        = $Node->File;
             $Content->title = $request['title'];
             $Content->body  = $request['body'];

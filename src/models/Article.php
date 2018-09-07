@@ -15,24 +15,27 @@ use Stationer\Graphite\data\PassiveRecord;
 
 /**
  * Class Content
- * @package Stationer\Pencil\models
- * @author Andrew Leach
  *
- * @property int    content_id
- * @property string created_uts
- * @property int    updated_dts
- * @property string title
- * @property string body
+ * @package Stationer\Pencil\models
+ * @author  Andrew Leach
+ *
+ * @property int    $article_id
+ * @property string $created_uts
+ * @property int    $updated_dts
+ * @property string $title
+ * @property string $body
  */
-class Content extends PassiveRecord {
-    protected static $table = G_DB_TABL . 'Content';
-    protected static $pkey = 'content_id';
+class Article extends PassiveRecord {
+    protected static $table = G_DB_TABL.'Article';
+    protected static $pkey = 'article_id';
     protected static $query = '';
     protected static $vars = [
-        'content_id'  => ['type' => 'i', 'min' => 0, 'guard' => true],
+        'article_id'  => ['type' => 'i', 'min' => 0, 'guard' => true],
         'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
         'updated_dts' => ['type' => 'dt', 'def' => NOW, 'guard' => true],
 
+        'release_uts' => ['type' => 'ts', 'min' => 0],
+        'author_id'   => ['type' => 'i', 'min' => 0],
         'title'       => ['type' => 's', 'strict' => true, 'max' => 255, 'def' => ''],
         'body'        => ['type' => 's', 'strict' => true, 'max' => 655350, 'def' => ''],
     ];

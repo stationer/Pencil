@@ -1,6 +1,6 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
-/** @var \Stationer\Pencil\models\Content[] $Articles */
+/** @var \Stationer\Pencil\models\Article[] $Articles */
 
 echo $View->render('header');
 ?>
