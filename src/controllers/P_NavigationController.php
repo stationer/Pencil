@@ -14,6 +14,9 @@ namespace Stationer\Pencil\controllers;
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
+use Stationer\Pencil\models\Navigation;
+use Stationer\Pencil\models\Node;
+use Stationer\Pencil\NavigationWorkflow;
 use Stationer\Pencil\PencilController;
 
 /**
@@ -56,6 +59,124 @@ class P_NavigationController extends PencilController {
         $Navigation = $this->Tree->setPath(self::NAVIGATION)->children()->get();
 
         $this->View->Navigation = $Navigation;
+
+        return $this->View;
+    }
+
+    /**
+     * Manage Navigation
+     *
+     * @param array $argv    Argument list passed from Dispatcher
+     * @param array $request Request_method-specific parameters
+     *
+     * @return View
+     */
+    public function do_add(array $argv = [], array $request = []) {
+        if (!G::$S->roleTest($this->role)) {
+            return parent::do_403($argv);
+        }
+
+        $Node = G::build(Node::class);
+        $Navigation = G::build(Navigation::class);
+
+        if ('POST' === $this->method) {
+            $Navigation->source = $request['source'];
+            $Navigation->rendered = G::build(NavigationWorkflow::class)->render($Navigation->source);
+            $result = $this->DB->insert($Navigation);
+            if (false !== $result) {
+                $Node->label = $request['label'] ?? '';
+                $this->Tree->create(PencilController::NAVIGATION.'/'.$Node->label, [
+                    'File' => $Navigation,
+                    'label' => $Node->label,
+                    'creator_id' => G::$S->Login->login_id ?? 0,
+                    'published' => isset($request['published']),
+                    'description' => $request['description'],
+                    'trashed' => isset($request['trashed']),
+                    'featured' => isset($request['featured']),
+                    'keywords' => $request['keywords']
+                ]);
+
+                $Node = $this->Tree->setPath(PencilController::NAVIGATION.'/'.$Node->label)->load()->getFirst();
+                if (is_a($Node, Node::class)) {
+                    G::msg("The navigation has been successfully created", 'success');
+                    $this->_redirect('/P_Navigation/edit/'.$Node->node_id);
+                }
+            }
+        }
+        $this->View->json = $json = json_encode([
+            "links" => [
+                [
+                    "text" => "Pretty Link text",
+                    "url"  => "http://anyurl.com",
+                ],
+                [
+                    "text" => "Our Blog!",
+                    "path" => "/blog" // "path" implies tree node, but can fall back on server-relative URL
+                ],
+                [
+                    "text"    => "Our Blog!",
+                    "node_id" => 13 // node_id considered unchanging
+                ],
+                [
+                    "node_id" => 22 // when link text is missing, fetch from Node-File-title or Node-label
+                ],
+                [
+                    "text" => "Custom Controller",
+                    "url"  => "/Cont/action",
+                ],
+                [
+                    "text"  => "Linkless menu",
+                    "links" => [
+                        [
+                            "text" => "Login",
+                            "url"  => "/Account/login",
+                        ],
+                    ],
+                ],
+                [
+                    "text"    => "Link with menu",
+                    "node_id" => 1234, // Sub-menus have links optional
+                    "links"   => [
+                        [
+                            "text" => "Login",
+                            "url"  => "/Account/login",
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        return $this->View;
+    }
+
+    public function do_edit(array $argv = [], array $request = []) {
+        if (!G::$S->roleTest($this->role)) {
+            return parent::do_403($argv);
+        }
+
+        $Node = $this->Tree->loadID($argv[1])
+            ->loadContent()
+            ->getFirst();
+
+        if ('POST' === $this->method) {
+            $Node->setAll($request, true);
+            $Navigation = $Node->File;
+            $Navigation->setAll($request, true);
+            $NW = G::build(NavigationWorkflow::class);
+            $Navigation->rendered = $NW->render($request['source']);
+            $Node->File($Navigation);
+
+            $result1 = $this->DB->save($Node);
+            $result2 = $this->DB->save($Navigation);
+
+            if (false !== $result1 && false !== $result2) {
+                G::msg("The navigation has been successfully updated.", 'success');
+            } else {
+                G::msg("There was a problem updating this navigation.", 'error');
+            }
+        }
+
+        $this->View->Node = $Node;
 
         return $this->View;
     }

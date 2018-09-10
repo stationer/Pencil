@@ -171,7 +171,7 @@ class P_TestController extends PencilController {
             "links" => [
                 [
                     "text" => "Pretty Link text",
-                    "url"  => "http=>//anyurl.com",
+                    "url"  => "http://anyurl.com",
                 ],
                 [
                     "text" => "Our Blog!",
@@ -179,10 +179,10 @@ class P_TestController extends PencilController {
                 ],
                 [
                     "text"    => "Our Blog!",
-                    "node_id" => "123" // node_id considered unchanging
+                    "node_id" => 13 // node_id considered unchanging
                 ],
                 [
-                    "node_id" => "765" // when link text is missing, fetch from Node-File-title or Node-label
+                    "node_id" => 22 // when link text is missing, fetch from Node-File-title or Node-label
                 ],
                 [
                     "text" => "Custom Controller",
@@ -197,7 +197,7 @@ class P_TestController extends PencilController {
                         ],
                     ],
                 ],
-                [
+                /*[
                     "text"    => "Link with menu",
                     "node_id" => 1234, // Sub-menus have links optional
                     "links"   => [
@@ -206,22 +206,16 @@ class P_TestController extends PencilController {
                             "url"  => "/Account/login",
                         ],
                     ],
-                ],
+                ],*/
             ],
         ];
         $json = json_encode($json);
-        croak($json);
+        //d($json);
 
         $Nav = new NavigationWorkflow();
 
-        croak($Nav->render(($json)));
-        die($Nav->render(($json)));
+        d($Nav->render(($json)));
+        //d($Nav->render(($json)));
     }
-    public function do_quill() {
 
-        if($this->method === "POST") {
-            dd($request);
-        }
-
-    }
 }
