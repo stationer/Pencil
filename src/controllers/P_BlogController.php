@@ -79,32 +79,42 @@ class P_BlogController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $this->View->Page = $Node = G::build(Node::class);
-
+        $Article = G::build(Article::class);
+        $Node = G::build(Node::class);
         if ('POST' === $this->method) {
-            $Content           = G::build(Article::class);
-            $Node->label       = $request['node_label'];
-            $Node->published   = $request['published'];
-            $Node->trashed     = $request['trashed'];
-            $Node->featured    = $request['featured'];
-            $Node->keywords    = $request['keywords'];
-            $Node->creator_id  = G::$S->Login->login_id;
-            $Node->description = $request['description'];
-            $Node->contentType = 'Blog';
-            $Content->title    = $request['title'];
-            $Content->body     = $request['body'];
+            $Article->setAll($request);
+            $Article->author_id = G::$S->Login->login_id;
+            $Article->created_uts = NOW;
+            d($request);
+            d($Article);
+            $result = $this->DB->insert($Article);
 
-            $result  = $this->DB->insert($Content);
-            $result2 = $this->DB->insert($Node);
+            if (false !== $result) {
+                $Node->label = $request['label'] ?: $request['title'];
+                $this->Tree->create(PencilController::BLOG.'/'.$Node->label, [
+                    'File' => $Article,
+                    'label' => $Node->label,
+                    'creator_id' => G::$S->Login->login_id ?? 0,
+                    'published' => isset($request['published']),
+                    'description' => $request['description'],
+                    'trashed' => isset($request['trashed']),
+                    'featured' => isset($request['featured']),
+                    'keywords' => $request['keywords']
+                ]);
 
-            // If successful redirect to the edit screen
-            if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
-                G::msg('The changes to this post have been successfully saved.', 'success');
-                $this->_redirect('/P_Blog/edit/'.$Node->node_id);
-            } else {
-                G::msg('There was a problem saving your new post.', 'error');
+                $Node = $this->Tree->setPath(PencilController::BLOG.'/'.$Node->label)->load()->getFirst();
+
+                if (is_a($Node, Node::class)) {
+                    G::msg('The changes to this post have been successfully saved.', 'success');
+                    $this->_redirect('/P_Blog/edit/'.$Node->node_id);
+                }
             }
+
+            G::msg('There was a problem saving your new post.', 'error');
         }
+
+        $Node->File($Article);
+        $this->View->Node = $Node;
 
         return $this->View;
     }
@@ -122,26 +132,32 @@ class P_BlogController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Node = $this->Tree->setPath(self::BLOG)->loadContent()->getFirst();
+        $Node = $this->Tree->loadID($argv[1])->loadContent()->getFirst();
 
         if ('POST' === $this->method) {
-            $Node->label = $request['node_label'];
-            $Node->setAll($request);
-            /** @var Article $Content */
-            $Content        = $Node->File;
-            $Content->title = $request['title'];
-            $Content->body  = $request['body'];
+            $Node->label       = $request['node_label'];
+            $Node->published   = $request['published'] ?? 0;
+            $Node->trashed     = $request['trashed'] ?? 0;
+            $Node->featured    = $request['featured'] ?? 0;
+            $Node->keywords    = $request['keywords'];
+            $Node->description = $request['description'];
+            $result  = $this->DB->save($Node);
 
-            $result  = $this->DB->save($Content);
-            $result2 = $this->DB->save($Node);
+            /** @var Page $Page */
+            $Article = $Node->File;
+            $Article->title = $request['title'];
+            $Article->body  = $request['body'];
+            $Article->author_id = G::$S->Login->login_id;
+
+            $result2 = $this->DB->save($Article);
+            $Node->File($Article);
 
             if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
-                G::msg('The changes to this page have been successfully saved.', 'success');
+                G::msg('The changes to this article have been successfully saved.', 'success');
             }
         }
 
         $this->View->Node    = $Node;
-        $this->View->Content = $Content;
 
         return $this->View;
     }
