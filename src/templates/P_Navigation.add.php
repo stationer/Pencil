@@ -40,7 +40,7 @@ echo $View->render('header');
                 </div>
 
                 <div class="form-group">
-                    <textarea style="height:150px;" class="form-control" name="source"><?php echo $json; ?></textarea>
+                    <textarea style="height:150px;" class="form-control" name="source"><?php echo $Node->File->source; ?></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-outline-primary">Add Navigation</button>

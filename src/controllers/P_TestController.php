@@ -197,7 +197,7 @@ class P_TestController extends PencilController {
                         ],
                     ],
                 ],
-                /*[
+                [
                     "text"    => "Link with menu",
                     "node_id" => 1234, // Sub-menus have links optional
                     "links"   => [
@@ -206,16 +206,15 @@ class P_TestController extends PencilController {
                             "url"  => "/Account/login",
                         ],
                     ],
-                ],*/
+                ],
             ],
         ];
         $json = json_encode($json);
-        //d($json);
 
         $Nav = new NavigationWorkflow();
 
-        d($Nav->render(($json)));
-        //d($Nav->render(($json)));
+        croak($Nav->render(($json)));
+        die($Nav->render(($json)));
     }
 
 }

@@ -103,48 +103,6 @@ class P_NavigationController extends PencilController {
                 }
             }
         }
-        $this->View->json = $json = json_encode([
-            "links" => [
-                [
-                    "text" => "Pretty Link text",
-                    "url"  => "http://anyurl.com",
-                ],
-                [
-                    "text" => "Our Blog!",
-                    "path" => "/blog" // "path" implies tree node, but can fall back on server-relative URL
-                ],
-                [
-                    "text"    => "Our Blog!",
-                    "node_id" => 13 // node_id considered unchanging
-                ],
-                [
-                    "node_id" => 22 // when link text is missing, fetch from Node-File-title or Node-label
-                ],
-                [
-                    "text" => "Custom Controller",
-                    "url"  => "/Cont/action",
-                ],
-                [
-                    "text"  => "Linkless menu",
-                    "links" => [
-                        [
-                            "text" => "Login",
-                            "url"  => "/Account/login",
-                        ],
-                    ],
-                ],
-                [
-                    "text"    => "Link with menu",
-                    "node_id" => 1234, // Sub-menus have links optional
-                    "links"   => [
-                        [
-                            "text" => "Login",
-                            "url"  => "/Account/login",
-                        ],
-                    ],
-                ],
-            ],
-        ]);
 
         return $this->View;
     }
