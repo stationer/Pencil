@@ -84,12 +84,14 @@ class P_BlogController extends PencilController {
         if ('POST' === $this->method) {
             $Article->setAll($request);
             $Article->author_id = G::$S->Login->login_id;
-            $Article->created_uts = NOW;
+
+            // If it's been published set publish date
             if ('on' == $request['published']) {
                 $Article->release_uts = NOW;
             }
             $result = $this->DB->insert($Article);
 
+            // If article has been save successfully create the node
             if (false !== $result) {
                 $Node->label = $request['label'] ?: $request['title'];
                 $this->Tree->create(PencilController::BLOG.'/'.$Node->label, [
@@ -103,8 +105,10 @@ class P_BlogController extends PencilController {
                     'keywords' => $request['keywords']
                 ]);
 
+                // Load the Node
                 $Node = $this->Tree->setPath(PencilController::BLOG.'/'.$Node->label)->load()->getFirst();
 
+                // Alert that it was successfully saved
                 if (is_a($Node, Node::class)) {
                     G::msg('The changes to this post have been successfully saved.', 'success');
                     $this->_redirect('/P_Blog/edit/'.$Node->node_id);
@@ -133,9 +137,11 @@ class P_BlogController extends PencilController {
             return parent::do_403($argv);
         }
 
+        // Load the existing node
         $Node = $this->Tree->loadID($argv[1])->loadContent()->getFirst();
 
         if ('POST' === $this->method) {
+            // Set Node values and save
             $Node->label       = $request['label'];
             $Node->published   = $request['published'] ?? 0;
             $Node->trashed     = $request['trashed'] ?? 0;
@@ -144,7 +150,7 @@ class P_BlogController extends PencilController {
             $Node->description = $request['description'];
             $result  = $this->DB->save($Node);
 
-            /** @var Page $Page */
+            /** @var Article $Article */
             $Article = $Node->File;
             $Article->title = $request['title'];
             $Article->body  = $request['body'];
@@ -155,15 +161,17 @@ class P_BlogController extends PencilController {
                 $Article->release_uts = NOW;
             }
 
+            // Save and set the article
             $result2 = $this->DB->save($Article);
             $Node->File($Article);
 
+            // If saved successfully alert the user
             if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
                 G::msg('The changes to this article have been successfully saved.', 'success');
             }
         }
 
-        $this->View->Node    = $Node;
+        $this->View->Node = $Node;
 
         return $this->View;
     }

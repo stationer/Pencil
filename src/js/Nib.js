@@ -164,16 +164,10 @@ class Nib {
         if (null != form) {
             // Create a submission event listener
             form.addEventListener('submit', event => {
-                event.preventDefault();
-
                 // For each wysiwyg in our form copy it over to our textarea
                 form.querySelectorAll('.quill-editor').forEach(element => {
-                    let textarea = 'textarea[name="'+element.id.replace('quill-container-for-', '')+'"]';
-                    document.querySelector(textarea).innerHTML
+                    element.querySelector('.ql-html-editor').value
                         = element.querySelector('.ql-editor').innerHTML;
-
-                    // re-trigger submission
-                    form.submit()
                 })
             })
         }
@@ -227,6 +221,7 @@ class Nib {
         let quillDiv = document.createElement('div');
         quillDiv.id = 'quill-container-for-' + (textarea.id || textarea.name);
         quillDiv.className = 'quill-editor';
+        textarea.className = 'ql-html-editor';
         textarea.parentNode.insertBefore(quillDiv, textarea);
 
         let toolbar = this.getToolbar(textarea);
@@ -243,6 +238,7 @@ class Nib {
 }
 
 // Mozilla polyfill for closest
+// @todo give this polyfill a better home
 if (window.Element && !Element.prototype.closest) {
     Element.prototype.closest =
         function(s) {
