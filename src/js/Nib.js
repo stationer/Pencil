@@ -159,6 +159,19 @@ class Nib {
             quill.root.innerHTML = textarea.value;
         });
 
+        // Find the form our wysiwyg belongs to
+        let form = quillDiv.closest('form');
+        if (null != form) {
+            // Create a submission event listener
+            form.addEventListener('submit', event => {
+                // For each wysiwyg in our form copy it over to our textarea
+                form.querySelectorAll('.quill-editor').forEach(element => {
+                    element.querySelector('.ql-html-editor').value
+                        = element.querySelector('.ql-editor').innerHTML;
+                })
+            })
+        }
+
         // Hide the newly appended text area which is now our view source and append it to our quill editor
         textarea.style.display = 'none';
         textarea.classList.add('ql-html-editor');
@@ -208,6 +221,7 @@ class Nib {
         let quillDiv = document.createElement('div');
         quillDiv.id = 'quill-container-for-' + (textarea.id || textarea.name);
         quillDiv.className = 'quill-editor';
+        textarea.className = 'ql-html-editor';
         textarea.parentNode.insertBefore(quillDiv, textarea);
 
         let toolbar = this.getToolbar(textarea);
@@ -221,4 +235,20 @@ class Nib {
 
         return true;
     }
+}
+
+// Mozilla polyfill for closest
+// @todo give this polyfill a better home
+if (window.Element && !Element.prototype.closest) {
+    Element.prototype.closest =
+        function(s) {
+            var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+                i,
+                el = this;
+            do {
+                i = matches.length;
+                while (--i >= 0 && matches.item(i) !== el) {};
+            } while ((i < 0) && (el = el.parentElement));
+            return el;
+        };
 }

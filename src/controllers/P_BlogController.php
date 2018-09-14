@@ -58,7 +58,7 @@ class P_BlogController extends PencilController {
             // TODO: the search thing
             $Articles = [];
         } else {
-            $Articles = $this->Tree->setPath(self::BLOG)->children()->get();
+            $Articles = $this->Tree->setPath(self::BLOG)->children()->loadContent()->get();
         }
 
         $this->View->Articles = $Articles;
@@ -79,32 +79,47 @@ class P_BlogController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $this->View->Page = $Node = G::build(Node::class);
-
+        $Article = G::build(Article::class);
+        $Node = G::build(Node::class);
         if ('POST' === $this->method) {
-            $Content           = G::build(Article::class);
-            $Node->label       = $request['node_label'];
-            $Node->published   = $request['published'];
-            $Node->trashed     = $request['trashed'];
-            $Node->featured    = $request['featured'];
-            $Node->keywords    = $request['keywords'];
-            $Node->creator_id  = G::$S->Login->login_id;
-            $Node->description = $request['description'];
-            $Node->contentType = 'Blog';
-            $Content->title    = $request['title'];
-            $Content->body     = $request['body'];
+            $Article->setAll($request);
+            $Article->author_id = G::$S->Login->login_id;
 
-            $result  = $this->DB->insert($Content);
-            $result2 = $this->DB->insert($Node);
-
-            // If successful redirect to the edit screen
-            if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
-                G::msg('The changes to this post have been successfully saved.', 'success');
-                $this->_redirect('/P_Blog/edit/'.$Node->node_id);
-            } else {
-                G::msg('There was a problem saving your new post.', 'error');
+            // If it's been published set publish date
+            if ('on' == $request['published']) {
+                $Article->release_uts = NOW;
             }
+            $result = $this->DB->insert($Article);
+
+            // If article has been save successfully create the node
+            if (false !== $result) {
+                $Node->label = $request['label'] ?: $request['title'];
+                $this->Tree->create(PencilController::BLOG.'/'.$Node->label, [
+                    'File' => $Article,
+                    'label' => $Node->label,
+                    'creator_id' => G::$S->Login->login_id ?? 0,
+                    'published' => isset($request['published']),
+                    'description' => $request['description'],
+                    'trashed' => isset($request['trashed']),
+                    'featured' => isset($request['featured']),
+                    'keywords' => $request['keywords']
+                ]);
+
+                // Load the Node
+                $Node = $this->Tree->setPath(PencilController::BLOG.'/'.$Node->label)->load()->getFirst();
+
+                // Alert that it was successfully saved
+                if (is_a($Node, Node::class)) {
+                    G::msg('The changes to this post have been successfully saved.', 'success');
+                    $this->_redirect('/P_Blog/edit/'.$Node->node_id);
+                }
+            }
+
+            G::msg('There was a problem saving your new post.', 'error');
         }
+
+        $Node->File($Article);
+        $this->View->Node = $Node;
 
         return $this->View;
     }
@@ -122,26 +137,41 @@ class P_BlogController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Node = $this->Tree->setPath(self::BLOG)->loadContent()->getFirst();
+        // Load the existing node
+        $Node = $this->Tree->loadID($argv[1])->loadContent()->getFirst();
 
         if ('POST' === $this->method) {
-            $Node->label = $request['node_label'];
-            $Node->setAll($request);
-            /** @var Article $Content */
-            $Content        = $Node->File;
-            $Content->title = $request['title'];
-            $Content->body  = $request['body'];
+            // Set Node values and save
+            $Node->label       = $request['label'];
+            $Node->published   = $request['published'] ?? 0;
+            $Node->trashed     = $request['trashed'] ?? 0;
+            $Node->featured    = $request['featured'] ?? 0;
+            $Node->keywords    = $request['keywords'];
+            $Node->description = $request['description'];
+            $result  = $this->DB->save($Node);
 
-            $result  = $this->DB->save($Content);
-            $result2 = $this->DB->save($Node);
+            /** @var Article $Article */
+            $Article = $Node->File;
+            $Article->title = $request['title'];
+            $Article->body  = $request['body'];
+            $Article->author_id = G::$S->Login->login_id;
 
+            // If a article is marked as published and doesn't have a released date set it
+            if ('on' == $request['published'] && $Article->released_uts != null) {
+                $Article->release_uts = NOW;
+            }
+
+            // Save and set the article
+            $result2 = $this->DB->save($Article);
+            $Node->File($Article);
+
+            // If saved successfully alert the user
             if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
-                G::msg('The changes to this page have been successfully saved.', 'success');
+                G::msg('The changes to this article have been successfully saved.', 'success');
             }
         }
 
-        $this->View->Node    = $Node;
-        $this->View->Content = $Content;
+        $this->View->Node = $Node;
 
         return $this->View;
     }
