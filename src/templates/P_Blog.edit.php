@@ -7,7 +7,7 @@ echo $View->render('header');
 ?>
 
     <main class="content" style="padding:20px;">
-        <h1 class="page-title">Edit Page</h1>
+        <h1 class="page-title">Edit Article</h1>
 
         <form action="/P_Blog/edit/<?php echo $Node->node_id; ?>" method="post">
             <div class="form-group">
@@ -45,7 +45,7 @@ echo $View->render('header');
                 <textarea class="wysiwyg" name="body" id="body"><?php echo $Node->File->body; ?></textarea>
             </div>
 
-            <button class="btn btn-primary" type="submit">Add Article</button>
+            <button class="btn btn-primary" type="submit">Update Article</button>
         </form>
     </main>
 

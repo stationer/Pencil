@@ -58,7 +58,7 @@ class P_BlogController extends PencilController {
             // TODO: the search thing
             $Articles = [];
         } else {
-            $Articles = $this->Tree->setPath(self::BLOG)->children()->get();
+            $Articles = $this->Tree->setPath(self::BLOG)->children()->loadContent()->get();
         }
 
         $this->View->Articles = $Articles;
@@ -85,8 +85,9 @@ class P_BlogController extends PencilController {
             $Article->setAll($request);
             $Article->author_id = G::$S->Login->login_id;
             $Article->created_uts = NOW;
-            d($request);
-            d($Article);
+            if ('on' == $request['published']) {
+                $Article->release_uts = NOW;
+            }
             $result = $this->DB->insert($Article);
 
             if (false !== $result) {
@@ -135,7 +136,7 @@ class P_BlogController extends PencilController {
         $Node = $this->Tree->loadID($argv[1])->loadContent()->getFirst();
 
         if ('POST' === $this->method) {
-            $Node->label       = $request['node_label'];
+            $Node->label       = $request['label'];
             $Node->published   = $request['published'] ?? 0;
             $Node->trashed     = $request['trashed'] ?? 0;
             $Node->featured    = $request['featured'] ?? 0;
@@ -148,6 +149,11 @@ class P_BlogController extends PencilController {
             $Article->title = $request['title'];
             $Article->body  = $request['body'];
             $Article->author_id = G::$S->Login->login_id;
+
+            // If a article is marked as published and doesn't have a released date set it
+            if ('on' == $request['published'] && $Article->released_uts != null) {
+                $Article->release_uts = NOW;
+            }
 
             $result2 = $this->DB->save($Article);
             $Node->File($Article);

@@ -13,6 +13,7 @@ echo $View->render('header');
                 <table class="table table-striped">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>Title</th>
                         <th>Author</th>
                         <th>Visibility</th>
@@ -26,11 +27,19 @@ echo $View->render('header');
                         <td><input type="checkbox" name="input[]" title="" /></td>
                         <td>
                             <a href="/P_Blog/edit/<?php echo $Article->node_id; ?>">
-                                <?php echo $Article->File->title ?? 'No Title'; ?>
+                                <?php
+                                if('' != $Article->File->title) {
+                                    echo $Article->File->title;
+                                } else {
+                                    echo 'No Title';
+                                }
+                                ?>
                             </a>
                         </td>
+                        <td><?php echo $Article->File->author_id; ?></td>
                         <td><?php echo $Article->published ? 'Public' : 'Private'; ?></td>
                         <td><?php echo date('F j, Y g:i a', $Article->created_uts); ?></td>
+                        <td></td>
                     </tr>
                     <?php endforeach; ?>
                     </tbody>
