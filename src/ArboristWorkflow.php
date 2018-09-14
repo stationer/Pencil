@@ -115,6 +115,7 @@ class ArboristWorkflow {
     public function loadID(int $node_id) {
         /** @var Node $Node */
         $Node = $this->DB->byPK(Node::class, $node_id);
+
         if (empty($Node)) {
             return $this;
         }

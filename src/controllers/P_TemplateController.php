@@ -125,7 +125,7 @@ class P_TemplateController extends PencilController {
         $Node = $this->Tree->loadID($argv[1])
             ->loadContent()
             ->getFirst();
-        if('POST' === $this->method) {
+        if ('POST' === $this->method) {
             $Node->setAll($request, true);
             $Template = $Node->File;
             $Template->setAll($request, true);
