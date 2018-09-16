@@ -103,7 +103,7 @@ class P_RenderController extends PencilController {
         header("HTTP/1.0 404 File Not Found");
 
         /** @var Node $Node */
-        $Node = $this->Tree->load(PencilController::ERROR.'/404');
+        $Node = $this->Tree->load(PencilController::ERROR.'/404')->loadContent()->getFirst();
         /** @var PaperWorkflow $Paper */
         $Paper  = G::build(PaperWorkflow::class, $this->Tree);
         $result = $Paper->render($Node);
@@ -123,7 +123,7 @@ class P_RenderController extends PencilController {
         header("HTTP/1.0 500 Internal Server Error");
 
         /** @var Node $Node */
-        $Node = $this->Tree->load(PencilController::ERROR.'/500');
+        $Node = $this->Tree->load(PencilController::ERROR.'/500')->loadContent()->getFirst();
         /** @var PaperWorkflow $Paper */
         $Paper  = G::build(PaperWorkflow::class, $this->Tree);
         $result = $Paper->render($Node);

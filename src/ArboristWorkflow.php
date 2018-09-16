@@ -81,6 +81,11 @@ class ArboristWorkflow {
      * @return $this
      */
     public function setPath(string $path) {
+        // If the path starts with the root, assume it's an absolute path and make it relative
+        if (0 === strpos($path, $this->getRoot())) {
+            $path = substr($path, strlen($this->getRoot()));
+        }
+
         $this->path  = \fakepath($path, '/');
         $this->Nodes = [];
 
@@ -156,11 +161,12 @@ class ArboristWorkflow {
     /**
      * Load Nodes directly included in the current path.
      *
-     * @param string $path Optional new current path
+     * @param string $path    Optional new current path
+     * @param array  $filters Optional additional filters
      *
      * @return $this
      */
-    public function children(string $path = null) {
+    public function children(string $path = null, array $filters = []) {
         if (null !== $path) {
             $this->setPath($path);
         }
@@ -183,7 +189,10 @@ class ArboristWorkflow {
         // Use false to indicate a failure to load, distinct from empty success
         $this->Nodes = [false];
         if (isset($node_id)) {
-            $this->Nodes = $this->DB->fetch(Node::class, ['parent_id' => $node_id]);
+            // Adding the star will indicate the previous path is no longer current
+            // $this->path.='/*';
+            $filters['parent_id'] = $node_id;
+            $this->Nodes = $this->DB->fetch(Node::class, $filters);
         }
 
         return $this;
@@ -269,7 +278,9 @@ class ArboristWorkflow {
         }
 
         $filters['path'] = $this->getFullPath();
-        $this->Nodes     = $this->DB->fetch(DescendantsByPathReport::class, $filters) ?: [];
+        // Adding the stars will indicate the previous path is no longer current
+        // $this->path .= '/*';
+        $this->Nodes = $this->DB->fetch(DescendantsByPathReport::class, $filters) ?: [];
 
         return $this;
     }
@@ -402,7 +413,7 @@ class ArboristWorkflow {
      */
     public function loadContent() {
         if (empty($this->Nodes)) {
-            $this->load();
+            //$this->load();
         }
         if (empty($this->Nodes)) {
             return $this;

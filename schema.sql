@@ -79,7 +79,6 @@ CREATE TABLE IF NOT EXISTS `Page` (
     `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
     `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `title` varchar(255) NOT NULL,
-    `body` mediumtext NOT NULL DEFAULT '',
     `template_id` int(10) unsigned NOT NULL DEFAULT 0,
     KEY (`updated_dts`),
     PRIMARY KEY(`page_id`)

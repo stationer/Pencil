@@ -15,6 +15,7 @@ use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\models\Page;
+use Stationer\Pencil\models\Text;
 use Stationer\Pencil\PencilController;
 
 use Stationer\Graphite\data\IDataProvider;
@@ -147,6 +148,13 @@ class P_PageController extends PencilController {
             'contentType' => 'Template',
         ])->get();
 
+        // Get the Page's Template to get a list of content requirements
+        /** @var Page $Page */
+        $Page = $Node->File;
+        $TemplateNode  = $this->Tree->loadID($Page->template_id)->loadContent()->getFirst();
+        $contentLabels = $TemplateNode->File->getContentLabels();
+        $ContentNodes  = $this->getContentNodes($Node->path, $contentLabels);
+
         if ('POST' === $this->method) {
             $Node->label       = $request['node_label'];
             $Node->published   = $request['published'] ?? 0;
@@ -156,14 +164,19 @@ class P_PageController extends PencilController {
             $Node->description = $request['description'];
             $result  = $this->DB->save($Node);
 
-            /** @var Page $Page */
-            $Page &= $Node->File;
+            foreach ($contentLabels as $label) {
+                if (isset($request['content'][$label])) {
+                    $Text = &$ContentNodes[$Node->path.'/'.$label]->File;
+                    $Text->body = $request['content'][$label];
+                    $this->DB->save($Text);
+                }
+            }
             $Page->title = $request['title'];
-            $Page->body  = $request['body'];
             if (isset($Templates[$request['template_id'] ?? null])) {
                 $Page->template_id = $request['template_id'];
             }
             $result2 = $this->DB->save($Page);
+            $Node->File = $Page;
 
             if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
                 G::msg('The changes to this page have been successfully saved.', 'success');
@@ -172,9 +185,43 @@ class P_PageController extends PencilController {
             }
         }
 
+        $this->View->ContentNodes = $ContentNodes;
+        $this->View->contentLabels = $contentLabels;
         $this->View->Templates = $Templates;
         $this->View->Page = $Node;
 
         return $this->View;
+    }
+
+    /**
+     * Get or create a Text node for each content label
+     *
+     * @param string   $path
+     * @param string[] $contentLabels
+     *
+     * @return Node[]
+     */
+    public function getContentNodes($path, $contentLabels) {
+        /** @var Node[] $ContentNodes */
+        $ContentNodes = $this->Tree->children($path, ['contentType' => 'Text'])->loadContent()->get();
+        // Re-index the nodes by path
+        $tmp = [];
+        foreach ($ContentNodes as $ContentNode) {
+            $tmp[$ContentNode->path] = $ContentNode;
+        }
+        $ContentNodes = $tmp;
+
+        // Verify each label has a node, or create it.
+        foreach ($contentLabels as $label) {
+            if (!isset($ContentNodes[$path.'/'.$label])) {
+                $Text = G::build(Text::class, true);
+                $this->DB->insert($Text);
+                $ContentNode = $this->Tree->create($path.'/'.$label, ['File' => $Text])->getLast();
+                $this->DB->insert($ContentNode);
+                $ContentNodes[$path.'/'.$label] = $ContentNode;
+            }
+        }
+
+        return $ContentNodes;
     }
 }

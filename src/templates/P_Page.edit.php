@@ -2,6 +2,7 @@
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Node $Page */
 /** @var \Stationer\Pencil\models\Template[] $Templates */
+/** @var \Stationer\Pencil\models\Node[] $ContentNodes */
 echo $View->render('header');
 ?>
 
@@ -56,14 +57,16 @@ echo $View->render('header');
                 <input type="checkbox" name="featured" id="featured" class="form-control" <?php echo 1 == $Page->featured ? 'checked="checked"': ''; ?>>
             </div>
 
+            <?php foreach ($ContentNodes as $ContentNode) : ?>
             <div class="form-group">
-                <label for="body">Page Body / Content Map</label>
-                <textarea class="form-control wysiwyg" name="body" id="body"><?php echo $Page->File->body; ?></textarea>
+                <label for="content-<?= $ContentNode->label ?>">[content.<?= $ContentNode->label?>]</label>
+                <textarea class="form-control wysiwyg" name="content[<?= $ContentNode->label ?>]" id="content-<?= $ContentNode->label ?>"><?php echo $ContentNode->File->body; ?></textarea>
             </div>
+            <?php endforeach; ?>
 
             <button type="submit" class="btn btn-primary">Update Page</button>
         </form>
     </div>
 </main>
 
-<?php croak($Page);echo $View->render('footer');
+<?php echo $View->render('footer');

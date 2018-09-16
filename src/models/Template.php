@@ -41,4 +41,10 @@ class Template extends PassiveRecord {
 
     const PAGE = 1;
     const COMPONENT = 2;
+
+    public function getContentLabels() {
+        preg_match_all('~\[content\.(\w+)\]~', $this->body, $matches, PREG_SET_ORDER);
+
+        return array_column($matches, 1);
+    }
 }

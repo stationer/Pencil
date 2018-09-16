@@ -75,7 +75,7 @@ class PaperWorkflow {
 //                    'trashed'     => false,
                             ])->first()->loadContent()->getFirst();
                             if (false === $Template) {
-                                trigger_error('Template Node not found');
+                                trigger_error('Template Node '.$Page->template_id.' not found');
                                 header("HTTP/1.0 500 Internal Server Error");
                                 die;
                             }
@@ -92,7 +92,7 @@ class PaperWorkflow {
 //                    'trashed'     => false,
                         ])->first()->loadContent()->getFirst();
                         if (false === $ThemeNode) {
-                            trigger_error('Theme Node not found');
+                            trigger_error('Theme Node '.$Site->theme_id.' not found');
                             header("HTTP/1.0 500 Internal Server Error");
                             die;
                         }
@@ -101,6 +101,13 @@ class PaperWorkflow {
                         $objects['theme'] = array_merge($ThemeNode->getAll(), $Theme->getAll(),
                             ['path' => str_replace($this->Tree->getRoot(), '', $ThemeNode->path)]);
 
+                        $ContentNodes = $this->Tree->descendants($Node->path, [
+                            'contentType' => 'Text',
+                        ])->loadContent()->get();
+                        $objects['content'] = [];
+                        foreach ($ContentNodes as $ContentNode) {
+                            $objects['content'][$ContentNode->label] = $ContentNode->File->body;
+                        }
                         $result = $Theme->document;
                         do {
                             $codes = $this->mergeCodes($result);
