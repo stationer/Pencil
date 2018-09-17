@@ -29,6 +29,13 @@ if (!isset($_bodyClass)) {
         $_bodyClass = $_controller . (!empty($_action) ? ' '.$_controller.'-'.$_action.' ' : '');
     }
 }
+if (!isset($_avatarURL)) {
+    if (!empty(G::$S->Login->email)) {
+        $_avatarURL = 'https://www.gravatar.com/avatar/'.md5(strtolower(trim(G::$S->Login->email))).'?s=90&d=identicon';
+    } else {
+        $_avatarURL = '/vendor/stationer/pencil/src/images/avatar-1.jpg';
+    }
+}
 ?><!DOCTYPE html>
 <html lang="en">
 
@@ -232,17 +239,20 @@ if (!isset($_bodyClass)) {
 
                         <!-- Toggle -->
                         <a href="#" class="avatar avatar-sm avatar-online dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img src="/vendor/stationer/pencil/src/images/avatar-1.jpg" alt="..." class="avatar-img rounded-circle">
+                            <img src="<?= $_avatarURL?>" alt="..." class="avatar-img rounded-circle">
                         </a>
-
                         <!-- Menu -->
+<?php if (false !== G::$S->Login): ?>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a href="profile-posts.html" class="dropdown-item">Profile</a>
-                            <a href="settings.html" class="dropdown-item">Settings</a>
+                            <a href="/Account/edit" class="dropdown-item">Account Settings</a>
                             <hr class="dropdown-divider">
-                            <a href="sign-in.html" class="dropdown-item">Logout</a>
+                            <a href="/Account/logout" class="dropdown-item">Logout</a>
                         </div>
-
+<?php else: ?>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a href="/Account/login?_URI=/P_Dashboard" class="dropdown-item">Login</a>
+                        </div>
+<?php endif; ?>
                     </div>
 
                 </div>

@@ -37,7 +37,7 @@ abstract class PencilController extends Controller {
     const NAVIGATION = '/navigation';
 
     /** @var string Required Role, TODO set to false for no requirement while testing */
-    protected $role = false; // 'Pencil';
+    protected $role = 'Pencil';
 
     /** @var string Tree path of current site root */
     protected $siteRoot = '';
