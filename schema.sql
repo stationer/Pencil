@@ -42,6 +42,19 @@ CREATE TABLE IF NOT EXISTS `Form` (
 );
 
 
+ -- \Stationer\Pencil\models\Navigation
+DROP TABLE IF EXISTS `Navigation`;
+CREATE TABLE IF NOT EXISTS `Navigation` (
+    `navigation_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `created_uts` int(10) unsigned NOT NULL DEFAULT 0,
+    `updated_dts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `source` mediumtext NOT NULL DEFAULT '',
+    `rendered` mediumtext NOT NULL DEFAULT '',
+    KEY (`updated_dts`),
+    PRIMARY KEY(`navigation_id`)
+);
+
+
  -- \Stationer\Pencil\models\Node
 DROP TABLE IF EXISTS `Node`;
 CREATE TABLE IF NOT EXISTS `Node` (

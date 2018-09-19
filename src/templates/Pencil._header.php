@@ -91,8 +91,21 @@ if (!isset($_avatarURL)) {
                     </ul>
                 </div>
             </li>
-            <li class="link-item">
-                <a href="/P_Navigation" ><i data-feather="navigation"></i>Navigation</a>
+            <li class="has-subnav-items link-item">
+                <a data-toggle="collapse" href="#subnav-menu-navigation" role="button" aria-expanded="false"
+                   aria-controls="collapseExample">
+                    <i data-feather="navigation"></i>Navigation
+                </a>
+                <div class="collapse" id="subnav-menu-navigation">
+                    <ul class="subnav list-unstyled">
+                        <li class="subnav-link-item">
+                            <a href="/P_Navigation/list">All Navigations</a>
+                        </li>
+                        <li class="subnav-link-item">
+                            <a href="/P_Navigation/add">Add New Navigation</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
             <li class="has-subnav-items link-item">
                 <a data-toggle="collapse" href="#subnav-menu-pages" role="button" aria-expanded="false" aria-controls="collapseExample">

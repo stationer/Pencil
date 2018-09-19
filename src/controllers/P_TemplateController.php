@@ -54,7 +54,7 @@ class P_TemplateController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Templates = $this->Tree->setPath(self::TEMPLATES)->children()->loadContent()->get();
+        $Templates = $this->Tree->children(self::TEMPLATES, ['contentType' => 'Template'])->loadContent()->get();
 
         $this->View->Templates = $Templates;
 

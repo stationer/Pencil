@@ -1,5 +1,6 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
+/** @var \Stationer\Pencil\models\Navigation[] $Navigations */
 echo $View->render('header');
 ?>
 <div class="container">
@@ -12,7 +13,7 @@ echo $View->render('header');
                     <th>Label</th>
                 </tr>
                 </thead>
-            <?php foreach($Navigation as $Nav): ?>
+            <?php foreach($Navigations as $Nav): ?>
                 <tr>
                     <td>
                         <a href="/P_Navigation/edit/<?php echo $Nav->node_id; ?>">

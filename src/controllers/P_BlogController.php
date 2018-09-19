@@ -58,7 +58,7 @@ class P_BlogController extends PencilController {
             // TODO: the search thing
             $Articles = [];
         } else {
-            $Articles = $this->Tree->setPath(self::BLOG)->children()->loadContent()->get();
+            $Articles = $this->Tree->children(self::BLOG, ['contentType' => 'Article'])->loadContent()->get();
         }
 
         $this->View->Articles = $Articles;

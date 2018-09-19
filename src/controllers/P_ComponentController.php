@@ -58,7 +58,7 @@ class P_ComponentController extends PencilController {
             // TODO: the search thing
             $Components = [];
         } else {
-            $Components = $this->Tree->setPath(self::COMPONENTS)->children()->loadContent()->get();
+            $Components = $this->Tree->children(self::COMPONENTS, ['contentType' => 'Template'])->loadContent()->get();
         }
 
         $this->View->Components = $Components;

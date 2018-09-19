@@ -56,9 +56,9 @@ class P_NavigationController extends PencilController {
         }
 
         // TODO support nested nav
-        $Navigation = $this->Tree->setPath(self::NAVIGATION)->children()->loadContent()->get();
+        $Navigations = $this->Tree->children(self::NAVIGATION, ['contentType' => 'Navigation'])->loadContent()->get();
 
-        $this->View->Navigation = $Navigation;
+        $this->View->Navigations = $Navigations;
 
         return $this->View;
     }

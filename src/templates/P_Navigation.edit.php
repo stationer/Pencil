@@ -1,5 +1,6 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
+/** @var \Stationer\Pencil\models\Node $Node */
 echo $View->render('header');
 ?>
 <div class="container">
@@ -39,10 +40,11 @@ echo $View->render('header');
                     <input type="checkbox" name="trashed" id="trashed" <?php echo $Node->trashed ? 'checked="checked"': ''; ?>>
                 </div>
                 <div class="form-group">
-                    <textarea style="height:150px;" class="form-control" name="source"><?php echo $Node->File->source; ?></textarea>
+                    <label for="source">Source</label>
+                    <textarea style="height:150px;" class="form-control" name="source" id="source"><?php echo $Node->File->source; ?></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Add Navigation</button>
+                <button type="submit" class="btn btn-primary">Save Navigation</button>
             </form>
 
             <?php echo ($Node->File->rendered); ?>

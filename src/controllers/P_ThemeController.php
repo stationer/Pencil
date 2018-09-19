@@ -54,9 +54,9 @@ class P_ThemeController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Nodes = $this->Tree->setPath(self::THEMES)->children()->loadContent()->get();
+        $Themes = $this->Tree->children(self::THEMES, ['contentType' => 'Theme'])->loadContent()->get();
 
-        $this->View->Nodes = $Nodes;
+        $this->View->Nodes = $Themes;
 
         return $this->View;
     }

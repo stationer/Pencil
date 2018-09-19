@@ -52,7 +52,7 @@ class P_FormController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Forms = $this->Tree->setPath(self::FORMS)->children()->get();
+        $Forms = $this->Tree->children(self::FORMS, ['contentType' => 'Form'])->loadContent()->get();
 
         $this->View->Forms = $Forms;
 

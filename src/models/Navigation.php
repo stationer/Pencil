@@ -30,11 +30,11 @@ class Navigation extends PassiveRecord {
     protected static $pkey = 'navigation_id';
     protected static $query = '';
     protected static $vars = [
-        'navigation_id'     => ['type' => 'i', 'min' => 0, 'guard' => true],
-        'created_uts' => ['type' => 'ts', 'min' => 0, 'guard' => true],
-        'updated_dts' => ['type' => 'dt', 'def' => NOW, 'guard' => true],
+        'navigation_id' => ['type' => 'i', 'min' => 0, 'guard' => true],
+        'created_uts'   => ['type' => 'ts', 'min' => 0, 'guard' => true],
+        'updated_dts'   => ['type' => 'dt', 'def' => NOW, 'guard' => true],
 
-        'source'      => ['type' => 's', 'strict' => true, 'max' => 655350, 'def' => ''],
-        'rendered'    => ['type' => 's', 'strict' => true, 'max' => 655350, 'def' => ''],
+        'source'   => ['type' => 's', 'strict' => true, 'max' => 655350, 'def' => ''],
+        'rendered' => ['type' => 's', 'strict' => true, 'max' => 655350, 'def' => ''],
     ];
 }

@@ -52,7 +52,7 @@ class P_MediaController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Media = $this->Tree->setPath(self::MEDIA)->children()->get();
+        $Media = $this->Tree->children(self::MEDIA, ['contentType' => 'Asset'])->loadContent()->get();
 
         $this->View->Media = $Media;
 
