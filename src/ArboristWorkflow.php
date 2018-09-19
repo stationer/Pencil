@@ -58,7 +58,7 @@ class ArboristWorkflow {
      * @return $this
      */
     public function setRoot(string $path) {
-        $this->root  = \fakepath($path, '/');
+        $this->root  = Node::cleanPath($path);
         $this->Nodes = [];
 
         return $this;
@@ -86,7 +86,7 @@ class ArboristWorkflow {
             $path = substr($path, strlen($this->getRoot()));
         }
 
-        $this->path  = \fakepath($path, '/');
+        $this->path  = Node::cleanPath($path);
         $this->Nodes = [];
 
         return $this;

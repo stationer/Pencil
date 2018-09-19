@@ -130,8 +130,8 @@ class WebsiteWorkflow {
   <title>[page.title] - [site.title]</title>
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="icon" href="/favicon.ico">
-  <link rel="stylesheet" type="text/css" href="[theme.path]:.css">
-  <link rel="stylesheet" type="text/css" href="[template.path]:.css">
+  <link rel="stylesheet" type="text/css" href="[theme.path].css">
+  <link rel="stylesheet" type="text/css" href="[template.path].css">
 </head>
 <body class="[page.bodyClass]">
 [theme.header]

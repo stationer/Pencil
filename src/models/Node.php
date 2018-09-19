@@ -96,15 +96,14 @@ class Node extends PassiveRecord {
     }
 
     /**
-     * Scrub Node label to only word characters and {-, _, .} characters
+     * Scrub Node label to only dash, underscore, and word characters
      *
      * @return mixed
      */
     public function label() {
         $argv = func_get_args();
         if (count($argv)) {
-            $val = preg_replace('~[^-\w.]~', '-', $argv[0]);
-            $this->_s(__FUNCTION__, $val);
+            $this->_s(__FUNCTION__, static::cleanLabel($argv[0]));
         }
 
         return $this->_s(__FUNCTION__);
@@ -133,10 +132,39 @@ class Node extends PassiveRecord {
     public function path() {
         $argv = func_get_args();
         if (count($argv)) {
-            $val = preg_replace('~[^-\w./]~', '-', $argv[0]);
-            $this->_s(__FUNCTION__, $val);
+            $this->_s(__FUNCTION__, static::cleanPath($argv[0]));
         }
 
         return $this->_s(__FUNCTION__);
+    }
+
+    /**
+     * Replace space with underscore and other non-word chars with dash
+     * Then clean up with \fakepath()
+     *
+     * @param string $path Path to clean
+     *
+     * @return string
+     */
+    public static function cleanPath(string $path) {
+        $path = str_replace(' ', '_', $path);
+        $path = preg_replace('~[^-\w/]~', '-', $path);
+        $path = \fakepath($path, '/');
+
+        return $path;
+    }
+
+    /**
+     * Replace space with underscore and other non-word chars with dash
+     *
+     * @param string $label Label to clean
+     *
+     * @return string
+     */
+    public static function cleanLabel(string $label) {
+        $label = str_replace(' ', '_', $label);
+        $label = preg_replace('~[^-\w]~', '-', $label);
+
+        return $label;
     }
 }

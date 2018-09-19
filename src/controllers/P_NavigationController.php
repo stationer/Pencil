@@ -78,6 +78,7 @@ class P_NavigationController extends PencilController {
 
         $Node = G::build(Node::class);
         $Navigation = G::build(Navigation::class);
+        $Node->File = $Navigation;
 
         if ('POST' === $this->method) {
             $Navigation->source = $request['source'];
@@ -103,6 +104,8 @@ class P_NavigationController extends PencilController {
                 }
             }
         }
+
+        $this->View->Node = $Node;
 
         return $this->View;
     }
