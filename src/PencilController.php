@@ -32,7 +32,7 @@ abstract class PencilController extends Controller {
     const COMPONENTS = '/components';
     const TEMPLATES = '/templates';
     const FORMS = '/forms';
-    const MEDIA = '/media';
+    const ASSETS = '/assets';
     const THEMES = '/themes';
     const NAVIGATION = '/navigation';
 

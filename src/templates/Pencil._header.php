@@ -191,16 +191,16 @@ if (!isset($_avatarURL)) {
                 </div>
             </li>
             <li class="has-subnav-items link-item">
-                <a data-toggle="collapse" href="#subnav-menu-media" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <i data-feather="image"></i>Media
+                <a data-toggle="collapse" href="#subnav-menu-assets" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <i data-feather="image"></i>Assets
                 </a>
-                <div class="collapse" id="subnav-menu-media">
+                <div class="collapse" id="subnav-menu-assets">
                     <ul class="subnav list-unstyled">
                         <li class="subnav-link-item">
-                            <a href="/P_Media/list">All Media</a>
+                            <a href="/P_Asset/list">All Assets</a>
                         </li>
                         <li class="subnav-link-item">
-                            <a href="/P_Media/add">Add New Media</a>
+                            <a href="/P_Asset/add">Add New Asset</a>
                         </li>
                     </ul>
                 </div>

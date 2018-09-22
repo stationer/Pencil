@@ -39,6 +39,7 @@ echo $View->render('header');
                     <label for="trashed">Trashed</label>
                     <input type="checkbox" name="trashed" id="trashed" <?php echo $Node->trashed ? 'checked="checked"': ''; ?>>
                 </div>
+
                 <div class="form-group">
                     <label for="source">Source</label>
                     <textarea style="height:150px;" class="form-control" name="source" id="source"><?php echo $Node->File->source; ?></textarea>

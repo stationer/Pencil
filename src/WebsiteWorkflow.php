@@ -85,7 +85,7 @@ class WebsiteWorkflow {
         $this->Tree->create(PencilController::COMPONENTS);
         $this->Tree->create(PencilController::TEMPLATES);
         $this->Tree->create(PencilController::FORMS);
-        $this->Tree->create(PencilController::MEDIA);
+        $this->Tree->create(PencilController::ASSETS);
         $this->Tree->create(PencilController::LANDING);
         $this->Tree->create(PencilController::ERROR);
         $this->Tree->create(PencilController::THEMES);
