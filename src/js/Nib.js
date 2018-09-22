@@ -163,7 +163,7 @@ class Nib {
         });
 
         // On change of value for the textarea copy it back over to Quill
-        textarea.addEventListener('keyup', function() {
+        textarea.addEventListener('blur', function() {
             quill.root.innerHTML = textarea.value;
         });
 
@@ -239,7 +239,10 @@ class Nib {
         /** @var {EventTarget|Element form */
         let form = event.target;
         form.querySelectorAll('.ql-container').forEach(element => {
-            element.querySelector('.ql-textarea').value = element.querySelector('.ql-editor').innerHTML;
+            // If the textarea is not active, set its value from the Quilljs editor.
+            if (element.querySelector('.ql-textarea').style.display !== 'block') {
+                element.querySelector('.ql-textarea').value = element.querySelector('.ql-editor').innerHTML;
+            }
         })
     }
 
