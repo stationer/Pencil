@@ -73,6 +73,84 @@ class AssetManager {
     }
 
     /**
+     * Given a requested cache image
+     * Determine the requested size and original file
+     * Produce the requested resized image and save in requested path.
+     *
+     * @param string $req_path Path requested by browser
+     *
+     * @return bool false on failure
+     */
+    public function resize(string $req_path) {
+        $pattern = '~^P_Cache/(\d+)x(\d+)(/.*)$~';
+        $valid   = preg_match($pattern, $req_path, $matches);
+        if (false === $valid) {
+            trigger_error($this->error = "Invalid P_Cache URL: ".$req_path);
+
+            return false;
+        }
+        list(, $req_width, $req_height, $path) = $matches;
+        if (2 > strlen($path)) {
+            trigger_error($this->error = "Invalid P_Cache URL: ".$req_path);
+
+            return false;
+        }
+        $original = SITE.$path;
+        if (!file_exists($original)) {
+            trigger_error($this->error = "P_Cache URL Original Not Found: ".$req_path);
+
+            return false;
+        }
+
+        list($og_width, $og_height) = $info = getimagesize($original);
+        $mimetype = $info['mime'];
+
+        // if the request max size is wider than the original, use height as the limit
+        if ($req_width / $req_height > $og_width / $og_height) {
+            $new_height = $req_height;
+            $new_width  = $og_width * $req_height / $og_height;
+        } else {
+            $new_width  = $req_width;
+            $new_height = $og_height * $req_width / $og_width;
+        }
+        // If the original is smaller than the request, use the original size
+        if ($og_height < $new_height || $og_width < $new_width) {
+            return $path;
+        }
+
+        $fullPath = dirname(SITE.'/'.$req_path);
+        // redundant check tests whether another process created it
+        if (!is_dir($fullPath) && !mkdir($fullPath, 0755, true) && !is_dir($fullPath)) {
+            trigger_error($this->error = "Unable to create directory: ".$req_path);
+
+            return false;
+        }
+        switch ($mimetype) {
+            case 'image/png':
+                $image = imagecreatefrompng($original);
+                $image = imagescale($image, $new_width, $new_height);
+                imagepng($image, SITE.'/'.$req_path);
+                break;
+            case 'image/gif':
+                $image = imagecreatefromgif($original);
+                $image = imagescale($image, $new_width, $new_height);
+                imagegif($image, SITE.'/'.$req_path);
+                break;
+            case 'image/jpeg':
+                $image = imagecreatefromjpeg($original);
+                $image = imagescale($image, $new_width, $new_height);
+                imagejpeg($image, SITE.'/'.$req_path);
+                break;
+            default:
+                trigger_error($this->error = "P_Cache URL Original Not a supported image: ".$req_path);
+
+                return false;
+        }
+
+        return $req_path;
+    }
+
+    /**
      * Replace space with underscore and other non-word chars with dash
      *
      * @param string $fileName Label to clean

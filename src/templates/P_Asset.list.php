@@ -21,7 +21,8 @@ echo $View->render('header');
                                 <a href="/P_Asset/edit/<?= $Asset->node_id; ?>"><?= $Asset->label; ?></a>
                             </td>
                             <td><?php if ('image/' == substr($Asset->File->type, 0, 6)) : ?>
-                                    <img src="/P_Cache/100x50<?= $Asset->File->path ?>">
+                                    <img src="/P_Cache/200x100<?= $Asset->File->path ?>"
+                                         style="max-height:50px;max-width:100px;">
                                 <?php endif; ?></td>
                         </tr>
                     <?php endforeach; ?>
