@@ -226,6 +226,21 @@ if (!isset($_avatarURL)) {
                     </ul>
                 </div>
             </li>
+            <li class="has-subnav-items link-item">
+                <a data-toggle="collapse" href="#subnav-menu-texts" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <i data-feather="mail"></i>Texts
+                </a>
+                <div class="collapse" id="subnav-menu-texts">
+                    <ul class="subnav list-unstyled">
+                        <li class="subnav-link-item">
+                            <a href="/P_Text/list">All Texts</a>
+                        </li>
+                        <li class="subnav-link-item">
+                            <a href="/P_Text/add">Add New Text</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
         </ul>
 
     </div>

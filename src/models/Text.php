@@ -22,7 +22,7 @@ use Stationer\Graphite\data\PassiveRecord;
  * @property int    $text_id
  * @property string $created_uts
  * @property int    $updated_dts
- * @property string $title
+ * @property string $mimeType
  * @property string $body
  */
 class Text extends PassiveRecord {

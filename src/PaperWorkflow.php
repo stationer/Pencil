@@ -131,7 +131,7 @@ class PaperWorkflow {
                     $vars = $Node->File->getAll();
                 }
                 if (isset($vars[$mode])) {
-                    $types = [0 => 'text/plain', 'css' => 'text/css'];
+                    $types = [0 => $vars['mimeType'] ?? 'text/plain', 'css' => 'text/css'];
                     header('Content-Type: '.($types[$mode] ?? $types[0]));
                     header('Content-Length: '.strlen($vars[$mode]));
                     header('Last-Modified: '.gmdate('D, d M Y H:i:s', strtotime($vars['updated_dts'])).' GMT');
