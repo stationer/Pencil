@@ -284,6 +284,28 @@ class ArboristWorkflow {
 
         return $this;
     }
+    /**
+     * Load Nodes containing the current path.
+     *
+     * @param string $path    Optional new current path
+     * @param array  $filters Optional additional filters
+     *
+     * @see DescendantsByPathReport
+     *
+     * @return $this
+     */
+    public function subtree(string $path = null, array $filters = []) {
+        if (null !== $path) {
+            $this->setPath($path);
+        }
+
+        $filters['line'] = $this->getFullPath();
+        // Adding the stars will indicate the previous path is no longer current
+        // $this->path .= '/*';
+        $this->Nodes = $this->DB->fetch(DescendantsByPathReport::class, $filters) ?: [];
+
+        return $this;
+    }
 
     /**
      * Load Nodes containing the current path.

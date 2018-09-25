@@ -27,6 +27,7 @@ class DescendantsByPathReport extends Report {
     protected static $query = "";
     protected static $vars = [
         'path'        => ['type' => 's', 'sql' => "t.`path` LIKE '%s/%%'"],
+        'line'        => ['type' => 's', 'sql' => "(t.`path` = '%1\$s' OR t.`path` LIKE '%1\$s/%%')"],
         'tag'         => ['type' => 's', 'sql' => "t2.`label` = '%s'"],
         'label'       => ['type' => 's', 'sql' => "t.`label` = '%s'"],
         'contentType' => ['type' => 's', 'sql' => "t.`contentType` = '%s'"],

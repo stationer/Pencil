@@ -88,6 +88,9 @@ if (!isset($_avatarURL)) {
                         <li class="subnav-link-item">
                             <a href="/P_Dashboard/settings">Site Settings</a>
                         </li>
+                        <li class="subnav-link-item">
+                            <a href="/P_Dashboard/tree">Site Tree</a>
+                        </li>
                     </ul>
                 </div>
             </li>
