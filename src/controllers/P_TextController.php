@@ -62,6 +62,7 @@ class P_TextController extends PencilController {
         }
 
         $this->View->Texts = $Texts;
+        $this->View->treeRoot = $this->Tree->getRoot();
 
         return $this->View;
     }
@@ -105,15 +106,18 @@ class P_TextController extends PencilController {
 
                 // Alert that it was successfully saved
                 if (is_a($Node, Node::class)) {
-                    G::msg('The changes to this post have been successfully saved.', 'success');
+                    G::msg('The changes to this text have been successfully saved.', 'success');
                     $this->_redirect('/P_Text/edit/'.$Node->node_id);
                 }
             }
 
-            G::msg('There was a problem saving your new post.', 'error');
+            G::msg('There was a problem saving your new text.', 'error');
         }
 
         $Node->File($Text);
+
+        $Nodes = $this->Tree->subtree('')->get();
+        $this->View->Nodes = $Nodes;
         $this->View->Node = $Node;
         $this->View->parentPath = $request['parentPath'] ?? $this->Tree->getRoot();
 
@@ -144,6 +148,11 @@ class P_TextController extends PencilController {
             $Node->featured    = $request['featured'] ?? 0;
             //$Node->keywords    = $request['keywords'];
             $Node->description = $request['description'];
+            // Adjust parent
+            if ($request['parentPath'] != dirname($Node->path)) {
+                $this->Tree->move($request['parentPath']);
+            }
+
             $result  = $this->DB->save($Node);
 
             /** @var Text $Text */
@@ -160,6 +169,8 @@ class P_TextController extends PencilController {
                 G::msg('The changes to this Text have been successfully saved.', 'success');
             }
         }
+        $Nodes                = $this->Tree->subtree('')->get();
+        $this->View->Nodes = $Nodes;
 
         $this->View->Node = $Node;
 

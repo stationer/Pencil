@@ -1,6 +1,7 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Node $Node */
+/** @var \Stationer\Pencil\models\Node[] $Nodes */
 /** @var string $parentPath */
 echo $View->render('header');
 ?>
@@ -9,8 +10,15 @@ echo $View->render('header');
 
     <form action="/P_Text/add" method="post">
         <div class="form-group">
-            <label for="parentPath">parentPath</label>
-            <input class="form-control" type="text" name="parentPath" id="parentPath" value="<?php echo $parentPath; ?>">
+            <label for="parentPath">Parent Path</label>
+            <select name="parentPath" id="parentPath" class="form-control">
+                <option value="">--- Select a Parent ---</option>
+                <?php foreach ($Nodes as $ParentNode) : ?>
+                    <option value="<?php echo $ParentNode->path; ?>" <?php
+                    echo $ParentNode->path == (dirname($Node->path) ?: $parentPath) ? 'selected' : '';
+                    ?>><?php echo $ParentNode->path; ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
         <div class="form-group">

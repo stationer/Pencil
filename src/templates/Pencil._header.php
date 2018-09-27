@@ -205,6 +205,9 @@ if (!isset($_avatarURL)) {
                         <li class="subnav-link-item">
                             <a href="/P_Asset/add">Add New Asset</a>
                         </li>
+                        <li class="subnav-link-item">
+                            <a href="/P_Asset/import">Import Assets</a>
+                        </li>
                     </ul>
                 </div>
             </li>

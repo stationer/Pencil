@@ -55,9 +55,10 @@ class P_AssetController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Assets = $this->Tree->children(self::ASSETS, ['contentType' => 'Asset'])->loadContent()->get();
+        $Assets = $this->Tree->descendants(self::ASSETS, ['contentType' => 'Asset'])->loadContent()->get();
 
         $this->View->Assets = $Assets;
+        $this->View->treeRoot = $this->Tree->getRoot();
 
         return $this->View;
     }
@@ -76,7 +77,7 @@ class P_AssetController extends PencilController {
         }
 
         /** @var Node $Node */
-        $Node       = G::build(Node::class);
+        $Node = G::build(Node::class);
         /** @var Asset $Asset */
         $Asset      = G::build(Asset::class);
         $Node->File = $Asset;
@@ -133,8 +134,8 @@ class P_AssetController extends PencilController {
         if ('POST' === $this->method) {
             $assetPath = $this->Tree->setPath(PencilController::ASSETS)->getFullPath();
             /** @var AssetManager $AssetManager */
-            $AssetManager    = G::build(AssetManager::class);
-            $assetPath       = $AssetManager->upload($_FILES['upload'], $assetPath);
+            $AssetManager = G::build(AssetManager::class);
+            $assetPath    = $AssetManager->upload($_FILES['upload'], $assetPath);
 
             $error = $AssetManager->error;
             if (!empty($error)) {
@@ -162,5 +163,75 @@ class P_AssetController extends PencilController {
         $this->View->Node = $Node;
 
         return $this->View;
+    }
+
+    /**
+     * Add new assets from the filesystem
+     *
+     * @param array $argv    Argument list passed from Dispatcher
+     * @param array $request Request_method-specific parameters
+     *
+     * @return View
+     */
+    public function do_import(array $argv = [], array $request = []) {
+        if (!G::$S->roleTest($this->role)) {
+            return parent::do_403($argv);
+        }
+        $assetPath = $this->Tree->setPath(PencilController::ASSETS)->getFullPath();
+        /** @var AssetManager $AssetManager */
+        $AssetManager = G::build(AssetManager::class);
+        // Get permissible files list
+        $fileList     = $AssetManager->scan($assetPath);
+        // Handle Post
+        if ('POST' === $this->method) {
+            if (!empty($request['import'])) {
+                foreach ($request['import'] as $file => $_) {
+                    // Ensure submitted path is within the list fetched above
+                    if (!isset($fileList[SITE.AssetManager::$uploadPath.$this->Tree->getRoot().$file])) {
+                        G::msg('Cannot import the specified file: '.htmlspecialchars($file), 'error');
+                        continue;
+                    }
+                    G::msg('Importing file: '.htmlspecialchars($file), 'error');
+                    /** @var Node $Node */
+                    $Node = G::build(Node::class);
+                    /** @var Asset $Asset */
+                    $Asset      = G::build(Asset::class);
+                    $Node->File = $Asset;
+                    $Asset->path = AssetManager::$uploadPath.$this->Tree->getRoot().$file;
+                    $Asset->type = $fileList[SITE.AssetManager::$uploadPath.$this->Tree->getRoot().$file];
+                    $result = $this->DB->insert($Asset);
+                    $Node->label = basename($file);
+                    $this->Tree->create(dirname($file).'/'.$Node->label, [
+                        'File'        => $Asset,
+                        'label'       => $Node->label,
+                        'creator_id'  => G::$S->Login->login_id ?? 0,
+                    ]);
+
+                    $Node = $this->Tree->setPath(dirname($file).'/'.$Node->label)->load()->getFirst();
+                    if (is_a($Node, Node::class)) {
+                        G::msg("The asset has been successfully created", 'success');
+                    }
+                }
+            }
+        }
+
+        // Prepare View
+        $data         = [];
+        foreach ($fileList as $file => $mimetype) {
+            $file = substr($file, strlen(SITE));
+            // Check whether we already have the file imported
+            /** @var Asset $Asset */
+            $Asset = $this->DB->fetch(Asset::class, ['path' => $file]);
+            $file  = substr($file, strlen(AssetManager::$uploadPath.$this->Tree->getRoot()));
+            $Nodes = [];
+            if (!empty($Asset)) {
+                $Asset = reset($Asset);
+                $Nodes = $this->Tree->descendants('', ['contentType' => 'Asset', 'content_id' => $Asset->asset_id])
+                                    ->get();
+            }
+            $data[] = ['path' => $file, 'Asset' => $Asset, 'Nodes' => $Nodes, 'mimetype' => $mimetype];
+        }
+
+        $this->View->fileList = $data;
     }
 }

@@ -12,6 +12,8 @@
 namespace Stationer\Pencil;
 
 
+use Stationer\Pencil\models\Asset;
+
 /**
  * AssetManager - For managing assets
  *
@@ -30,9 +32,17 @@ class AssetManager {
     const allowedTypes = [
         'application/pdf', 'application/postscript',
         'audio/basic', 'audio/mid', 'audio/mpeg', 'audio/x-aiff', 'audio/x-wav',
-        'image/png', 'image/gif', 'image/jpeg', 'image/svg+xml',
+        'image/png', 'image/gif', 'image/jpeg', 'image/svg+xml', 'image/vnd.microsoft.icon',
         'text/css', 'text/csv', 'text/html', 'text/plain', 'text/richtext', 'text/x-vcard',
         'video/mpeg', 'video/mp4', 'video/quicktime',
+    ];
+
+    const importExtentions = [
+        '.pdf', '.ps',
+        '.au', '.mid', '.mp3', '.aiff', '.wav',
+        '.png', '.gif', '.jpeg', '.svg', '.ico',
+        '.css', '.csv', '.html', '.txt',
+        '.mpeg', '.mp4', '.mov',
     ];
 
     public $error = '';
@@ -163,5 +173,20 @@ class AssetManager {
         $fileName = preg_replace('~[^-\w.]~', '-', $fileName);
 
         return $fileName;
+    }
+
+    public function scan($assetPath) {
+        exec('find '.SITE.self::$uploadPath.$assetPath, $fileList);
+
+        $result = [];
+        foreach ($fileList as $key => $file) {
+            // Make sure it's a regular file of a supported mimetime
+            $mimetype = mime_content_type($file);
+            if (is_file($file) && in_array($mimetype, self::allowedTypes)) {
+                $result[$file] = $mimetype;
+            }
+        }
+
+        return $result;
     }
 }

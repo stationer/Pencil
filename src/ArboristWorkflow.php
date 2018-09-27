@@ -654,6 +654,11 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
      * @return Node|bool
      */
     public function getByPath(string $path) {
+        // If the path starts with the root, assume it's an absolute path and make it relative
+        if (0 === strpos($path, $this->getRoot())) {
+            $path = substr($path, strlen($this->getRoot()));
+        }
+
         $result = $this->DB->fetch(Node::class, ['path' => '/'.trim($this->root.$path, '/')], [], 1);
         if (false !== $result && !empty($result)) {
             return array_pop($result);

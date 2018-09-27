@@ -56,6 +56,8 @@ class PaperWorkflow {
             case 'html':
                 $pagePath = str_replace($this->Tree->getRoot(), '', $Node->path);
                 $objects  = [
+                    'tree' => ['root' => $this->Tree->getRoot(),
+                               'uploads' => AssetManager::$uploadPath.$this->Tree->getRoot()],
                     'site' => array_merge($SiteNode->getAll(), $SiteNode->File->getAll(), ['path' => '/']),
                     'page' => array_merge($Node->getAll(), $Node->File->getAll(),
                         [

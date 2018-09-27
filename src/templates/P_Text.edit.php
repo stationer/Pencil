@@ -1,12 +1,25 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Node $Node */
+/** @var \Stationer\Pencil\models\Node[] $Nodes */
 echo $View->render('header');
 ?>
 <div class="container">
     <h1>Edit Text</h1>
 
     <form action="/P_Text/edit/<?php echo $Node->node_id; ?>" method="post">
+        <div class="form-group">
+            <label for="parentPath">Parent Path</label>
+            <select name="parentPath" id="parentPath" class="form-control">
+                <option value="">--- Select a Parent ---</option>
+                <?php foreach ($Nodes as $ParentNode) : ?>
+                    <option value="<?php echo $ParentNode->path; ?>" <?php
+                    echo $ParentNode->path == dirname($Node->path) ? 'selected' : '';
+                    ?>><?php echo $ParentNode->path; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
         <div class="form-group">
             <label for="label">Label</label>
             <input class="form-control" type="text" name="label" id="label" value="<?php echo $Node->label ?? ''; ?>">
