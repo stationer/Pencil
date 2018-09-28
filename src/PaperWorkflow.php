@@ -11,6 +11,8 @@
 
 namespace Stationer\Pencil;
 
+use const Stationer\Graphite\DATETIME_HTTP;
+use Stationer\Graphite\G;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\models\Page;
 use Stationer\Pencil\models\Site;
@@ -52,19 +54,21 @@ class PaperWorkflow {
         $SiteNode = $this->Tree->load('')->loadContent()->getFirst();
         /** @var Site $Site */
         $Site = $SiteNode->File;
+        $pagePath = str_replace($this->Tree->getRoot(), '', $Node->path);
+        $objects = [
+            'tree' => [
+                'root'    => $this->Tree->getRoot(),
+                'uploads' => AssetManager::$uploadPath.$this->Tree->getRoot(),
+            ],
+            'site' => array_merge($SiteNode->getAll(), $SiteNode->File->getAll(), ['path' => '/']),
+            'page' => array_merge($Node->getAll(), $Node->File->getAll(),
+                [
+                    'path'      => $pagePath,
+                    'bodyClass' => $this->pathClasses($pagePath),
+                ]),
+        ];
         switch ($mode) {
             case 'html':
-                $pagePath = str_replace($this->Tree->getRoot(), '', $Node->path);
-                $objects  = [
-                    'tree' => ['root' => $this->Tree->getRoot(),
-                               'uploads' => AssetManager::$uploadPath.$this->Tree->getRoot()],
-                    'site' => array_merge($SiteNode->getAll(), $SiteNode->File->getAll(), ['path' => '/']),
-                    'page' => array_merge($Node->getAll(), $Node->File->getAll(),
-                        [
-                            'path'      => $pagePath,
-                            'bodyClass' => $this->pathClasses($pagePath),
-                        ]),
-                ];
                 switch ($Node->contentType) {
                     case 'Page':
                         /** @var Page $Page */
@@ -111,16 +115,6 @@ class PaperWorkflow {
                             $objects['content'][$ContentNode->label] = $ContentNode->File->body;
                         }
                         $result = $Theme->document;
-                        do {
-                            $codes = $this->mergeCodes($result);
-                            foreach ($codes as $code) {
-                                if (!isset($objects[$code[1]][$code[2]])) {
-                                    trigger_error('Unresolvable merge code: '.$code[0]);
-                                    $objects[$code[1]][$code[2]] = '';
-                                }
-                                $result = str_replace($code[0], $objects[$code[1]][$code[2]], $result);
-                            }
-                        } while (!empty($codes));
                         break;
                     default:
                         break;
@@ -135,17 +129,32 @@ class PaperWorkflow {
                 if (isset($vars[$mode])) {
                     $types = [0 => $vars['mimeType'] ?? 'text/plain', 'css' => 'text/css'];
                     header('Content-Type: '.($types[$mode] ?? $types[0]));
-                    header('Content-Length: '.strlen($vars[$mode]));
-                    header('Last-Modified: '.gmdate('D, d M Y H:i:s', strtotime($vars['updated_dts'])).' GMT');
-                    header('Expires: '.date('D, d M Y H:i:s', NOW + 86400));
-                    header('Cache-Control: private');
 
-                    echo $vars[$mode];
+                    // This doesn't make it to the browser
+                    // header('Content-Length: '.strlen($vars[$mode]));
+                    header('Last-Modified: '.gmdate(DATETIME_HTTP, strtotime($vars['updated_dts'])));
+                    header('Expires: '.gmdate(DATETIME_HTTP, NOW + 86400));
+                    // This mysteriously causes the browser to not get the entire response.
+                    // header('Cache-Control: private');
+                    // This too.
+                    // header('Cache-Control: max-age=84600');
 
-                    exit;
+                    $result = $vars[$mode];
                 }
                 break;
         }
+
+        // Process merge codes
+        do {
+            $codes = $this->mergeCodes($result);
+            foreach ($codes as $code) {
+                if (!isset($objects[$code[1]][$code[2]])) {
+                    trigger_error('Unresolvable merge code: '.$code[0]);
+                    $objects[$code[1]][$code[2]] = '';
+                }
+                $result = str_replace($code[0], $objects[$code[1]][$code[2]], $result);
+            }
+        } while (!empty($codes));
 
         return $result;
     }
