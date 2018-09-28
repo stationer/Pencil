@@ -284,6 +284,7 @@ class ArboristWorkflow {
 
         return $this;
     }
+
     /**
      * Load Nodes containing the current path.
      *
@@ -551,6 +552,12 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
 
             return $this;
         }
+        if (1 < count($this->Nodes)) {
+            trigger_error('Cowardly refusing to move more than one Node.');
+            croak($this->Nodes);
+            return $this;
+        }
+
         foreach ($this->Nodes as $Child) {
             if (!is_a($Child, Node::class)) {
                 continue;
@@ -625,7 +632,7 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
      * @return Node[]
      */
     public function get(int $count = null) {
-        return array_slice($this->Nodes, 0, $count);
+        return array_slice($this->Nodes, 0, $count, true);
     }
 
     /**
@@ -791,5 +798,111 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
         }
 
         return $this;
+    }
+
+    /**
+     * WIP - not working
+     * Rebuild the tree's indexing and paths by touching every Node
+     *
+     * @param int $parent_id Node to start with
+     */
+    public function rebuild($parent_id = 1) {
+        if (1) {
+            return;
+        }
+        $token = sha1(uniqid());
+        $Nodes = $this->DB->fetch(Node::class, ['parent_id' => $parent_id], ['ordinal' => true, 'left_index' => true]);
+        foreach ($Nodes as $Node) {
+            $label = $Node->label;
+            $Node->label = $token;
+            $this->DB->save($Node);
+            $Node->label = $label;
+            $this->DB->save($Node);
+            $this->rebuild($Node->node_id);
+        }
+    }
+
+    /**
+     * WIP - not working
+     * Rebuild the tree's indexing and paths by touching every Node
+     *
+     * @return void
+     */
+    public function reindex() {
+        if (1) {
+            return;
+        }
+
+        // reset all indexes
+        $query = "UPDATE `".Node::getTable()."` SET path='', left_index=0, right_index=0";
+        G::$M->query($query);
+
+        $Node              = $this->DB->byPK(Node::class, 1);
+        $Node->left_index  = 1;
+        $index             = $this->reindex_sub($Node, 2);
+        $Node->right_index = $index;
+        if ($Node->getDiff()) {
+            $query = "UPDATE `".Node::getTable()."` SET"
+                ." `path` = '".G::$M->escape_string($Node->path)."'"
+                .",`left_index`=".$Node->left_index
+                .",`right_index`=".$Node->right_index
+                ." WHERE `node_id`=".$Node->node_id;
+            echo $query.';<br>';
+        }
+        croak(G::$M->getQueries());
+        exit;
+    }
+
+    /**
+     * WIP - not working
+     * Rebuild the tree's indexing and paths by touching every Node
+     *
+     * @param Node $ParentNode Node to work under
+     * @param int  $index      Current traversal index
+     *
+     * @return mixed|void
+     */
+    protected function reindex_sub($ParentNode, $index) {
+        if (1) {
+            return;
+        }
+
+        /** @var Node[] $Nodes */
+        $Nodes = $this->DB->fetch(Node::class, ['parent_id' => $ParentNode->node_id], ['ordinal' => true]);
+        foreach ($Nodes as $kid) {
+            $path        = $kid->path;
+            $left_index  = $kid->left_index;
+            $right_index = $kid->right_index;
+
+            $kid->path        = $ParentNode->path.'/'.$kid->label;
+            $kid->left_index  = $index++;
+            $index            = $this->reindex_sub($kid, $index);
+            $kid->right_index = $index++;
+
+            if ($kid->getDiff()) {
+                $query = [];
+                if ($path != $kid->path) {
+                    $query[] = " `path` = '".G::$M->escape_string($kid->path)."'";
+//                    echo $path.' -> '.$kid->path.'<br>';
+                }
+                if ($left_index != $kid->left_index) {
+                    $query[] = " `left_index` = '".G::$M->escape_string($kid->left_index)."'";
+//                    echo $left_index.' -> '.$kid->left_index.'<br>';
+                }
+                if ($right_index != $kid->right_index) {
+                    $query[] = " `right_index` = '".G::$M->escape_string($kid->right_index)."'";
+//                    echo $right_index.' -> '.$kid->right_index.'<br>';
+                }
+
+                $query = "UPDATE `".Node::getTable()."` SET"
+                    .implode(',', $query)
+                    ." WHERE `node_id`=".$kid->node_id;
+                echo $query.';<br>';
+                G::$M->query($query);
+            }
+        }
+        flush();
+
+        return $index;
     }
 }
