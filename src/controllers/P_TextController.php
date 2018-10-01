@@ -30,6 +30,9 @@ class P_TextController extends PencilController {
     /** @var string Default action */
     protected $action = 'list';
 
+    /** @var string The Node->contentType this Controller works on */
+    const CONTENT_TYPE = 'Text';
+
     /**
      * Controller constructor
      *
@@ -56,13 +59,12 @@ class P_TextController extends PencilController {
 
         if (isset($request['search'])) {
             // TODO: the search thing
-            $Texts = [];
+            $Nodes = [];
         } else {
-            $Texts = $this->Tree->descendants('', ['contentType' => 'Text'])->loadContent()->get();
+            $Nodes = $this->Tree->descendants('', ['contentType' => static::CONTENT_TYPE])->loadContent()->get();
         }
 
-        $this->View->Texts = $Texts;
-        $this->View->treeRoot = $this->Tree->getRoot();
+        $this->View->Texts    = $Nodes;
 
         return $this->View;
     }
@@ -91,13 +93,13 @@ class P_TextController extends PencilController {
             if (false !== $result) {
                 $Node->label = $request['label'] ?: $request['title'];
                 $this->Tree->create($request['parentPath'].'/'.$Node->label, [
-                    'File' => $Text,
-                    'label' => $Node->label,
-                    'creator_id' => G::$S->Login->login_id ?? 0,
-                    'published' => isset($request['published']),
+                    'File'        => $Text,
+                    'label'       => $Node->label,
+                    'creator_id'  => G::$S->Login->login_id ?? 0,
+                    'published'   => isset($request['published']),
                     'description' => $request['description'],
-                    'trashed' => isset($request['trashed']),
-                    'featured' => isset($request['featured']),
+                    'trashed'     => isset($request['trashed']),
+                    'featured'    => isset($request['featured']),
                     //'keywords' => $request['keywords']
                 ]);
 
@@ -116,9 +118,9 @@ class P_TextController extends PencilController {
 
         $Node->File($Text);
 
-        $Nodes = $this->Tree->subtree('')->get();
-        $this->View->Nodes = $Nodes;
-        $this->View->Node = $Node;
+        $Nodes                  = $this->Tree->subtree('')->get();
+        $this->View->Nodes      = $Nodes;
+        $this->View->Node       = $Node;
         $this->View->parentPath = $request['parentPath'] ?? $this->Tree->getRoot();
 
         return $this->View;
@@ -138,38 +140,19 @@ class P_TextController extends PencilController {
         }
 
         // Load the existing node
-        $Node = $this->Tree->loadID($argv[1])->loadContent()->getFirst();
+        $Node = $this->getNode($argv[1]);
+        // If we didn't get the Node, show error and delegate to do_list
+        if (empty($Node)) {
+            G::msg('Requested '.static::CONTENT_TYPE.' not found: '.$argv[1], 'error');
+            $this->_redirect('/P_Text/list');
+        }
 
         if ('POST' === $this->method) {
-            // Set Node values and save
-            $Node->label       = $request['label'];
-            $Node->published   = $request['published'] ?? 0;
-            $Node->trashed     = $request['trashed'] ?? 0;
-            $Node->featured    = $request['featured'] ?? 0;
-            //$Node->keywords    = $request['keywords'];
-            $Node->description = $request['description'];
-            // Adjust parent
-            if ($request['parentPath'] != dirname($Node->path)) {
-                $this->Tree->move($request['parentPath']);
-            }
-
-            $result  = $this->DB->save($Node);
-
-            /** @var Text $Text */
-            $Text = $Node->File;
-            $Text->mimeType = $request['mimeType'];
-            $Text->body  = $request['body'];
-
-            // Save and set the Text
-            $result2 = $this->DB->save($Text);
-            $Node->File($Text);
-
-            // If saved successfully alert the user
-            if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
-                G::msg('The changes to this Text have been successfully saved.', 'success');
-            }
+            $result = $this->updateNode($Node, $request);
+            $this->resultMessage($result);
         }
-        $Nodes                = $this->Tree->subtree('')->get();
+
+        $Nodes             = $this->Tree->subtree('')->get();
         $this->View->Nodes = $Nodes;
 
         $this->View->Node = $Node;

@@ -13,6 +13,7 @@ echo $View->render('header');
                     <th>Label</th>
                 </tr>
                 </thead>
+            <?php if(!empty($Navigations)): ?>
             <?php foreach($Navigations as $Nav): ?>
                 <tr>
                     <td>
@@ -22,6 +23,7 @@ echo $View->render('header');
                     </td>
                 </tr>
             <?php endforeach; ?>
+            <?php endif; ?>
             </table>
         </div>
     </div>

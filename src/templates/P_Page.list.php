@@ -1,6 +1,7 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Page[] $Pages */
+/** @var string $treeRoot */
 
 echo $View->render('header');
 ?>
@@ -13,13 +14,14 @@ echo $View->render('header');
             <tr>
                 <th><input type="checkbox" name="input[]" id="input[]" title="" /></th>
                 <th>Title</th>
+                <th>Path</th>
                 <th>Visibility</th>
                 <th>Date</th>
                 <th>Quick Options</th>
             </tr>
             </thead>
             <tbody>
-            <?php foreach($Pages['Public'] as $Page) : ?>
+            <?php foreach($Pages as $Page) : ?>
                 <tr>
                     <td><input type="checkbox" name="input[]" id="input[]" title="" /></td>
                     <td>
@@ -27,6 +29,7 @@ echo $View->render('header');
                             <?php echo $Page->File->title ?: 'No Title'; ?>
                         </a>
                     </td>
+                    <td><?= substr($Page->path, strlen($treeRoot)) ?></td>
                     <td><?php echo $Page->published ? 'Public' : 'Private'; ?></td>
                     <td><?php echo date('F j, Y g:i a', $Page->created_uts); ?></td>
                 </tr>

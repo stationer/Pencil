@@ -18,6 +18,7 @@ use Stationer\Pencil\models\Node;
 use Stationer\Pencil\models\Tag;
 use Stationer\Pencil\reports\AncestorsByPathReport;
 use Stationer\Pencil\reports\DescendantsByPathReport;
+use Stationer\Pencil\reports\NodeReport;
 
 /**
  * ArboristWorkflow - A workflow for handling trees
@@ -34,6 +35,8 @@ class ArboristWorkflow {
     protected $root = '';
     /** @var string */
     protected $path = '/';
+    /** @var Node */
+    protected $RootNode = null;
     /** @var Node[] */
     protected $Nodes = [];
     /** @var array [path => node_id] */
@@ -60,6 +63,10 @@ class ArboristWorkflow {
     public function setRoot(string $path) {
         $this->root  = Node::cleanPath($path);
         $this->Nodes = [];
+        $result = $this->DB->fetch(Node::class, ['path' => $this->root]);
+        if (!empty($result)) {
+            $this->RootNode = reset($result);
+        }
 
         return $this;
     }
@@ -134,6 +141,28 @@ class ArboristWorkflow {
         $this->path                   = $Node->path;
         $this->pathCache[$Node->path] = $Node->node_id;
         $this->Nodes                  = [$Node];
+
+        return $this;
+    }
+
+    /**
+     * Load a node by ID, set it as current Node
+     *
+     * @param array $filters Search Parameters
+     *
+     * @return $this
+     */
+    public function search(array $filters) {
+        if (!$this->RootNode) {
+            return $this;
+        }
+
+        $filters['min_left'] = $this->RootNode->left_index;
+        $filters['max_right'] = $this->RootNode->right_index;
+        /** @var Node[] $Nodes */
+        $Nodes = $this->DB->fetch(NodeReport::class, $filters);
+
+        $this->Nodes = $Nodes;
 
         return $this;
     }

@@ -31,6 +31,9 @@ class P_NavigationController extends PencilController {
     /** @var string Default action */
     protected $action = 'list';
 
+    /** @var string The Node->contentType this Controller works on */
+    const CONTENT_TYPE = 'Navigation';
+
     /**
      * Controller constructor
      *
@@ -115,26 +118,21 @@ class P_NavigationController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Node = $this->Tree->loadID($argv[1])
-            ->loadContent()
-            ->getFirst();
+        // Get the Page's Node, with the Page record
+        $Node = $this->getNode($argv[1]);
+
+        // If we didn't get the Node, show error and delegate to do_list
+        if (empty($Node)) {
+            G::msg('Requested '.static::CONTENT_TYPE.' not found: '.$argv[1], 'error');
+            $this->_redirect('/P_Navigation/list');
+        }
 
         if ('POST' === $this->method) {
-            $Node->setAll($request, true);
-            $Navigation = $Node->File;
-            $Navigation->setAll($request, true);
             $NW = G::build(NavigationWorkflow::class);
-            $Navigation->rendered = $NW->render($request['source']);
-            $Node->File($Navigation);
+            $request['rendered'] = $NW->render($request['source']);
 
-            $result1 = $this->DB->save($Node);
-            $result2 = $this->DB->save($Navigation);
-
-            if (false !== $result1 && false !== $result2) {
-                G::msg("The navigation has been successfully updated.", 'success');
-            } else {
-                G::msg("There was a problem updating this navigation.", 'error');
-            }
+            $result = $this->updateNode($Node, $request);
+            $this->resultMessage($result);
         }
 
         $this->View->Node = $Node;

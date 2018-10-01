@@ -3,12 +3,26 @@
 /** @var \Stationer\Pencil\models\Node $Node */
 /** @var \Stationer\Pencil\models\Page $Page */
 /** @var \Stationer\Pencil\models\Template[] $Templates */
+/** @var \Stationer\Pencil\models\Node[] $Nodes */
+
 echo $View->render('header');
 ?>
 <div class="container">
     <h1 class="page-title">Add Page</h1>
 
     <form action="/P_Page/add/" method="post">
+        <?php /*<div class="form-group">
+            <label for="parentPath">Parent Path</label>
+            <select name="parentPath" id="parentPath" class="form-control">
+                <option value="">--- Select a Parent ---</option>
+                <?php foreach ($Nodes as $ParentNode) : ?>
+                    <option value="<?php echo $ParentNode->path; ?>" <?php
+                    echo $ParentNode->path == dirname($Node->path) ? 'selected' : '';
+                    ?>><?php echo $ParentNode->path; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div> */ ?>
+
         <div class="form-group">
             <label for="title">Title</label>
             <input type="text" name="title" id="title" class="form-control"
@@ -60,7 +74,7 @@ echo $View->render('header');
 
         <div class="form-group">
             <label for="body">Page Body / Content Map</label>
-            <textarea class="form-control wysiwyg" name="body" id="body"><?php echo $Page->File->body; ?></textarea>
+            <textarea class="form-control wysiwyg" name="body" id="body"><?php echo $Node->File->body; ?></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Add Page</button>

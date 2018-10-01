@@ -32,6 +32,9 @@ class P_PageController extends PencilController {
     /** @var string Default action */
     protected $action = 'list';
 
+    /** @var string The Node->contentType this Controller works on */
+    const CONTENT_TYPE = 'Page';
+
     /**
      * Controller constructor
      *
@@ -56,11 +59,14 @@ class P_PageController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Pages['Public']  = $this->Tree->children(self::WEBROOT, ['contentType' => 'Page'])->loadContent()->get();
-        $Pages['Landing'] = $this->Tree->children(self::LANDING, ['contentType' => 'Page'])->loadContent()->get();
-        $Pages['Error']   = $this->Tree->children(self::ERROR,   ['contentType' => 'Page'])->loadContent()->get();
+        if (isset($request['search'])) {
+            // TODO: the search thing
+            $Nodes = [];
+        } else {
+            $Nodes = $this->Tree->descendants('', ['contentType' => static::CONTENT_TYPE])->loadContent()->get();
+        }
 
-        $this->View->Pages = $Pages;
+        $this->View->Pages = $Nodes;
 
         return $this->View;
     }
@@ -94,7 +100,7 @@ class P_PageController extends PencilController {
 
             if (false !== $result) {
                 $Node->label = $request['label'] ?: $request['title'];
-                $this->Tree->create(PencilController::WEBROOT.'/'.$Node->label, [
+                $this->Tree->create(PencilController::LANDING.'/'.$Node->label, [
                     'File' => $Page,
                     'label' => $Node->label,
                     'creator_id' => G::$S->Login->login_id ?? 0,
@@ -105,7 +111,7 @@ class P_PageController extends PencilController {
                     'keywords' => $request['keywords']
                 ]);
 
-                $Node = $this->Tree->setPath(PencilController::WEBROOT.'/'.$Node->label)->load()->getFirst();
+                $Node = $this->Tree->setPath(PencilController::LANDING.'/'.$Node->label)->load()->getFirst();
                 if (is_a($Node, Node::class)) {
                     G::msg("The page has been successfully created", 'success');
                     $this->_redirect('/P_Page/edit/'.$Node->node_id);
@@ -115,6 +121,9 @@ class P_PageController extends PencilController {
             G::msg("There was a problem creating this page.", 'error');
         }
 
+//        $Nodes                  = $this->Tree->subtree('', ['contentType' => ['', static::CONTENT_TYPE]])->get();
+//        $this->View->Nodes      = $Nodes;
+//        $this->View->parentPath = $request['parentPath'] ?? parent::WEBROOT;
         $this->View->Templates = $Templates;
         $this->View->Page = $Page;
         $this->View->Node = $Node;
@@ -136,13 +145,16 @@ class P_PageController extends PencilController {
             return parent::do_403($argv);
         }
 
-        //$Node = $this->Tree->loadID($argv[1])->getFirst();
         // Get the Page's Node, with the Page record
-        $Node = $this->Tree->descendants('', [
-            'contentType' => 'Page',
-            'node_id' => $argv[1],
-        ])->loadContent()->getFirst();
+        $Node = $this->getNode($argv[1]);
 
+        // If we didn't get the Node, show error and delegate to do_list
+        if (empty($Node)) {
+            G::msg('Requested '.static::CONTENT_TYPE.' not found: '.$argv[1], 'error');
+            $this->_redirect('/P_Page/list');
+        }
+
+        // Get associated data required for editing
         // Get the list of Template Nodes, without the Templates
         $Templates = $this->Tree->descendants(PencilController::TEMPLATES, [
             'contentType' => 'Template',
@@ -155,15 +167,12 @@ class P_PageController extends PencilController {
         $contentLabels = $TemplateNode->File->getContentLabels();
         $ContentNodes  = $this->getContentNodes($Node->path, $contentLabels);
 
-        if ('POST' === $this->method) {
-            $Node->label       = $request['node_label'];
-            $Node->published   = $request['published'] ?? 0;
-            $Node->trashed     = $request['trashed'] ?? 0;
-            $Node->featured    = $request['featured'] ?? 0;
-            $Node->keywords    = $request['keywords'];
-            $Node->description = $request['description'];
-            $result  = $this->DB->save($Node);
+        if (!isset($Templates[$request['template_id'] ?? null])) {
+            unset($request['template_id']);
+        }
 
+        if ('POST' === $this->method) {
+            // Special for Pages, update the Text Nodes under it
             foreach ($contentLabels as $label) {
                 if (isset($request['content'][$label])) {
                     $Text = &$ContentNodes[$Node->path.'/'.$label]->File;
@@ -171,20 +180,14 @@ class P_PageController extends PencilController {
                     $this->DB->save($Text);
                 }
             }
-            $Page->title = $request['title'];
-            if (isset($Templates[$request['template_id'] ?? null])) {
-                $Page->template_id = $request['template_id'];
-            }
-            $result2 = $this->DB->save($Page);
-            $Node->File = $Page;
 
-            if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
-                G::msg('The changes to this page have been successfully saved.', 'success');
-            } else {
-                G::msg('There was a problem saving your page.', 'error');
-            }
+            $result = $this->updateNode($Node, $request);
+            $this->resultMessage($result);
         }
 
+        // TODO resolve mysqli::escape_string() expects parameter 1 to be string, array given
+        $Nodes = $this->Tree->subtree('', ['contentType' => ['', static::CONTENT_TYPE]])->get();
+        $this->View->Nodes = $Nodes;
         $this->View->ContentNodes = $ContentNodes;
         $this->View->contentLabels = $contentLabels;
         $this->View->Templates = $Templates;

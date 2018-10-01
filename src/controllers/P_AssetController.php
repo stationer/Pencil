@@ -31,6 +31,9 @@ class P_AssetController extends PencilController {
     /** @var string Default action */
     protected $action = 'list';
 
+    /** @var string The Node->contentType this Controller works on */
+    const CONTENT_TYPE = 'Asset';
+
     /**
      * Controller constructor
      *
@@ -58,7 +61,6 @@ class P_AssetController extends PencilController {
         $Assets = $this->Tree->descendants(self::ASSETS, ['contentType' => 'Asset'])->loadContent()->get();
 
         $this->View->Assets = $Assets;
-        $this->View->treeRoot = $this->Tree->getRoot();
 
         return $this->View;
     }
@@ -136,28 +138,15 @@ class P_AssetController extends PencilController {
             /** @var AssetManager $AssetManager */
             $AssetManager = G::build(AssetManager::class);
             $assetPath    = $AssetManager->upload($_FILES['upload'], $assetPath);
-
             $error = $AssetManager->error;
             if (!empty($error)) {
                 G::msg($error, 'error');
             }
-
             $request['path'] = $assetPath;
             $request['type'] = $_FILES['upload']['type'];
 
-            $Node->setAll($request, true);
-            $Asset = $Node->File;
-            $Asset->setAll($request, true);
-            $Node->File($Asset);
-
-            $result1 = $this->DB->save($Node);
-            $result2 = $this->DB->save($Asset);
-
-            if (false !== $result1 && false !== $result2) {
-                G::msg("The asset has been successfully updated.", 'success');
-            } else {
-                G::msg("There was a problem updating this asset.", 'error');
-            }
+            $result = $this->updateNode($Node, $request);
+            $this->resultMessage($result);
         }
 
         $this->View->Node = $Node;

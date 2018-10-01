@@ -30,6 +30,9 @@ class P_BlogController extends PencilController {
     /** @var string Default action */
     protected $action = 'list';
 
+    /** @var string The Node->contentType this Controller works on */
+    const CONTENT_TYPE = 'Article';
+
     /**
      * Controller constructor
      *
@@ -138,37 +141,22 @@ class P_BlogController extends PencilController {
         }
 
         // Load the existing node
-        $Node = $this->Tree->loadID($argv[1])->loadContent()->getFirst();
+        $Node = $this->getNode($argv[1]);
+        // If we didn't get the Node, show error and delegate to do_list
+        if (empty($Node)) {
+            G::msg('Requested '.static::CONTENT_TYPE.' not found: '.$argv[1], 'error');
+            $this->_redirect('/P_Blog/list');
+        }
 
         if ('POST' === $this->method) {
-            // Set Node values and save
-            $Node->label       = $request['label'];
-            $Node->published   = $request['published'] ?? 0;
-            $Node->trashed     = $request['trashed'] ?? 0;
-            $Node->featured    = $request['featured'] ?? 0;
-            $Node->keywords    = $request['keywords'];
-            $Node->description = $request['description'];
-            $result  = $this->DB->save($Node);
-
             /** @var Article $Article */
             $Article = $Node->File;
-            $Article->title = $request['title'];
-            $Article->body  = $request['body'];
-            $Article->author_id = G::$S->Login->login_id;
-
-            // If a article is marked as published and doesn't have a released date set it
-            if ('on' == $request['published'] && $Article->released_uts != null) {
-                $Article->release_uts = NOW;
+            // If a article is marked as published and doesn't have a released date, set it
+            if (isset($request['published']) && $Article->release_uts != null) {
+                $request['release_uts'] = NOW;
             }
-
-            // Save and set the article
-            $result2 = $this->DB->save($Article);
-            $Node->File($Article);
-
-            // If saved successfully alert the user
-            if (in_array($result, [null, true]) && in_array($result2, [null, true])) {
-                G::msg('The changes to this article have been successfully saved.', 'success');
-            }
+            $result = $this->updateNode($Node, $request);
+            $this->resultMessage($result);
         }
 
         $this->View->Node = $Node;

@@ -88,6 +88,7 @@ class P_RenderController extends PencilController {
         $result = $Paper->render($Node, $mode);
 
         echo $result;
+        G::close();
         die;
     }
 
@@ -109,6 +110,7 @@ class P_RenderController extends PencilController {
         $result = $Paper->render($Node);
 
         echo $result;
+        G::close();
         die;
     }
     /**
@@ -129,6 +131,7 @@ class P_RenderController extends PencilController {
         $result = $Paper->render($Node);
 
         echo $result;
+        G::close();
         die;
     }
 }

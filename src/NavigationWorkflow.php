@@ -35,7 +35,7 @@ class NavigationWorkflow {
 
         $html = '';
 
-        if ($data->links) {
+        if (!empty($data->links)) {
             $links = $data->links;
             $html  = $this->renderLinks($links);
         }

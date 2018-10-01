@@ -22,6 +22,8 @@ use Stationer\Graphite\data\PassiveRecord;
  * @property int    $article_id
  * @property string $created_uts
  * @property int    $updated_dts
+ * @property int    $release_uts
+ * @property int    $author_id
  * @property string $title
  * @property string $body
  */

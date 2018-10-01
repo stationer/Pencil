@@ -28,6 +28,9 @@ class P_FormController extends PencilController {
     /** @var string Default action */
     protected $action = 'list';
 
+    /** @var string The Node->contentType this Controller works on */
+    const CONTENT_TYPE = 'Form';
+
     /**
      * Controller constructor
      *

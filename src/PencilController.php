@@ -15,6 +15,7 @@ use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\Controller;
 use Stationer\Graphite\data\IDataProvider;
+use Stationer\Pencil\models\Node;
 
 /**
  * Class P_ThemeController
@@ -58,6 +59,12 @@ abstract class PencilController extends Controller {
     public function __construct(array $argv = [], IDataProvider $DB = null, View $View = null) {
         parent::__construct($argv, $DB, $View);
 
+        // Set the default root path to the current site.
+        $root = '/sites/'.$_SERVER['SERVER_NAME'];
+        $this->Tree = G::build(ArboristWorkflow::class, $this->DB);
+        $this->Tree->setRoot('')->create($root)->setRoot($root)->setPath('');
+        $this->Website = G::build(WebsiteWorkflow::class, $this->Tree, $this->DB);
+
         $this->View->setTemplate('header', 'Pencil._header.php');
         $this->View->setTemplate('footer', 'Pencil._footer.php');
         $this->View->setTemplate('debug', 'footer.debug.php');
@@ -67,10 +74,44 @@ abstract class PencilController extends Controller {
         $this->View->_script('https://cdn.quilljs.com/1.0.0/quill.js');
         $this->View->_script(str_replace(SITE, '', __DIR__.'/js/Nib.js'));
 
-        $this->Tree = G::build(ArboristWorkflow::class);
-        // Set the default root path to the current site.
-        $root = '/sites/'.$_SERVER['SERVER_NAME'];
-        $this->Tree->setRoot('')->create($root)->setRoot($root)->setPath('');
-        $this->Website = G::build(WebsiteWorkflow::class, $this->Tree, $this->DB);
+        $this->View->treeRoot = $this->Tree->getRoot();
+    }
+
+    public function getNode($node_id) {
+        return $this->Tree->search([
+            'contentType' => static::CONTENT_TYPE,
+            'node_id'     => $node_id
+        ])->loadContent()->getFirst();
+    }
+
+    public function updateNode(Node $Node, array $request) {
+        // Set the checkbox values according to whether they were checked
+        $request['published'] = !empty($request['published']);
+        $request['trashed']   = !empty($request['trashed']);
+        $request['featured']  = !empty($request['featured']);
+        // Accept and Save changes to Node
+        $Node->setAll($request, true);
+        $result = $this->DB->save($Node);
+
+        // If we got a new parent path, move the Node
+        if (isset($request['parentPath']) && $request['parentPath'] != dirname($Node->path)) {
+            $this->Tree->setPath($Node->path)->move($request['parentPath']);
+        }
+
+        $File = $Node->File;
+        $File->setAll($request, true);
+        $result2    = $this->DB->save($File);
+        $Node->File = $File;
+
+        // Return success if both saves were successful.
+        return (in_array($result, [null, true]) && in_array($result2, [null, true]));
+    }
+
+    public function resultMessage($result) {
+        if ($result) {
+            G::msg('The changes to this '.static::CONTENT_TYPE.' have been successfully saved.', 'success');
+        } else {
+            G::msg('There was a problem saving your '.static::CONTENT_TYPE.'.', 'error');
+        }
     }
 }
