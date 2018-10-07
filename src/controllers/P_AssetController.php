@@ -79,43 +79,28 @@ class P_AssetController extends PencilController {
         }
 
         /** @var Node $Node */
-        $Node = G::build(Node::class);
-        /** @var Asset $Asset */
-        $Asset      = G::build(Asset::class);
-        $Node->File = $Asset;
+        $Node       = G::build(Node::class);
+        $Node->File = G::build(Asset::class);;
 
         if ('POST' === $this->method && isset($_FILES['upload'])) {
             $assetPath = $this->Tree->setPath(PencilController::ASSETS)->getFullPath();
             /** @var AssetManager $AssetManager */
-            $AssetManager = G::build(AssetManager::class);
-            $assetPath    = $AssetManager->upload($_FILES['upload'], $assetPath);
-            $Asset->path  = $assetPath;
-            $Asset->type  = $_FILES['upload']['type'];
+            $AssetManager    = G::build(AssetManager::class);
+            $assetPath       = $AssetManager->upload($_FILES['upload'], $assetPath);
+            $request['path'] = $assetPath;
+            $request['type'] = $_FILES['upload']['type'];
+
             // Only attempt the save if we got an assetPath
             if (false === $assetPath) {
                 $error = $AssetManager->error ?: 'Upload not detected.  Please select a file.';
                 G::msg($error, 'error');
-                $result = false;
             } else {
-                $result = $this->DB->insert($Asset);
-            }
-            if (false !== $result) {
-                $Node->label = $request['label'] ?: basename($assetPath);
-                G::msg($Node->label);
-                $this->Tree->create(PencilController::ASSETS.'/'.$Node->label, [
-                    'File'        => $Asset,
-                    'label'       => $Node->label,
-                    'creator_id'  => G::$S->Login->login_id ?? 0,
-                    'published'   => isset($request['published']),
-                    'description' => $request['description'],
-                    'trashed'     => isset($request['trashed']),
-                    'featured'    => isset($request['featured']),
-                    'keywords'    => $request['keywords'],
-                ]);
-
-                $Node = $this->Tree->setPath(PencilController::ASSETS.'/'.$Node->label)->load()->getFirst();
-                if (is_a($Node, Node::class)) {
-                    G::msg("The asset has been successfully created", 'success');
+                $request['label']      = $request['label'] ?: basename($assetPath);
+                $request['parentPath'] = PencilController::ASSETS;
+                $Node                  = $this->insertNode($request, $Node->File);
+                $result                = is_a($Node, Node::class);
+                $this->resultMessage($result);
+                if ($result) {
                     $this->_redirect('/P_Asset/edit/'.$Node->node_id);
                 }
             }
@@ -138,7 +123,7 @@ class P_AssetController extends PencilController {
             /** @var AssetManager $AssetManager */
             $AssetManager = G::build(AssetManager::class);
             $assetPath    = $AssetManager->upload($_FILES['upload'], $assetPath);
-            $error = $AssetManager->error;
+            $error        = $AssetManager->error;
             if (!empty($error)) {
                 G::msg($error, 'error');
             }
@@ -170,7 +155,7 @@ class P_AssetController extends PencilController {
         /** @var AssetManager $AssetManager */
         $AssetManager = G::build(AssetManager::class);
         // Get permissible files list
-        $fileList     = $AssetManager->scan($assetPath);
+        $fileList = $AssetManager->scan($assetPath);
         // Handle Post
         if ('POST' === $this->method) {
             if (!empty($request['import'])) {
@@ -184,16 +169,16 @@ class P_AssetController extends PencilController {
                     /** @var Node $Node */
                     $Node = G::build(Node::class);
                     /** @var Asset $Asset */
-                    $Asset      = G::build(Asset::class);
-                    $Node->File = $Asset;
+                    $Asset       = G::build(Asset::class);
+                    $Node->File  = $Asset;
                     $Asset->path = AssetManager::$uploadPath.$this->Tree->getRoot().$file;
                     $Asset->type = $fileList[SITE.AssetManager::$uploadPath.$this->Tree->getRoot().$file];
-                    $result = $this->DB->insert($Asset);
+                    $result      = $this->DB->insert($Asset);
                     $Node->label = basename($file);
                     $this->Tree->create(dirname($file).'/'.$Node->label, [
-                        'File'        => $Asset,
-                        'label'       => $Node->label,
-                        'creator_id'  => G::$S->Login->login_id ?? 0,
+                        'File'       => $Asset,
+                        'label'      => $Node->label,
+                        'creator_id' => G::$S->Login->login_id ?? 0,
                     ]);
 
                     $Node = $this->Tree->setPath(dirname($file).'/'.$Node->label)->load()->getFirst();
@@ -205,7 +190,7 @@ class P_AssetController extends PencilController {
         }
 
         // Prepare View
-        $data         = [];
+        $data = [];
         foreach ($fileList as $file => $mimetype) {
             $file = substr($file, strlen(SITE));
             // Check whether we already have the file imported

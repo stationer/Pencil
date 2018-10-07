@@ -1,9 +1,10 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Node $Node */
-/** @var \Stationer\Pencil\models\Page $Page */
 /** @var \Stationer\Pencil\models\Template[] $Templates */
 /** @var \Stationer\Pencil\models\Node[] $Nodes */
+/** @var \Stationer\Pencil\models\Page $Page */
+$Page = $Node->File;
 
 echo $View->render('header');
 ?>
@@ -70,11 +71,6 @@ echo $View->render('header');
         <div class="form-group">
             <label for="trashed">Trashed</label>
             <input type="checkbox" name="trashed" id="trashed" <?php echo $Node->trashed ? 'checked="checked"': ''; ?>>
-        </div>
-
-        <div class="form-group">
-            <label for="body">Page Body / Content Map</label>
-            <textarea class="form-control wysiwyg" name="body" id="body"><?php echo $Node->File->body; ?></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Add Page</button>

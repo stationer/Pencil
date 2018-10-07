@@ -79,32 +79,17 @@ class P_NavigationController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Node = G::build(Node::class);
-        $Navigation = G::build(Navigation::class);
-        $Node->File = $Navigation;
+        $Node       = G::build(Node::class);
+        $Node->File = G::build(Navigation::class);
 
         if ('POST' === $this->method) {
-            $Navigation->source = $request['source'];
-            $Navigation->rendered = G::build(NavigationWorkflow::class)->render($Navigation->source);
-            $result = $this->DB->insert($Navigation);
-            if (false !== $result) {
-                $Node->label = $request['label'] ?? '';
-                $this->Tree->create(PencilController::NAVIGATION.'/'.$Node->label, [
-                    'File' => $Navigation,
-                    'label' => $Node->label,
-                    'creator_id' => G::$S->Login->login_id ?? 0,
-                    'published' => isset($request['published']),
-                    'description' => $request['description'],
-                    'trashed' => isset($request['trashed']),
-                    'featured' => isset($request['featured']),
-                    'keywords' => $request['keywords']
-                ]);
-
-                $Node = $this->Tree->setPath(PencilController::NAVIGATION.'/'.$Node->label)->load()->getFirst();
-                if (is_a($Node, Node::class)) {
-                    G::msg("The navigation has been successfully created", 'success');
-                    $this->_redirect('/P_Navigation/edit/'.$Node->node_id);
-                }
+            $request['rendered']   = G::build(NavigationWorkflow::class)->render($request['source']);
+            $request['parentPath'] = PencilController::NAVIGATION;
+            $Node                  = $this->insertNode($request, $Node->File);
+            $result                = is_a($Node, Node::class);
+            $this->resultMessage($result);
+            if ($result) {
+                $this->_redirect('/P_Navigation/edit/'.$Node->node_id);
             }
         }
 
@@ -128,7 +113,7 @@ class P_NavigationController extends PencilController {
         }
 
         if ('POST' === $this->method) {
-            $NW = G::build(NavigationWorkflow::class);
+            $NW                  = G::build(NavigationWorkflow::class);
             $request['rendered'] = $NW->render($request['source']);
 
             $result = $this->updateNode($Node, $request);

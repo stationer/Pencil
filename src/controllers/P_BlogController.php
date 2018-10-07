@@ -82,46 +82,26 @@ class P_BlogController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Article = G::build(Article::class);
-        $Node = G::build(Node::class);
-        if ('POST' === $this->method) {
-            $Article->setAll($request);
-            $Article->author_id = G::$S->Login->login_id;
+        /** @var Node $Node */
+        $Node       = G::build(Node::class);
+        $Node->File = G::build(Article::class);
 
+        if ('POST' === $this->method) {
             // If it's been published set publish date
             if ('on' == $request['published']) {
-                $Article->release_uts = NOW;
+                $request['release_uts'] = NOW;
             }
-            $result = $this->DB->insert($Article);
+            $request['parentPath'] = PencilController::BLOG;
+            $request['label']      = $request['label'] ?: $request['title'];
 
-            // If article has been save successfully create the node
-            if (false !== $result) {
-                $Node->label = $request['label'] ?: $request['title'];
-                $this->Tree->create(PencilController::BLOG.'/'.$Node->label, [
-                    'File' => $Article,
-                    'label' => $Node->label,
-                    'creator_id' => G::$S->Login->login_id ?? 0,
-                    'published' => isset($request['published']),
-                    'description' => $request['description'],
-                    'trashed' => isset($request['trashed']),
-                    'featured' => isset($request['featured']),
-                    'keywords' => $request['keywords']
-                ]);
-
-                // Load the Node
-                $Node = $this->Tree->setPath(PencilController::BLOG.'/'.$Node->label)->load()->getFirst();
-
-                // Alert that it was successfully saved
-                if (is_a($Node, Node::class)) {
-                    G::msg('The changes to this post have been successfully saved.', 'success');
-                    $this->_redirect('/P_Blog/edit/'.$Node->node_id);
-                }
+            $Node   = $this->insertNode($request, $Node->File);
+            $result = is_a($Node, Node::class);
+            $this->resultMessage($result);
+            if ($result) {
+                $this->_redirect('/P_Blog/edit/'.$Node->node_id);
             }
-
-            G::msg('There was a problem saving your new post.', 'error');
         }
 
-        $Node->File($Article);
         $this->View->Node = $Node;
 
         return $this->View;

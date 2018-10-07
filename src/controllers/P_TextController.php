@@ -64,7 +64,7 @@ class P_TextController extends PencilController {
             $Nodes = $this->Tree->descendants('', ['contentType' => static::CONTENT_TYPE])->loadContent()->get();
         }
 
-        $this->View->Texts    = $Nodes;
+        $this->View->Texts = $Nodes;
 
         return $this->View;
     }
@@ -82,41 +82,18 @@ class P_TextController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Text = G::build(Text::class);
-        $Node = G::build(Node::class);
+        /** @var Node $Node */
+        $Node       = G::build(Node::class);
+        $Node->File = G::build(Text::class);
+
         if ('POST' === $this->method) {
-            $Text->setAll($request);
-
-            $result = $this->DB->insert($Text);
-
-            // If Text has been save successfully create the node
-            if (false !== $result) {
-                $Node->label = $request['label'] ?: $request['title'];
-                $this->Tree->create($request['parentPath'].'/'.$Node->label, [
-                    'File'        => $Text,
-                    'label'       => $Node->label,
-                    'creator_id'  => G::$S->Login->login_id ?? 0,
-                    'published'   => isset($request['published']),
-                    'description' => $request['description'],
-                    'trashed'     => isset($request['trashed']),
-                    'featured'    => isset($request['featured']),
-                    //'keywords' => $request['keywords']
-                ]);
-
-                // Load the Node
-                $Node = $this->Tree->setPath($request['parentPath'].'/'.$Node->label)->load()->getFirst();
-
-                // Alert that it was successfully saved
-                if (is_a($Node, Node::class)) {
-                    G::msg('The changes to this text have been successfully saved.', 'success');
-                    $this->_redirect('/P_Text/edit/'.$Node->node_id);
-                }
+            $Node   = $this->insertNode($request, $Node->File);
+            $result = is_a($Node, Node::class);
+            $this->resultMessage($result);
+            if ($result) {
+                $this->_redirect('/P_Text/edit/'.$Node->node_id);
             }
-
-            G::msg('There was a problem saving your new text.', 'error');
         }
-
-        $Node->File($Text);
 
         $Nodes                  = $this->Tree->subtree('')->get();
         $this->View->Nodes      = $Nodes;

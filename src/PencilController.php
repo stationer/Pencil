@@ -11,6 +11,7 @@
 
 namespace Stationer\Pencil;
 
+use Stationer\Graphite\data\PassiveRecord;
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\Controller;
@@ -75,6 +76,35 @@ abstract class PencilController extends Controller {
         $this->View->_script(str_replace(SITE, '', __DIR__.'/js/Nib.js'));
 
         $this->View->treeRoot = $this->Tree->getRoot();
+    }
+
+    public function insertNode(array $request, PassiveRecord $File) {
+        // Set the checkbox values according to whether they were checked
+        $request['published'] = !empty($request['published']);
+        $request['trashed']   = !empty($request['trashed']);
+        $request['featured']  = !empty($request['featured']);
+
+        // Sanitize the destination path
+        $request['label'] = Node::cleanLabel($request['label']);
+        $request['parentPath'] = Node::cleanPath($request['parentPath']);
+
+        // Create the new Node
+        $request['created_uts'] = NOW;
+        $request['creator_id']  = G::$S->Login->login_id ?? 0;
+        $Node = $this->Tree->create($request['parentPath'].'/'.$request['label'], $request)->getFirst();
+
+        // If we created a Node, insert the File, too!
+        if (is_a($Node, Node::class)) {
+            $File->setAll($request);
+            $result = $this->DB->insert($File);
+            if (false !== $result) {
+                $Node->File = $File;
+                // Finally, update the node to refer to the new file.
+                $this->DB->update($Node);
+                return $Node;
+            }
+        }
+        return false;
     }
 
     public function getNode($node_id) {

@@ -2,6 +2,7 @@
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Node $Node */
 /** @var \Stationer\Pencil\models\Theme $Theme */
+$Theme = $Node->File;
 echo $View->render('header');
 ?>
 <div class="container">

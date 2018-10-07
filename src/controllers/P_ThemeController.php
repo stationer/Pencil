@@ -77,35 +77,21 @@ class P_ThemeController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Theme = G::build(Theme::class);
-        $Node = G::build(Node::class);
+        /** @var Node $Node */
+        $Node       = G::build(Node::class);
+        $Node->File = G::build(Theme::class);
+
         if ('POST' === $this->method) {
-            $Theme->setAll($request);
-            $Theme->created_uts = strtotime('now');
-            $result = $this->DB->insert($Theme);
-
-            $Node->label = $request['label'];
-            if (false !== $result) {
-                $this->Tree->create(PencilController::THEMES.'/'.$Node->label, [
-                    'File' => $Theme,
-                    'creator_id' => G::$S->Login->login_id,
-                    'published' => isset($request['published']),
-                    'description' => $request['description'],
-                    'trashed' => isset($request['trashed']),
-                ]);
-
-                $Node = $this->Tree->getFirst();
-                if (is_a($Node, Node::class)) {
-                    G::msg("The theme has been successfully created", 'success');
-                    $this->_redirect('/P_Theme/edit/'.$Node->node_id);
-                }
+            $request['parentPath'] = PencilController::THEMES;
+            $Node                  = $this->insertNode($request, $Node->File);
+            $result                = is_a($Node, Node::class);
+            $this->resultMessage($result);
+            if ($result) {
+                $this->_redirect('/P_Theme/edit/'.$Node->node_id);
             }
-
-            G::msg("There was a problem creating this theme.", 'error');
         }
 
         $this->View->Node = $Node;
-        $this->View->Theme = $Theme;
 
         return $this->View;
     }

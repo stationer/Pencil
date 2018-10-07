@@ -1,7 +1,6 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Node $Node */
-/** @var \Stationer\Pencil\models\Article $Content */
 echo $View->render('header');
 ?>
 <div class="container">
@@ -35,7 +34,7 @@ echo $View->render('header');
 
         <div class="form-group">
             <label for="title">Title</label>
-            <input type="text" name="title" class="form-control"><?php echo $Node->File->title; ?>
+            <input type="text" name="title" id="title" class="form-control"><?php echo $Node->File->title; ?>
         </div>
 
         <div class="form-group">

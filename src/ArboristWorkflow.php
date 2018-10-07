@@ -441,8 +441,8 @@ class ArboristWorkflow {
                 $this->Nodes[] = false;
                 break;
             }
-            // Add the next Node to the collection
-            $this->Nodes[] = $Node;
+            // Add the last Node to the collection
+            $this->Nodes = [$Node];
             // Update the parent_id for the next insert
             $parent_id = $this->pathCache[$progress] = $Node->node_id;
         }

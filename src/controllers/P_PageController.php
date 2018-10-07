@@ -38,9 +38,9 @@ class P_PageController extends PencilController {
     /**
      * Controller constructor
      *
-     * @param array $argv Argument list passed from Dispatcher
-     * @param IDataProvider $DB DataProvider to use with Controller
-     * @param View $View Graphite View helper
+     * @param array         $argv Argument list passed from Dispatcher
+     * @param IDataProvider $DB   DataProvider to use with Controller
+     * @param View          $View Graphite View helper
      */
     public function __construct(array $argv = [], IDataProvider $DB = null, View $View = null) {
         parent::__construct($argv, $DB, $View);
@@ -49,7 +49,7 @@ class P_PageController extends PencilController {
     /**
      * Page for listing all pages
      *
-     * @param array $argv Argument list passed from Dispatcher
+     * @param array $argv    Argument list passed from Dispatcher
      * @param array $request Request_method-specific parameters
      *
      * @return View
@@ -74,7 +74,7 @@ class P_PageController extends PencilController {
     /**
      * Page for adding a new page
      *
-     * @param array $argv Argument list passed from Dispatcher
+     * @param array $argv    Argument list passed from Dispatcher
      * @param array $request Request_method-specific parameters
      *
      * @return View
@@ -84,50 +84,33 @@ class P_PageController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Page = G::build(Page::class);
-        $Node = G::build(Node::class);
+        /** @var Node $Node */
+        $Node       = G::build(Node::class);
+        $Node->File = G::build(Page::class);
+
         // Get the list of Template Nodes, without the Templates
         $Templates = $this->Tree->descendants(PencilController::TEMPLATES, [
             'contentType' => 'Template',
         ])->get();
 
         if ('POST' === $this->method) {
-            $Page->title = $request['title'];
-            if (isset($Templates[$request['template_id'] ?? null])) {
-                $Page->template_id = $request['template_id'];
+            // Page-specific sanitizing
+            if (!isset($Templates[$request['template_id']])) {
+                unset($request['template_id']);
             }
-            $result = $this->DB->insert($Page);
+            $request['parentPath'] = PencilController::LANDING;
+            $request['label']      = $request['label'] ?: $request['title'];
 
-            if (false !== $result) {
-                $Node->label = $request['label'] ?: $request['title'];
-                $this->Tree->create(PencilController::LANDING.'/'.$Node->label, [
-                    'File' => $Page,
-                    'label' => $Node->label,
-                    'creator_id' => G::$S->Login->login_id ?? 0,
-                    'published' => isset($request['published']),
-                    'description' => $request['description'],
-                    'trashed' => isset($request['trashed']),
-                    'featured' => isset($request['featured']),
-                    'keywords' => $request['keywords']
-                ]);
-
-                $Node = $this->Tree->setPath(PencilController::LANDING.'/'.$Node->label)->load()->getFirst();
-                if (is_a($Node, Node::class)) {
-                    G::msg("The page has been successfully created", 'success');
-                    $this->_redirect('/P_Page/edit/'.$Node->node_id);
-                }
+            $Node   = $this->insertNode($request, $Node->File);
+            $result = is_a($Node, Node::class);
+            $this->resultMessage($result);
+            if ($result) {
+                $this->_redirect('/P_Page/edit/'.$Node->node_id);
             }
-
-            G::msg("There was a problem creating this page.", 'error');
         }
 
-//        $Nodes                  = $this->Tree->subtree('', ['contentType' => ['', static::CONTENT_TYPE]])->get();
-//        $this->View->Nodes      = $Nodes;
-//        $this->View->parentPath = $request['parentPath'] ?? parent::WEBROOT;
         $this->View->Templates = $Templates;
-        $this->View->Page = $Page;
-        $this->View->Node = $Node;
-
+        $this->View->Node      = $Node;
 
         return $this->View;
     }
@@ -135,7 +118,7 @@ class P_PageController extends PencilController {
     /**
      * Page for editing a page
      *
-     * @param array $argv Argument list passed from Dispatcher
+     * @param array $argv    Argument list passed from Dispatcher
      * @param array $request Request_method-specific parameters
      *
      * @return View
@@ -162,7 +145,7 @@ class P_PageController extends PencilController {
 
         // Get the Page's Template to get a list of content requirements
         /** @var Page $Page */
-        $Page = $Node->File;
+        $Page          = $Node->File;
         $TemplateNode  = $this->Tree->loadID($Page->template_id)->loadContent()->getFirst();
         $contentLabels = $TemplateNode->File->getContentLabels();
         $ContentNodes  = $this->getContentNodes($Node->path, $contentLabels);
@@ -175,7 +158,7 @@ class P_PageController extends PencilController {
             // Special for Pages, update the Text Nodes under it
             foreach ($contentLabels as $label) {
                 if (isset($request['content'][$label])) {
-                    $Text = &$ContentNodes[$Node->path.'/'.$label]->File;
+                    $Text       = &$ContentNodes[$Node->path.'/'.$label]->File;
                     $Text->body = $request['content'][$label];
                     $this->DB->save($Text);
                 }
@@ -186,12 +169,12 @@ class P_PageController extends PencilController {
         }
 
         // TODO resolve mysqli::escape_string() expects parameter 1 to be string, array given
-        $Nodes = $this->Tree->subtree('', ['contentType' => ['', static::CONTENT_TYPE]])->get();
-        $this->View->Nodes = $Nodes;
-        $this->View->ContentNodes = $ContentNodes;
+        $Nodes                     = $this->Tree->subtree('', ['contentType' => ['', static::CONTENT_TYPE]])->get();
+        $this->View->Nodes         = $Nodes;
+        $this->View->ContentNodes  = $ContentNodes;
         $this->View->contentLabels = $contentLabels;
-        $this->View->Templates = $Templates;
-        $this->View->Page = $Node;
+        $this->View->Templates     = $Templates;
+        $this->View->Page          = $Node;
 
         return $this->View;
     }
