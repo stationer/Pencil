@@ -17,6 +17,7 @@ use Stationer\Pencil\models\Node;
 use Stationer\Pencil\models\Page;
 use Stationer\Pencil\models\Text;
 use Stationer\Pencil\PencilController;
+use Stationer\Pencil\PencilDashboardController;
 
 use Stationer\Graphite\data\IDataProvider;
 
@@ -28,7 +29,7 @@ use Stationer\Graphite\data\IDataProvider;
  * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
  * @link     https://github.com/stationer/Pencil
  */
-class P_PageController extends PencilController {
+class P_PageController extends PencilDashboardController {
     /** @var string Default action */
     protected $action = 'list';
 

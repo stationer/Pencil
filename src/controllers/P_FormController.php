@@ -14,7 +14,7 @@ namespace Stationer\Pencil\controllers;
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
-use Stationer\Pencil\PencilController;
+use Stationer\Pencil\PencilDashboardController;
 
 /**
  * Class P_FormController
@@ -24,7 +24,7 @@ use Stationer\Pencil\PencilController;
  * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
  * @link     https://github.com/stationer/Pencil
  */
-class P_FormController extends PencilController {
+class P_FormController extends PencilDashboardController {
     /** @var string Default action */
     protected $action = 'list';
 

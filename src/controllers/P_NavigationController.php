@@ -18,6 +18,7 @@ use Stationer\Pencil\models\Navigation;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\NavigationWorkflow;
 use Stationer\Pencil\PencilController;
+use Stationer\Pencil\PencilDashboardController;
 
 /**
  * Class P_NavigationController
@@ -27,7 +28,7 @@ use Stationer\Pencil\PencilController;
  * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
  * @link     https://github.com/stationer/Pencil
  */
-class P_NavigationController extends PencilController {
+class P_NavigationController extends PencilDashboardController {
     /** @var string Default action */
     protected $action = 'list';
 
@@ -58,9 +59,14 @@ class P_NavigationController extends PencilController {
             return parent::do_403($argv);
         }
 
-        // TODO support nested nav
-        $Navigations = $this->Tree->children(self::NAVIGATION, ['contentType' => 'Navigation'])->loadContent()->get();
-
+        if (isset($request['search'])) {
+            // TODO: the search thing
+            $Navigations = [];
+        } else {
+            // TODO support nested nav
+            $Navigations = $this->Tree->children(self::NAVIGATION, ['contentType' => 'Navigation'])->loadContent()
+                                                                                                   ->get();
+        }
         $this->View->Navigations = $Navigations;
 
         return $this->View;

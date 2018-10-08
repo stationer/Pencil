@@ -17,6 +17,7 @@ use Stationer\Graphite\data\IDataProvider;
 use Stationer\Pencil\models\Article;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\PencilController;
+use Stationer\Pencil\PencilDashboardController;
 
 /**
  * Class P_BlogController
@@ -26,7 +27,7 @@ use Stationer\Pencil\PencilController;
  * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
  * @link     https://github.com/stationer/Pencil
  */
-class P_BlogController extends PencilController {
+class P_BlogController extends PencilDashboardController {
     /** @var string Default action */
     protected $action = 'list';
 

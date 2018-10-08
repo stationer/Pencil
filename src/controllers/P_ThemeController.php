@@ -17,6 +17,7 @@ use Stationer\Graphite\data\IDataProvider;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\models\Theme;
 use Stationer\Pencil\PencilController;
+use Stationer\Pencil\PencilDashboardController;
 
 /**
  * Class P_ThemeController
@@ -26,7 +27,7 @@ use Stationer\Pencil\PencilController;
  * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
  * @link     https://github.com/stationer/Pencil
  */
-class P_ThemeController extends PencilController {
+class P_ThemeController extends PencilDashboardController {
     /** @var string Default action */
     protected $action = 'list';
 
@@ -57,7 +58,12 @@ class P_ThemeController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Themes = $this->Tree->children(self::THEMES, ['contentType' => 'Theme'])->loadContent()->get();
+        if (isset($request['search'])) {
+            // TODO: the search thing
+            $Themes = [];
+        } else {
+            $Themes = $this->Tree->children(self::THEMES, ['contentType' => 'Theme'])->loadContent()->get();
+        }
 
         $this->View->Nodes = $Themes;
 

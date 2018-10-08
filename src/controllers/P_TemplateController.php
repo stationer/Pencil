@@ -17,6 +17,7 @@ use Stationer\Graphite\data\IDataProvider;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\models\Template;
 use Stationer\Pencil\PencilController;
+use Stationer\Pencil\PencilDashboardController;
 
 /**
  * Class P_TemplateController
@@ -26,7 +27,7 @@ use Stationer\Pencil\PencilController;
  * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
  * @link     https://github.com/stationer/Pencil
  */
-class P_TemplateController extends PencilController {
+class P_TemplateController extends PencilDashboardController {
     /** @var string Default action */
     protected $action = 'list';
 
@@ -57,8 +58,12 @@ class P_TemplateController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Templates = $this->Tree->children(self::TEMPLATES, ['contentType' => 'Template'])->loadContent()->get();
-
+        if (isset($request['search'])) {
+            // TODO: the search thing
+            $Templates = [];
+        } else {
+            $Templates = $this->Tree->children(self::TEMPLATES, ['contentType' => 'Template'])->loadContent()->get();
+        }
         $this->View->Templates = $Templates;
 
         return $this->View;

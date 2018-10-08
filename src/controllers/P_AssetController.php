@@ -18,6 +18,7 @@ use Stationer\Pencil\AssetManager;
 use Stationer\Pencil\models\Asset;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\PencilController;
+use Stationer\Pencil\PencilDashboardController;
 
 /**
  * Class P_AssetController
@@ -27,7 +28,7 @@ use Stationer\Pencil\PencilController;
  * @license  MIT https://github.com/stationer/Pencil/blob/master/LICENSE
  * @link     https://github.com/stationer/Pencil
  */
-class P_AssetController extends PencilController {
+class P_AssetController extends PencilDashboardController {
     /** @var string Default action */
     protected $action = 'list';
 
@@ -58,7 +59,12 @@ class P_AssetController extends PencilController {
             return parent::do_403($argv);
         }
 
-        $Assets = $this->Tree->descendants(self::ASSETS, ['contentType' => 'Asset'])->loadContent()->get();
+        if (isset($request['search'])) {
+            // TODO: the search thing
+            $Assets = [];
+        } else {
+            $Assets = $this->Tree->descendants(self::ASSETS, ['contentType' => 'Asset'])->loadContent()->get();
+        }
 
         $this->View->Assets = $Assets;
 
@@ -173,7 +179,7 @@ class P_AssetController extends PencilController {
                     $Node->File  = $Asset;
                     $Asset->path = AssetManager::$uploadPath.$this->Tree->getRoot().$file;
                     $Asset->type = $fileList[SITE.AssetManager::$uploadPath.$this->Tree->getRoot().$file];
-                    $result      = $this->DB->insert($Asset);
+                    $this->DB->insert($Asset);
                     $Node->label = basename($file);
                     $this->Tree->create(dirname($file).'/'.$Node->label, [
                         'File'       => $Asset,
@@ -207,5 +213,7 @@ class P_AssetController extends PencilController {
         }
 
         $this->View->fileList = $data;
+
+        return $this->View;
     }
 }
