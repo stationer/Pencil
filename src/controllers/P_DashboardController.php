@@ -141,6 +141,25 @@ class P_DashboardController extends PencilController {
     }
 
     /**
+     * Invoke the tree rebuild
+     *
+     * @param array $argv    Argument list passed from Dispatcher
+     * @param array $request Request_method-specific parameters
+     *
+     * @return View
+     */
+    public function do_export(array $argv = [], array $request = []) {
+        if (!G::$S->roleTest($this->role)) {
+            return parent::do_403($argv);
+        }
+
+        $this->View->data = $this->Tree->getExport();
+        $this->View->_template = 'JSON.php';
+
+        return $this->View;
+    }
+
+    /**
      * Page for viewing fancy graphs ;-)
      *
      * @param array $argv    Argument list passed from Dispatcher

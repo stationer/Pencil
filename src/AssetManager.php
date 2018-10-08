@@ -11,9 +11,6 @@
 
 namespace Stationer\Pencil;
 
-
-use Stationer\Pencil\models\Asset;
-
 /**
  * AssetManager - For managing assets
  *

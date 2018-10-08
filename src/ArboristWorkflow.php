@@ -14,7 +14,12 @@ namespace Stationer\Pencil;
 use Stationer\Graphite\G;
 use Stationer\Graphite\data\DataBroker;
 use Stationer\Pencil\data\TreeMySQLDataProvider;
+use Stationer\Pencil\models\Article;
+use Stationer\Pencil\models\Asset;
 use Stationer\Pencil\models\Node;
+use Stationer\Pencil\models\Page;
+use Stationer\Pencil\models\Site;
+use Stationer\Pencil\models\Submission;
 use Stationer\Pencil\models\Tag;
 use Stationer\Pencil\reports\AncestorsByPathReport;
 use Stationer\Pencil\reports\DescendantsByPathReport;
@@ -222,6 +227,8 @@ class ArboristWorkflow {
             // $this->path.='/*';
             $filters['parent_id'] = $node_id;
             $this->Nodes = $this->DB->fetch(Node::class, $filters);
+            $this->pathCache += array_combine(array_column($this->Nodes, 'path'),
+                array_column($this->Nodes, 'node_id'));
         }
 
         return $this;
@@ -933,5 +940,69 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
         flush();
 
         return $index;
+    }
+
+    /**
+     * WIP
+     * Return an exportable format of all tree data.
+     *
+     * @return array to be JSON encoded
+     */
+    public function getExport() {
+        $data = [];
+        $nodeKeys = [
+            'contentType' => 1, 'label' => 1, 'keywords' => 1, 'description' => 1, 'published' => 1, 'trashed' => 1,
+            'featured'    => 1, 'pathAlias' => 1, 'ordinal' => 1,
+        ];
+        $paths = [];
+        $rootLen = strlen($this->getRoot());
+        $assetLen = strlen(AssetManager::$uploadPath) + $rootLen;
+
+        $Nodes = $this->load()->loadContent()->get();
+
+        while (!empty($Nodes)) {
+            // Get the next Node
+            $Node = array_shift($Nodes);
+            // Add the Node to the export
+            $paths[$Node->node_id] = $Node->path;
+            $node = array_intersect_key($Node->getAll(), $nodeKeys);
+            $node['path'] = substr($Node->path, $rootLen);
+            // Add the File
+            if ($Node->File) {
+                $node['File'] = $Node->File->getAll();
+            }
+            $data[$Node->node_id] = $node;
+
+            // Add child Nodes to the loop array
+            $this->setPath($Node->path);
+            $this->Nodes = [$Node];
+            $Nodes += $this->children()->loadContent()->get();
+        }
+
+        foreach ($data as $key => $node) {
+            switch (get_class($node['contentType'])) {
+                case 'Article':
+                    // TODO Figure how to translate login_id
+                    break;
+                case 'Asset':
+                    $node['File']['path'] = substr($node['File']['path'], $assetLen);
+                    break;
+                case 'Page':
+                    $node['File']['template_id'] = $data[$node['File']['template_id']]['path'];
+                    break;
+                case 'Site':
+                    $node['File']['theme_id'] = $data[$node['File']['theme_id']]['path'];
+                    $node['File']['defaultPage_id'] = $data[$node['File']['defaultPage_id']]['path'];
+                    break;
+                case 'Submission':
+                    $node['File']['form_id'] = $data[$node['File']['form_id']]['path'];
+                    break;
+                default:
+                    break;
+            }
+            $data[$key] = $node;
+        }
+
+        return $data;
     }
 }
