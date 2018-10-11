@@ -14,6 +14,7 @@ namespace Stationer\Pencil\controllers;
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
+use Stationer\Pencil\AssetManager;
 use Stationer\Pencil\models\Site;
 use Stationer\Pencil\PencilDashboardController;
 
@@ -153,8 +154,65 @@ class P_DashboardController extends PencilDashboardController {
             return parent::do_403($argv);
         }
 
-        $this->View->data = $this->Tree->getExport();
-        $this->View->_template = 'JSON.php';
+        $filename = $this->Tree->getExport();
+
+        if (false === $filename) {
+            die('Export Failed');
+        }
+
+        header("Content-type: application/zip");
+        header("Content-Disposition: attachment; filename=".basename($filename));
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        readfile($filename);
+        unlink($filename);
+        exit;
+    }
+    /**
+     * Invoke the tree rebuild
+     *
+     * @param array $argv    Argument list passed from Dispatcher
+     * @param array $request Request_method-specific parameters
+     *
+     * @return View
+     */
+    public function do_import(array $argv = [], array $request = []) {
+        if (!G::$S->roleTest($this->role)) {
+            return parent::do_403($argv);
+        }
+
+        if ('POST' == $this->method) {
+            G::msg(ob_var_dump($_FILES));
+
+            if (isset($_FILES['upload']['tmp_name'])
+                && is_file($_FILES['upload']['tmp_name'])
+                && is_readable($_FILES['upload']['tmp_name'])
+            ) {
+                $Zip = new \ZipArchive();
+                $Zip->open($_FILES['upload']['tmp_name']);
+                $assetPath = SITE.AssetManager::$uploadPath.$this->Tree->getRoot();
+                // redundant check tests whether another process created it
+                if (!is_dir($assetPath) && !mkdir($assetPath, 0755, true) && !is_dir($assetPath)) {
+                    G::msg('Failed to import assets!');
+                    goto end;
+                }
+                $Zip->extractTo($assetPath);
+
+                if (!is_dir($assetPath.'/tables')) {
+                    G::msg('Failed to import tables from '.$assetPath.'/tables');
+                    goto end;
+                }
+                // Clear out the current site
+                //$this->Website->resetSite();
+
+                $files = scandir($assetPath.'/tables');
+                foreach ($files as $file) {
+                    G::msg($file);
+                }
+            }
+        }
+        end:
 
         return $this->View;
     }

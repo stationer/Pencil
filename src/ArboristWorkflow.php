@@ -943,12 +943,58 @@ WHERE `tag_id` = '".((int)$Tag->tag_id)."'
     }
 
     /**
+     * Generate a Zip archive for current tree root
+     *
+     * @return string Filename of the generated Zip archive
+     */
+    public function getExport() {
+        $Zip = new \ZipArchive();
+        // Get all Nodes, without Files
+        $Nodes = $this->subtree()->get();
+        $filename = SITE.AssetManager::$uploadPath.'/'.reset($Nodes)->label.'.zip';
+        $result = $Zip->open($filename, \ZipArchive::CREATE);
+        if (true !== $result) {
+            return false;
+        }
+        $Zip->addFromString('tables/Node.csv', array_to_csv($Nodes));
+        $contentTypes = [];
+        foreach ($Nodes as $Node) {
+            $contentTypes[$Node->contentType][] = $Node->content_id;
+        }
+        unset($contentTypes['']);
+        foreach ($contentTypes as $contentType => $content_ids) {
+            $Files = $this->DB->byPK('\\Stationer\\Pencil\\models\\'.$contentType, $content_ids);
+            if (!empty($Files)) {
+                $Zip->addFromString('tables/'.$contentType.'.csv', array_to_csv($Files));
+            }
+        }
+        $Tags = $this->DB->fetch(Tag::class, []);
+        if (!empty($Tags)) {
+            $Zip->addFromString('tables/Tag.csv', array_to_csv($Tags));
+        }
+        // TODO get Node_Tag data
+
+        $assetPath = SITE.AssetManager::$uploadPath.$this->getRoot();
+        $assetPathLen = strlen($assetPath);
+        exec('find '.$assetPath, $fileList);
+        foreach ($fileList as $file) {
+            if (is_file($file) && is_readable($file)) {
+                $Zip->addFile($file, substr($file, $assetPathLen));
+            }
+        }
+
+        $Zip->close();
+
+        return $filename;
+    }
+
+    /**
      * WIP
      * Return an exportable format of all tree data.
      *
      * @return array to be JSON encoded
      */
-    public function getExport() {
+    public function _getExport() {
         $data = [];
         $nodeKeys = [
             'contentType' => 1, 'label' => 1, 'keywords' => 1, 'description' => 1, 'published' => 1, 'trashed' => 1,
