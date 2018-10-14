@@ -67,232 +67,110 @@ if (!isset($_avatarURL)) {
 </head>
 
 <body class="<?php echo $_bodyClass; ?>">
-
-<div id="wrapper" class="toggled">
-
-    <!-- Sidebar -->
-    <div id="sidebar-wrapper">
-        <a class="sidebar-brand" href="#">
-            <img src="/vendor/stationer/pencil/src/images/logo.jpg">
-        </a>
-        <ul class="sidebar-nav">
-            <li class="has-subnav-items link-item">
-                <a data-toggle="collapse" href="#subnav-menu-dashboard" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <i data-feather="home"></i>Dashboard
-                </a>
-                <div class="collapse" id="subnav-menu-dashboard">
-                    <ul class="subnav list-unstyled">
-                        <li class="subnav-link-item">
-                            <a href="/P_Dashboard">Home</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Dashboard/settings">Site Settings</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Dashboard/tree">Site Tree</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="has-subnav-items link-item">
-                <a data-toggle="collapse" href="#subnav-menu-navigation" role="button" aria-expanded="false"
-                   aria-controls="collapseExample">
-                    <i data-feather="navigation"></i>Navigation
-                </a>
-                <div class="collapse" id="subnav-menu-navigation">
-                    <ul class="subnav list-unstyled">
-                        <li class="subnav-link-item">
-                            <a href="/P_Navigation/list">All Navigations</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Navigation/add">Add New Navigation</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="has-subnav-items link-item">
-                <a data-toggle="collapse" href="#subnav-menu-pages" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <i data-feather="file"></i>Pages
-                </a>
-                <div class="collapse" id="subnav-menu-pages">
-                    <ul class="subnav list-unstyled">
-                        <li class="subnav-link-item">
-                            <a href="/P_Page/list">All Pages</a>
-                        </li>
-                        <li class="subnav-link-item">
-
-                            <a data-toggle="collapse" href="#subnav-menu-addpages" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                Add New Page
-                            </a>
-
-                            <div class="collapse" id="subnav-menu-addpages">
-                                <ul class="subnav list-unstyled">
-                                    <li class="subnav-link-item">
-                                        <a href="#">From Template</a>
-                                    </li>
-                                    <li class="subnav-link-item">
-                                        <a href="#">From Component</a>
-                                    </li>
-                                    <li class="subnav-link-item">
-                                        <a href="/P_Page/add">(advanced)</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="has-subnav-items link-item">
-                <a data-toggle="collapse" href="#subnav-menu-templates" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <i data-feather="layout"></i>Templates
-                </a>
-                <div class="collapse" id="subnav-menu-templates">
-                    <ul class="subnav list-unstyled">
-                        <li class="subnav-link-item">
-                            <a href="/P_Template/list">All Templates</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Template/add">Add New Template</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Component/list">All Component</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Component/add">Add New Component</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="has-subnav-items link-item">
-                <a data-toggle="collapse" href="#subnav-menu-themes" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <i data-feather="package"></i>Themes
-                </a>
-                <div class="collapse" id="subnav-menu-themes">
-                    <ul class="subnav list-unstyled">
-                        <li class="subnav-link-item">
-                            <a href="/P_Theme/list">All Themes</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Theme/add">Add New Theme</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="has-subnav-items link-item">
-                <a data-toggle="collapse" href="#subnav-menu-blog" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <i data-feather="message-square"></i>Blog
-                </a>
-                <div class="collapse" id="subnav-menu-blog">
-                    <ul class="subnav list-unstyled">
-                        <li class="subnav-link-item">
-                            <a href="/P_Blog/list">All Articles</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Blog/add">Add New Article</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="has-subnav-items link-item">
-                <a data-toggle="collapse" href="#subnav-menu-assets" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <i data-feather="image"></i>Assets
-                </a>
-                <div class="collapse" id="subnav-menu-assets">
-                    <ul class="subnav list-unstyled">
-                        <li class="subnav-link-item">
-                            <a href="/P_Asset/list">All Assets</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Asset/add">Add New Asset</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Asset/import">Import Assets</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="has-subnav-items link-item">
-                <a data-toggle="collapse" href="#subnav-menu-forms" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <i data-feather="mail"></i>Forms
-                </a>
-                <div class="collapse" id="subnav-menu-forms">
-                    <ul class="subnav list-unstyled">
-                        <li class="subnav-link-item">
-                            <a href="/P_Form/list">All Forms</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Form/add">Add New Form</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Form/submissions">Submissions</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="has-subnav-items link-item">
-                <a data-toggle="collapse" href="#subnav-menu-texts" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <i data-feather="mail"></i>Texts
-                </a>
-                <div class="collapse" id="subnav-menu-texts">
-                    <ul class="subnav list-unstyled">
-                        <li class="subnav-link-item">
-                            <a href="/P_Text/list">All Texts</a>
-                        </li>
-                        <li class="subnav-link-item">
-                            <a href="/P_Text/add">Add New Text</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-        </ul>
-
+<input type="checkbox" id="l-drawer-toggle" name="l-drawer-toggle"/>
+<label for="l-drawer-toggle" id="l-drawer-label"><i data-feather="menu"></i></label>
+<header>
+        <span>
+            <h1>Pencil Dashboard</h1>
+        </span>
+    <div>
+        <a href="/" class="c-btn m-outline">View Site</a>
+        <a href="#" class="c-avatar-sm"><img src="<?= $_avatarURL ?>"></a>
+    <?php if (false !== G::$S->Login): ?>
+            <a href="/Account/edit">Account Settings</a>
+            <a href="/Account/logout">Logout</a>
+    <?php else: ?>
+            <a href="/Account/login?_URI=/P_Dashboard">Login</a>
+    <?php endif; ?>
     </div>
-    <!-- /#sidebar-wrapper -->
 
-    <!-- Page Content -->
-    <div id="page-content-wrapper">
-        <nav class="navbar  navbar-top d-md-flex">
-            <div class="container-fluid">
-
-                <a href="#menu-toggle" id="menu-toggle" class="btn btn-outline-secondary border-0 mr-2"><i data-feather="menu"></i></a>
-                <!-- Brand -->
-                <div class="mr-auto">
-                    <span class="navbar-brand " href="index.html">
-                        Dashboard
-                    </span>
-                    <span class="navbar-breadcrumb d-none"><a href="dashboard.html" class="d-inline-block">Home</a></span>
-                </div>
-
-                <!-- User -->
-                <div class="navbar-user">
-
-
-
-                    <!-- Dropdown -->
-                    <div class="dropdown">
-
-                        <!-- Toggle -->
-                        <a href="#" class="avatar avatar-sm avatar-online dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img src="<?= $_avatarURL?>" alt="..." class="avatar-img rounded-circle">
-                        </a>
-                        <!-- Menu -->
-<?php if (false !== G::$S->Login): ?>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a href="/Account/edit" class="dropdown-item">Account Settings</a>
-                            <hr class="dropdown-divider">
-                            <a href="/Account/logout" class="dropdown-item">Logout</a>
-                        </div>
-<?php else: ?>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a href="/Account/login?_URI=/P_Dashboard" class="dropdown-item">Login</a>
-                        </div>
-<?php endif; ?>
-                    </div>
-
-                </div>
-
-            </div> <!-- / .container-fluid -->
-        </nav>
+</header>
+<nav>
+    <?php // TODO Add a setting for which uploaded asset to display here ?>
+    <div class="c-brand"><img src="/vendor/stationer/pencil/src/images/logo.jpg"></div>
+    <ul class="c-nav-menu">
+        <li><a href="#"><i data-feather="home"></i> Dashboard
+                <div><i data-feather="chevron-down"></i></div>
+            </a>
+            <ul>
+                <li><a href="/P_Dashboard">Home</a></li>
+                <li><a href="/P_Dashboard/settings">Site Settings</a></li>
+                <li><a href="/P_Dashboard/tree">Site Tree</a></li>
+            </ul>
+        </li>
+        <li><a href="#"><i data-feather="navigation"></i> Navigation
+                <div><i data-feather="chevron-down"></i></div>
+            </a>
+            <ul>
+                <li><a href="/P_Navigation/list">All Navigations</a></li>
+                <li><a href="/P_Navigation/add">Add New Navigation</a></li>
+            </ul>
+        </li>
+        <li><a href="#"><i data-feather="file"></i> Pages
+                <div><i data-feather="chevron-down"></i></div>
+            </a>
+            <ul class="sub">
+                <li><a href="/P_Page/list">All Pages</a></li>
+                <li><a href="#">Add New
+                        <div><i data-feather="chevron-down"></i></div>
+                    </a>
+                    <ul>
+                        <li><a href="#">From Template</a></li>
+                        <li><a href="#">From Component</a></li>
+                        <li><a href="/P_Page/add">(advanced)</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li><a href="#"><i data-feather="layout"></i> Templates
+                <div><i data-feather="chevron-down"></i></div>
+            </a>
+            <ul>
+                <li><a href="/P_Template/list">All Templates</a></li>
+                <li><a href="/P_Template/add">Add New Template</a></li>
+                <li><a href="/P_Component/list">All Components</a></li>
+                <li><a href="/P_Component/add">Add New Component</a></li>
+            </ul>
+        </li>
+        <li><a href="#"><i data-feather="package"></i> Themes
+                <div><i data-feather="chevron-down"></i></div>
+            </a>
+            <ul>
+                <li><a href="/P_Theme/list">All Themes</a></li>
+                <li><a href="/P_Theme/add">Add New Theme</a></li>
+            </ul>
+        </li>
+        <li><a href="#"><i data-feather="message-square"></i> Blog
+                <div><i data-feather="chevron-down"></i></div>
+            </a>
+            <ul>
+                <li><a href="/P_Blog/list">All Articles</a></li>
+                <li><a href="/P_Blog/add">Add New Article</a></li>
+            </ul>
+        </li>
+        <li><a href="#"><i data-feather="image"></i> Assets
+                <div><i data-feather="chevron-down"></i></div>
+            </a>
+            <ul>
+                <li><a href="/P_Asset/list">All Assets</a></li>
+                <li><a href="/P_Asset/add">Add New Asset</a></li>
+                <li><a href="/P_Asset/import">Import Assets</a></li>
+            </ul>
+        </li>
+        <li><a href="#"><i data-feather="mail"></i> Forms
+                <div><i data-feather="chevron-down"></i></div>
+            </a>
+            <ul>
+                <li><a href="/P_Form/list">All Forms</a></li>
+                <li><a href="/P_Form/add">Add New Form</a></li>
+                <li><a href="/P_Form/submissions">Submissions</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
+<main>
+    <div class="container-fluid">
+        <div class="row">
         <section class="messages">
             <?php if (0 < $v = count($a = G::msg())) { ?>
                 <details id="msg" open="open">
@@ -305,4 +183,3 @@ if (!isset($_avatarURL)) {
                 </details>
             <?php } ?>
         </section>
-        <main class="main">

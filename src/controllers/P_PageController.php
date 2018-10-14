@@ -112,6 +112,8 @@ class P_PageController extends PencilDashboardController {
 
         $this->View->Templates = $Templates;
         $this->View->Node      = $Node;
+        $this->View->formAction = '/P_Page/add';
+        $this->View->formHeader = 'Add Page';
 
         return $this->View;
     }
@@ -175,7 +177,8 @@ class P_PageController extends PencilDashboardController {
         $this->View->ContentNodes  = $ContentNodes;
         $this->View->contentLabels = $contentLabels;
         $this->View->Templates     = $Templates;
-        $this->View->Page          = $Node;
+        $this->View->formAction = '/P_Page/edit/'.$Node->node_id;
+        $this->View->formHeader = 'Edit Page';
 
         return $this->View;
     }

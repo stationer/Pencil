@@ -49,7 +49,7 @@ class NavigationWorkflow {
      * @return string
      */
     public function renderLinks($links): string {
-        $html = '<ul>';
+        $html = '<ul class="c-nav-menu">';
         foreach ($links as $link) {
             unset($url, $text);
 
