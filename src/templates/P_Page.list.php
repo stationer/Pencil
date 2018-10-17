@@ -57,9 +57,15 @@ echo $View->render('header');
 						<td><?php echo $Page->published ? 'Public' : 'Private'; ?></td>
 						<td><?php echo date('m-d-Y', $Page->created_uts); ?></td>
 						<td>
-							<i data-feather="edit"></i>
-							<i data-feather="eye"></i>
-							<i data-feather="trash"></i>
+							<a href="">
+								<i data-feather="edit"></i>
+							</a>
+							<a href="">
+								<i data-feather="eye"></i>
+							</a>
+							<a href="">
+								<i data-feather="trash"></i>
+							</a>
 						</td>
 					</tr>
 				<?php endforeach; ?>

@@ -75,13 +75,19 @@ if (!isset($_avatarURL)) {
         </span>
     <div>
         <a href="/" class="c-btn m-outline">View Site</a>
-        <a href="#" class="c-avatar-sm"><img src="<?= $_avatarURL ?>"></a>
-    <?php if (false !== G::$S->Login): ?>
-            <a href="/Account/edit">Account Settings</a>
-            <a href="/Account/logout">Logout</a>
-    <?php else: ?>
-            <a href="/Account/login?_URI=/P_Dashboard">Login</a>
-    <?php endif; ?>
+	    <div class="c-dropdown">
+		    <div role="button" data-toggle="dropdown">
+			    <div class="c-avatar-sm"><img src="<?= $_avatarURL ?>"></div>
+		    </div>
+		    <ul class="dropdown-menu">
+			    <?php if (false !== G::$S->Login): ?>
+				    <li><a href="/Account/edit">Account Settings</a></li>
+				    <li><a href="/Account/logout">Logout</a></li>
+			    <?php else: ?>
+				    <li><a href="/Account/login?_URI=/P_Dashboard">Login</a></li>
+			    <?php endif; ?>
+		    </ul>
+	    </div>
     </div>
 
 </header>
@@ -171,15 +177,17 @@ if (!isset($_avatarURL)) {
 <main>
     <div class="container-fluid">
         <div class="row">
-        <section class="messages">
-            <?php if (0 < $v = count($a = G::msg())) { ?>
-                <details id="msg" open="open">
-                    <summary><?php echo $v; ?> Messages:</summary>
-                    <ul>
-                        <?php foreach ($a as $v) { ?>
-                            <li class="<?php echo $v[1]; ?>"><?php echo $v[0]; ?></li>
-                        <?php } ?>
-                    </ul>
-                </details>
-            <?php } ?>
-        </section>
+	        <?php if (!empty(G::msg())): ?>
+		        <section class="messages">
+		            <?php if (0 < $v = count($a = G::msg())) { ?>
+		                <details id="msg" open="open">
+		                    <summary><?php echo $v; ?> Messages:</summary>
+		                    <ul>
+		                        <?php foreach ($a as $v) { ?>
+		                            <li class="<?php echo $v[1]; ?>"><?php echo $v[0]; ?></li>
+		                        <?php } ?>
+		                    </ul>
+		                </details>
+		            <?php } ?>
+		        </section>
+	        <?php endif; ?>
