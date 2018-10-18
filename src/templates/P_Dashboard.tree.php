@@ -38,9 +38,9 @@ echo $View->render('header');
 								<?php if ('' != $Node->contentType): ?>
 									<a href="/P_<?= $Node->contentType; ?>/edit/<?= $Node->node_id; ?>"><i data-feather="edit">Edit</i></a>
 								<?php else: ?>
-									<s>Edit</s>
+									<i data-feather="slash">Edit</i>
 								<?php endif; ?>
-								<a href="/P_Text/add?parentPath=<?= urlencode($Node->path); ?>">Add Text</a>
+								<a href="/P_Text/add?parentPath=<?= urlencode($Node->path); ?>"><i data-feather="plus-square">Add Text</i></a>
 							</td>
 						</tr>
 					<?php endforeach; ?>

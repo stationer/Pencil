@@ -27,7 +27,8 @@ echo $View->render('header');
 						<textarea class="form-control" name="description" id="description"></textarea>
 					</div>
 					<div class="form-group">
-						<label for="upload">Upload</label>
+						<label for="Media File">Media File</label>
+						<label for="upload" class="c-upload">Upload File</label>
 						<input type="file" class="form-control" name="upload" id="upload">
 					</div>
 				</div>

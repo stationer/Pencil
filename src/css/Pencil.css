@@ -8261,7 +8261,7 @@ table {
 }
 
 table tr th {
-	padding: 15px 0;
+	padding: 15px 0 15px 10px;
 	text-transform: uppercase;
 	font-weight: 900;
 	font-size: 0.8125rem;
@@ -8277,8 +8277,12 @@ table tr th:not(:first-child) {
 table tr td {
 	line-height: 1;
 	border-bottom: solid 1px #ebf0f4;
-	padding: 11px 0;
+	padding: 11px 0 11px 10px;
 	font-size: 0.9375rem;
+}
+
+table tr td:first-of-type {
+	padding-left: 20px;
 }
 
 table tr td:nth-child(2) {
@@ -8290,7 +8294,6 @@ table tr td a {
 }
 
 table tr td a svg {
-	cursor: pointer;
 	color: #7a7a7a;
 	width: 18px;
 }
@@ -8303,12 +8306,13 @@ table tr td a:last-of-type {
 	margin-right: 0;
 }
 
-table tr th input[type="checkbox"],
-table tr td input[type="checkbox"] {
-	margin-left: 20px;
+svg {
+	color: #7a7a7a;
+	width: 18px;
 }
 
-.c-btn {
+.c-btn,
+.c-upload {
 	background: #42a0e5;
 	color: #fff;
 	font-family: "Roboto", sans-serif;
@@ -8338,8 +8342,13 @@ table tr td input[type="checkbox"] {
 	box-sizing: border-box;
 }
 
-.c-btn:hover {
+.c-btn:hover,
+.c-upload:hover {
 	background: #1e88d6;
+}
+
+input[type="file"] {
+	display: none;
 }
 
 .c-modal {
@@ -8479,8 +8488,11 @@ table tr td input[type="checkbox"] {
 }
 
 .c-card.c-options .footer .c-btn:first-of-type,
+.c-card.c-options .footer .c-upload:first-of-type,
 .c-modal.c-options .footer .c-btn:first-of-type,
+.c-modal.c-options .footer .c-upload:first-of-type,
 .c-modal .modal-content > .footer .c-btn:first-of-type,
+.c-modal .modal-content > .footer .c-upload:first-of-type,
 .m-outline {
 	background: transparent;
 	border-color: #42a0e5;
@@ -8488,16 +8500,22 @@ table tr td input[type="checkbox"] {
 }
 
 .c-card.c-options .footer .c-btn:hover:first-of-type,
+.c-card.c-options .footer .c-upload:hover:first-of-type,
 .c-modal.c-options .footer .c-btn:hover:first-of-type,
+.c-modal.c-options .footer .c-upload:hover:first-of-type,
 .c-modal .modal-content > .footer .c-btn:hover:first-of-type,
+.c-modal .modal-content > .footer .c-upload:hover:first-of-type,
 .m-outline:hover {
 	background: #42a0e5;
 	color: #fff;
 }
 
 .c-card.c-options .footer .c-btn,
+.c-card.c-options .footer .c-upload,
 .c-modal.c-options .footer .c-btn,
+.c-modal.c-options .footer .c-upload,
 .c-modal .modal-content > .footer .c-btn,
+.c-modal .modal-content > .footer .c-upload,
 .m-lg {
 	font-size: 1.125rem;
 	padding: 15px 30px;
@@ -8506,11 +8524,13 @@ table tr td input[type="checkbox"] {
 	margin-bottom: 5px;
 }
 
-.secondary.c-btn {
+.secondary.c-btn,
+.secondary.c-upload {
 	background: #26313a;
 }
 
-.secondary.c-btn:hover {
+.secondary.c-btn:hover,
+.secondary.c-upload:hover {
 	background: #12171b;
 }
 
@@ -8525,11 +8545,13 @@ table tr td input[type="checkbox"] {
 	color: #fff;
 }
 
-.success.c-btn {
+.success.c-btn,
+.success.c-upload {
 	background: #95CF54;
 }
 
-.success.c-btn:hover {
+.success.c-btn:hover,
+.success.c-upload:hover {
 	background: #7cbb35;
 }
 
@@ -8544,11 +8566,13 @@ table tr td input[type="checkbox"] {
 	color: #fff;
 }
 
-.warning.c-btn {
+.warning.c-btn,
+.warning.c-upload {
 	background: #EBE48F;
 }
 
-.warning.c-btn:hover {
+.warning.c-btn:hover,
+.warning.c-upload:hover {
 	background: #e3da64;
 }
 
@@ -8563,11 +8587,13 @@ table tr td input[type="checkbox"] {
 	color: #fff;
 }
 
-.danger.c-btn {
+.danger.c-btn,
+.danger.c-upload {
 	background: #FF485F;
 }
 
-.danger.c-btn:hover {
+.danger.c-btn:hover,
+.danger.c-upload:hover {
 	background: #ff1532;
 }
 

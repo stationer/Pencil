@@ -2,9 +2,15 @@
 /** @var \Stationer\Graphite\View $View */
 echo $View->render('header');
 ?>
+<section>
+	<div class="c-card">
+		<div class="header">
+			<h5>Add Form</h5>
+		</div>
+		<div class="content">
 
-    <div class="container">
-    <h1>Add Form</h1>
-</div>
+		</div>
+	</div>
+</section>
 
 <?php echo $View->render('footer');
