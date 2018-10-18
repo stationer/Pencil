@@ -77,7 +77,7 @@ if (!isset($_avatarURL)) {
         <a href="/" class="c-btn m-outline">View Site</a>
 	    <div class="c-dropdown">
 		    <div role="button" data-toggle="dropdown">
-			    <div class="c-avatar-sm"><img src="<?= $_avatarURL ?>"></div>
+			    <div class="c-avatar m-sm"><img src="<?= $_avatarURL ?>"></div>
 		    </div>
 		    <ul class="dropdown-menu">
 			    <?php if (false !== G::$S->Login): ?>
@@ -94,7 +94,7 @@ if (!isset($_avatarURL)) {
 <nav>
     <?php // TODO Add a setting for which uploaded asset to display here ?>
     <div class="c-brand"><img src="/vendor/stationer/pencil/src/images/logo.jpg"></div>
-    <ul class="c-nav-menu">
+    <ul class="c-side-nav">
         <li><a href="#"><i data-feather="home"></i> Dashboard
                 <div><i data-feather="chevron-down"></i></div>
             </a>

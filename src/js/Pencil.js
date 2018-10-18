@@ -96,7 +96,7 @@
     feather.replace();
 
     //Navigation Dropdown
-    var coll = document.querySelectorAll(".c-nav-menu > li a");
+    var coll = document.querySelectorAll(".c-side-nav > li a");
     var i;
 
     for (i = 0; i < coll.length; i++) {
