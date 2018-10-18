@@ -33,7 +33,7 @@ echo $View->render('header');
 					</select>
 				</div>
 				<div class="l-search">
-					<input type="text" placeholder="Search..">
+					<input type="text" placeholder="Search">
 				</div>
 			</form>
 			<table>
@@ -54,7 +54,9 @@ echo $View->render('header');
 							</a>
 						</td>
 						<td><?= substr($Page->path, strlen($treeRoot)) ?></td>
-						<td><?php echo $Page->published ? 'Public' : 'Private'; ?></td>
+						<td class="visibility">
+							<span><?php echo $Page->published ? 'Public' : 'Private'; ?></span>
+						</td>
 						<td><?php echo date('m-d-Y', $Page->created_uts); ?></td>
 						<td>
 							<a href="">

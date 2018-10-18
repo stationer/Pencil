@@ -7514,8 +7514,10 @@ input {
 textarea {
 	width: 100%;
 	border: none;
-	resize: none;
+	resize: vertical;
 	line-height: 1.4;
+	max-height: 300px;
+	min-height: 50px;
 }
 
 input,
@@ -8329,6 +8331,7 @@ table tr td:nth-child(2) {
 }
 
 table tr td a {
+	color: #0c1620;
 	margin-right: 17px;
 }
 
@@ -8347,6 +8350,17 @@ table tr td a:last-of-type {
 
 table tr td a:hover {
 	text-decoration: none;
+}
+
+table tr td.visibility {
+	font-size: 0.6875rem;
+	text-transform: lowercase;
+}
+
+table tr td.visibility span {
+	background-color: #b6dc8d;
+	padding: 5px 12px;
+	border-radius: 15px;
 }
 
 .c-btn,
