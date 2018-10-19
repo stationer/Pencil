@@ -34,8 +34,7 @@ echo $View->render('header');
 						</tr>
 					<?php endforeach; ?>
 				</table>
-				<button class="btn btn-primary" type="submit">Import Checked</button>
-
+				<button class="c-btn" type="submit">Import Checked</button>
 			</form>
 		</div>
 	</div>
