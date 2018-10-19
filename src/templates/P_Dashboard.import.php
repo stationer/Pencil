@@ -3,24 +3,21 @@
 /** @var \Stationer\Pencil\models\Node $Node */
 echo $View->render('header');
 ?>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Import Pencil Data</h1>
-
-                <form action="/P_Dashboard/import" method="post" enctype="multipart/form-data">
-
+    <form class="m-flex" action="/P_Dashboard/import" method="post" enctype="multipart/form-data">
+        <section>
+            <div class="c-card">
+                <div class="header">
+                    <h5>Import Pencil Data</h5>
+                </div>
+                <div class="content">
                     <div class="form-group">
                         <label for="upload">Upload</label>
                         <input type="file" class="form-control" name="upload" id="upload">
                     </div>
-
-                    <button type="submit" class="btn btn-primary">Import</button>
-                </form>
+                    <button type="submit" class="c-btn">Import</button>
+                </div>
             </div>
-        </div>
-    </div>
-
+        </section>
+    </form>
 
 <?php echo $View->render('footer');

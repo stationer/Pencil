@@ -1,13 +1,15 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Node $Node */
+/** @var string $formHeader */
+/** @var string $formAction */
 echo $View->render('header');
 ?>
-	<form class="m-flex" action="/P_Asset/add" method="post" enctype="multipart/form-data">
+	<form class="m-flex" action="<?= $formAction ?>" method="post" enctype="multipart/form-data">
 		<section class="l-two-thirds">
 			<div class="c-card">
 				<div class="header">
-					<h5>Add Asset</h5>
+                    <h5><?= $formHeader ?></h5>
 				</div>
 				<div class="content">
 					<div class="form-group">
@@ -24,8 +26,9 @@ echo $View->render('header');
 
 					<div class="form-group">
 						<label for="description">Description</label>
-						<textarea class="form-control" name="description" id="description"></textarea>
+						<textarea class="form-control" name="description" id="description"><?php echo $Node->description; ?></textarea>
 					</div>
+
 					<div class="form-group">
 						<label for="Media File">Media File</label>
 						<label for="upload" class="c-upload">Upload File</label>
@@ -44,10 +47,11 @@ echo $View->render('header');
 				</div>
 				<div class="footer">
 					<div class="buttons">
-						<button type="submit" class="c-btn">Add Asset</button>
+						<button type="submit" class="c-btn">Save</button>
 					</div>
 				</div>
 			</div>
 		</section>
 	</form>
+
 <?php echo $View->render('footer');
