@@ -97,7 +97,9 @@ class P_ComponentController extends PencilDashboardController {
             }
         }
 
-        $this->View->Node = $Node;
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Component/add';
+        $this->View->formHeader = 'Add Component';
 
         return $this->View;
     }
@@ -128,7 +130,9 @@ class P_ComponentController extends PencilDashboardController {
             $this->resultMessage($result);
         }
 
-        $this->View->Node = $Node;
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Component/edit/'.$Node->node_id;
+        $this->View->formHeader = 'Edit Component';
 
         return $this->View;
     }

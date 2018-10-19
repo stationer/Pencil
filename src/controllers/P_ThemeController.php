@@ -97,7 +97,9 @@ class P_ThemeController extends PencilDashboardController {
             }
         }
 
-        $this->View->Node = $Node;
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Theme/add';
+        $this->View->formHeader = 'Add Theme';
 
         return $this->View;
     }
@@ -128,7 +130,9 @@ class P_ThemeController extends PencilDashboardController {
             $this->resultMessage($result);
         }
 
-        $this->View->Node = $Node;
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Theme/edit/'.$Node->node_id;
+        $this->View->formHeader = 'Edit Theme';
 
         return $this->View;
     }

@@ -14,6 +14,8 @@ namespace Stationer\Pencil\controllers;
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
+use Stationer\Pencil\models\Form;
+use Stationer\Pencil\models\Node;
 use Stationer\Pencil\PencilDashboardController;
 
 /**
@@ -74,6 +76,51 @@ class P_FormController extends PencilDashboardController {
         if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
+        /** @var Node $Node */
+        $Node       = G::build(Node::class);
+        $Node->File = G::build(Form::class);
+
+        if ('POST' === $this->method) {
+            // Handle add
+        }
+
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Form/add';
+        $this->View->formHeader = 'Add Form';
+
+        return $this->View;
+    }
+
+    /**
+     * Edit a form
+     *
+     * @param array $argv    Argument list passed from Dispatcher
+     * @param array $request Request_method-specific parameters
+     *
+     * @return View
+     */
+    public function do_edit(array $argv = [], array $request = []) {
+        if (!G::$S->roleTest($this->role)) {
+            return parent::do_403($argv);
+        }
+
+        // Load the existing node
+        $Node = $this->getNode($argv[1]);
+        // If we didn't get the Node, show error and delegate to do_list
+        if (empty($Node)) {
+            G::msg('Requested '.static::CONTENT_TYPE.' not found: '.$argv[1], 'error');
+            $this->_redirect('/P_Form/list');
+        }
+
+        if ('POST' === $this->method) {
+            // TODO: handle edit form
+            $result = false; // $this->updateNode($Node, $request);
+            $this->resultMessage($result);
+        }
+
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Form/edit/'.$Node->node_id;
+        $this->View->formHeader = 'Edit Form';
 
         return $this->View;
     }

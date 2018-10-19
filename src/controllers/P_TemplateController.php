@@ -96,8 +96,9 @@ class P_TemplateController extends PencilDashboardController {
             }
         }
 
-        $this->View->Template = $Node->File;
-        $this->View->Node     = $Node;
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Template/add';
+        $this->View->formHeader = 'Add Template';
 
         return $this->View;
     }
@@ -128,7 +129,9 @@ class P_TemplateController extends PencilDashboardController {
             $this->resultMessage($result);
         }
 
-        $this->View->Node = $Node;
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Template/edit/'.$Node->node_id;
+        $this->View->formHeader = 'Edit Template';
 
         return $this->View;
     }

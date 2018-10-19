@@ -103,7 +103,9 @@ class P_BlogController extends PencilDashboardController {
             }
         }
 
-        $this->View->Node = $Node;
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Blog/add';
+        $this->View->formHeader = 'Add Article';
 
         return $this->View;
     }
@@ -140,7 +142,9 @@ class P_BlogController extends PencilDashboardController {
             $this->resultMessage($result);
         }
 
-        $this->View->Node = $Node;
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Blog/edit/'.$Node->node_id;
+        $this->View->formHeader = 'Edit Article';
 
         return $this->View;
     }

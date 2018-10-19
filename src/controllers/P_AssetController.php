@@ -112,7 +112,9 @@ class P_AssetController extends PencilDashboardController {
             }
         }
 
-        $this->View->Node = $Node;
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Asset/add/';
+        $this->View->formHeader = 'Add Asset';
 
         return $this->View;
     }
@@ -140,7 +142,9 @@ class P_AssetController extends PencilDashboardController {
             $this->resultMessage($result);
         }
 
-        $this->View->Node = $Node;
+        $this->View->Node       = $Node;
+        $this->View->formAction = '/P_Asset/edit/'.$Node->node_id;
+        $this->View->formHeader = 'Edit Asset';
 
         return $this->View;
     }
