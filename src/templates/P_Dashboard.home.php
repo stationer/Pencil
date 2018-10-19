@@ -2,12 +2,15 @@
 /** @var \Stationer\Graphite\View $View */
 echo $View->render('header');
 ?>
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Dashboard Home</h1>
-        </div>
-    </div>
-</div>
+<section>
+	<div class="c-card">
+		<div class="header">
+			<h5>Dashboard Home</h5>
+		</div>
+		<div class="content">
+
+		</div>
+	</div>
+</section>
 
 <?php echo $View->render('footer');
