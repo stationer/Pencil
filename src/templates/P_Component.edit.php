@@ -1,6 +1,8 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Node $Node */
+/** @var string $formHeader */
+/** @var string $formAction */
 
 $types = [
     0 => 'Header',
@@ -10,11 +12,11 @@ $types = [
 ];
 echo $View->render('header');
 ?>
-    <form class="m-flex" action="/P_Component/edit/<?php echo $Node->node_id; ?>" method="POST">
+    <form class="m-flex" action="<?= $formAction ?>" method="post">
         <section class="l-two-thirds">
             <div class="c-card">
                 <div class="header">
-                    <h5>Edit Component</h5>
+                    <h5><?= $formHeader ?></h5>
                 </div>
                 <div class="content">
                     <div class="form-group">
@@ -60,7 +62,7 @@ echo $View->render('header');
                 </div>
                 <div class="footer">
                     <div class="buttons">
-                        <button class="c-btn" type="submit">Update Component</button>
+                        <button class="c-btn" type="submit"><?= $formHeader ?></button>
                     </div>
                 </div>
             </div>

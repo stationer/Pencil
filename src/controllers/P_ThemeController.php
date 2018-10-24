@@ -98,7 +98,7 @@ class P_ThemeController extends PencilDashboardController {
         }
 
         $this->View->Node       = $Node;
-        $this->View->formAction = '/P_Theme/add';
+        $this->View->formAction = '/P_Theme/add'.$Node->node_id;
         $this->View->formHeader = 'Add Theme';
 
         return $this->View;

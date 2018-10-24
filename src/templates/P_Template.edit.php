@@ -1,6 +1,8 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Node $Node */
+/** @var string $formHeader */
+/** @var string $formAction */
 
 $types = [
 	0 => 'Header',
@@ -10,11 +12,11 @@ $types = [
 ];
 echo $View->render('header');
 ?>
-	<form class="m-flex" action="/P_Template/edit/<?php echo $Node->node_id; ?>" method="POST">
+	<form class="m-flex" action="<?= $formAction ?>" method="POST">
 		<section class="l-two-thirds">
 			<div class="c-card">
 				<div class="header">
-					<h5>Edit Template</h5>
+                    <h5><?= $formHeader ?></h5>
 				</div>
 				<div class="content">
 					<div class="form-group">
@@ -29,7 +31,7 @@ echo $View->render('header');
 
 					<div class="form-group">
 						<label for="body">Template Body</label>
-						<textarea class="form-control " name="body" id="body"><?php echo $Node->File->body; ?></textarea>
+						<textarea class="form-control" name="body" id="body"><?php echo $Node->File->body; ?></textarea>
 					</div>
 
 					<div class="form-group">
@@ -51,7 +53,7 @@ echo $View->render('header');
 			</div>
 		</section>
 		<section class="l-one-third">
-			<div class="c-card c-option">
+			<div class="c-card c-options">
 				<div class="header">
 					<h5>Options</h5>
 				</div>
@@ -60,7 +62,7 @@ echo $View->render('header');
 				</div>
 				<div class="footer">
 					<div class="buttons">
-						<button class="c-btn" type="submit">Update Template</button>
+						<button class="c-btn" type="submit"><?= $formHeader ?></button>
 					</div>
 				</div>
 			</div>

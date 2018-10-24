@@ -7563,10 +7563,6 @@ select:focus {
 	background: #ebf0f4;
 }
 
-input[type="file"] {
-	display: none;
-}
-
 input[type="radio"],
 input[type="checkbox"] {
 	margin-right: 5px;
@@ -7576,10 +7572,10 @@ input[type="checkbox"] {
 
 hr {
 	border: 0;
-	height: 0px;
+	height: 0;
 	border-bottom: 1px solid #E5E6EB;
 	display: block;
-	margin: 15px 0px 30px;
+	margin: 15px 0 30px;
 }
 
 svg {
@@ -8017,6 +8013,7 @@ section {
 	-webkit-box-shadow: 0 1px 13px 0 rgba(0, 0, 0, 0.06);
 	box-shadow: 0 1px 13px 0 rgba(0, 0, 0, 0.06);
 	border: solid 1px #ebf0f4;
+	margin-bottom: 30px;
 }
 
 .c-card .header,
@@ -8440,6 +8437,10 @@ table tr td.visibility span {
 .c-btn:hover,
 .c-upload:hover {
 	background: #1e88d6;
+}
+
+.c-upload + input[type="file"] {
+	display: none;
 }
 
 .c-dropdown {

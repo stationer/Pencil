@@ -1,13 +1,16 @@
 <?php
 /** @var \Stationer\Graphite\View $View */
 /** @var \Stationer\Pencil\models\Node $Node */
+/** @var string $formHeader */
+/** @var string $formAction */
+
 echo $View->render('header');
 ?>
-	<form class="m-flex" action="/P_Theme/edit/<?php echo $Node->node_id; ?>" method="POST">
+	<form class="m-flex" action="<?= $formAction ?>" method="POST">
 		<section class="l-two-thirds">
 			<div class="c-card">
 				<div class="header">
-					<h5>Edit Theme</h5>
+					<h5><?= $formHeader ?></h5>
 				</div>
 				<div class="content">
 					<div class="form-group">
@@ -22,7 +25,21 @@ echo $View->render('header');
 
 					<div class="form-group">
 						<label for="document">Theme Root Document</label>
-						<textarea class="form-control" name="document" id="document"><?php html($Node->File->document); ?></textarea>
+						<textarea class="form-control" name="document" id="document"><?php html($Node->File->document ?: '<!doctype html>
+<html lang="en-US">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>[page.title] - [site.title]</title>
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="[theme.css_url]">
+</head>
+<body class="[page.bodyClass]">
+[theme.header]
+[page.template]
+[theme.footer]
+</body>
+</html>'); ?></textarea>
 					</div>
 
 					<div class="form-group">
@@ -52,10 +69,11 @@ echo $View->render('header');
 				</div>
 				<div class="footer">
 					<div class="buttons">
-						<button class="c-btn" type="submit">Update Theme</button>
+						<button class="c-btn" type="submit"><?= $formHeader ?></button>
 					</div>
 				</div>
 			</div>
 		</section>
 	</form>
+
 <?php echo $View->render('footer');

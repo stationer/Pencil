@@ -4,8 +4,12 @@
 /** @var \Stationer\Pencil\models\Template[] $Templates */
 /** @var \Stationer\Pencil\models\Node[] $ContentNodes */
 /** @var \Stationer\Pencil\models\Node[] $Nodes */
+/** @var string $formHeader */
+/** @var string $formAction */
+
 echo $View->render('header');
 ?>
+
 	<form class="m-flex" action="<?= $formAction ?>" method="post">
 		<section class="l-two-thirds">
 			<div class="c-card">

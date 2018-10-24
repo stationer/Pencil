@@ -13,6 +13,11 @@ echo $View->render('header');
                     <h5><?= $formHeader ?></h5>
 				</div>
 				<div class="content">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" name="title" id="title" class="form-control" value="<?php echo $Node->File->title; ?>">
+                    </div>
+
 					<div class="form-group">
 						<label for="label">Label</label>
 						<input class="form-control" type="text" name="label" id="label" value="<?php echo $Node->label ?? ''; ?>">
@@ -24,13 +29,8 @@ echo $View->render('header');
 					</div>
 
 					<div class="form-group">
-						<label for="title">Title</label>
-						<input type="text" name="title" id="title" class="form-control" value="<?php echo $Node->File->title; ?>">
-					</div>
-
-					<div class="form-group">
 						<label for="body"></label>
-						<textarea class="wysiwyg" name="body" id="body"><?php echo $Node->File->body; ?></textarea>
+						<textarea name="body" id="body"><?php echo $Node->File->body; ?></textarea>
 					</div>
 				</div>
 			</div>
@@ -45,7 +45,7 @@ echo $View->render('header');
 				</div>
 				<div class="footer">
 					<div class="buttons">
-						<button class="c-btn" type="submit">Save</button>
+						<button class="c-btn" type="submit"><?= $formHeader ?></button>
 					</div>
 				</div>
 			</div>
