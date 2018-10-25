@@ -10,20 +10,24 @@ echo $View->render('header');
 			</div>
 			<div class="content">
 				<table>
-					<tr>
-						<th>Label</th>
-					</tr>
-					<?php if (!empty($Navigations)): ?>
-						<?php foreach ($Navigations as $Nav): ?>
-							<tr>
-								<td>
-									<a href="/P_Navigation/edit/<?php echo $Nav->node_id; ?>">
-										<?php echo $Nav->label; ?>
-									</a>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-					<?php endif; ?>
+                    <thead>
+                    <tr>
+                        <th class="sort" data-sort="label">Label</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php if (!empty($Navigations)): ?>
+                        <?php foreach ($Navigations as $Nav): ?>
+                            <tr>
+                                <td>
+                                    <a href="/P_Navigation/edit/<?php echo $Nav->node_id; ?>">
+                                        <?php echo $Nav->label; ?>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                    </tbody>
 				</table>
 			</div>
 		</div>

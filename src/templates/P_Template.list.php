@@ -10,22 +10,26 @@ echo $View->render('header');
 			</div>
 			<div class="content">
 				<table>
-					<tr>
-						<th>Template</th>
-						<th>Last Updated</th>
-					</tr>
-					<?php foreach ($Templates as $Template) : ?>
-						<tr>
-							<td>
-								<strong>
-									<a href="/P_Template/edit/<?php echo $Template->node_id; ?>">
-										<?php echo $Template->label; ?>
-									</a>
-								</strong>
-							</td>
-							<td><?php echo $Template->File->updated_dts; ?></td>
-						</tr>
-					<?php endforeach; ?>
+                    <thead>
+                    <tr>
+                        <th class="sort" data-sort="template">Template</th>
+                        <th class="sort" data-sort="updated">Last Updated</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($Templates as $Template) : ?>
+                        <tr>
+                            <td>
+                                <strong>
+                                    <a href="/P_Template/edit/<?php echo $Template->node_id; ?>">
+                                        <?php echo $Template->label; ?>
+                                    </a>
+                                </strong>
+                            </td>
+                            <td><?php echo $Template->File->updated_dts; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
 				</table>
 			</div>
 		</div>
