@@ -174,6 +174,7 @@ class P_PageController extends PencilDashboardController {
         // TODO resolve mysqli::escape_string() expects parameter 1 to be string, array given
         $Nodes                     = $this->Tree->subtree('', ['contentType' => ['', static::CONTENT_TYPE]])->get();
         $this->View->Nodes         = $Nodes;
+        $this->View->Node          = $Node;
         $this->View->ContentNodes  = $ContentNodes;
         $this->View->contentLabels = $contentLabels;
         $this->View->Templates     = $Templates;
