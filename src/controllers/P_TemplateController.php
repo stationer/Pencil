@@ -97,7 +97,7 @@ class P_TemplateController extends PencilDashboardController {
         }
 
         $this->View->Node       = $Node;
-        $this->View->formAction = '/P_Template/add'.$Node->node_id;
+        $this->View->formAction = '/P_Template/add';
         $this->View->formHeader = 'Add Template';
 
         return $this->View;

@@ -100,7 +100,7 @@ class P_TextController extends PencilDashboardController {
         $this->View->Nodes      = $Nodes;
         $this->View->Node       = $Node;
         $this->View->parentPath = $request['parentPath'] ?? $this->Tree->getRoot();
-        $this->View->formAction = '/P_Text/add'.$Node->node_id;
+        $this->View->formAction = '/P_Text/add';
         $this->View->formHeader = 'Add Text';
 
         return $this->View;
