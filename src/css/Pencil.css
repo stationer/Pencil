@@ -8010,6 +8010,7 @@ section {
 	-o-object-fit: cover;
 	object-fit: cover;
 	border-radius: 50%;
+	border: 1px solid #E5E6EB;
 }
 
 .c-avatar + ul {
@@ -8494,6 +8495,8 @@ table tr [data-sort]:after {
 .c-btn:hover,
 .c-upload:hover {
 	background: #1e88d6;
+	color: #fff;
+	text-decoration: none;
 }
 
 .c-upload + input[type="file"] {
