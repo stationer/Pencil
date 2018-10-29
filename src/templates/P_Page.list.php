@@ -66,8 +66,8 @@ echo $View->render('header');
                             <td>
                                 <span class="c-badge"><?php echo $Page->published ? 'Public' : 'Private'; ?></span>
                                 <?php
-                                    $A = [$Page->published ? 'Public' : 'Private'];
-                                    $B = [$Page->published ? '' : ''];
+                                $A = [$Page->published ? 'Public' : 'Private'];
+                                $B = [$Page->published ? '' : ''];
                                 ?>
                             </td>
                             <td><?php echo date('m-d-Y', $Page->created_uts); ?></td>

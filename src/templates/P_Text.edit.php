@@ -5,7 +5,6 @@
 /** @var string $parentPath */
 /** @var string $formHeader */
 /** @var string $formAction */
-
 echo $View->render('header');
 ?>
     <form class="m-flex" action="<?= $formAction ?>" method="post">
