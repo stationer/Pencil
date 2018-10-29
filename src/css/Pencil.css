@@ -7459,8 +7459,8 @@ p {
 
 h1,
 h2,
-h4,
-h5 {
+h3,
+h4 {
 	font-family: "Muli", "Roboto", "Helvetica Neue", Arial, sans-serif;
 	text-transform: none;
 	font-weight: 400;
@@ -7501,7 +7501,7 @@ select:active {
 
 label {
 	color: #7a7a7a;
-	padding: 10px 0;
+	padding: 0 0 15px 0;
 	font-weight: 700;
 	font-size: 0.8125rem;
 	text-transform: uppercase;
@@ -7531,22 +7531,22 @@ textarea {
 
 input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder {
-	color: #c0c9d7;
+	color: #A1A7B1;
 }
 
 input:-ms-input-placeholder,
 textarea:-ms-input-placeholder {
-	color: #c0c9d7;
+	color: #A1A7B1;
 }
 
 input::-ms-input-placeholder,
 textarea::-ms-input-placeholder {
-	color: #c0c9d7;
+	color: #A1A7B1;
 }
 
 input::placeholder,
 textarea::placeholder {
-	color: #c0c9d7;
+	color: #A1A7B1;
 }
 
 input,
@@ -8163,7 +8163,7 @@ section {
 .c-modal .header,
 .c-card .footer,
 .c-modal .footer {
-	padding: 13px 20px;
+	padding: 12px 20px;
 }
 
 .c-card .header .buttons button:last-of-type,
@@ -8191,11 +8191,6 @@ section {
 .c-card .content h6:first-of-type,
 .c-modal .content h6:first-of-type {
 	margin-top: 0;
-}
-
-.c-card.c-options .content,
-.c-options.c-modal .content {
-	padding: 5px 20px;
 }
 
 .c-card.c-options .footer,
@@ -8249,14 +8244,18 @@ section {
 
 .c-modal .modal-content > .header {
 	background: #E5E6EB;
+	border: none;
+	border-radius: 0px;
 }
 
 .c-modal .modal-content > .header h3 {
 	margin: 6px 0;
 	font-weight: normal;
+	text-transform: none;
 	-webkit-box-flex: 1;
 	-ms-flex-positive: 1;
 	flex-grow: 1;
+	color: #0c1620;
 }
 
 .c-modal .modal-content > .header a {
@@ -8654,6 +8653,14 @@ table tr [data-sort]:after {
 .c-options.c-modal .footer .c-upload,
 .c-modal .modal-content > .footer .c-btn,
 .c-modal .modal-content > .footer .c-upload,
+.m-md {
+	font-size: 1rem;
+	padding: 12px 20px;
+	border-radius: 0.375rem;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
 .m-lg {
 	font-size: 1.125rem;
 	padding: 15px 30px;
