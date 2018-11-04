@@ -62,7 +62,7 @@ class P_BlogController extends PencilDashboardController {
             // TODO: the search thing
             $Articles = [];
         } else {
-            $Articles = $this->Tree->children(self::BLOG, ['contentType' => 'Article'])->loadContent()->get();
+            $Articles = $this->Tree->descendants(self::BLOG, ['contentType' => 'Article'])->loadContent()->get();
         }
 
         $this->View->Articles = $Articles;
@@ -142,6 +142,8 @@ class P_BlogController extends PencilDashboardController {
             $this->resultMessage($result);
         }
 
+        $Nodes                  = $this->Tree->subtree(PencilController::BLOG, ['contentType' => ['']])->get();
+        $this->View->Nodes      = $Nodes;
         $this->View->Node       = $Node;
         $this->View->formAction = '/P_Blog/edit/'.$Node->node_id;
         $this->View->formHeader = 'Edit Article';

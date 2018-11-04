@@ -445,7 +445,7 @@ class ArboristWorkflow {
             // TODO Elegantly handle duplicate parent_id-label pairs
             // If $result is still false, Fail
             if (false === $result) {
-                $this->Nodes[] = false;
+                $this->Nodes = [false];
                 break;
             }
             // Add the last Node to the collection

@@ -13,20 +13,7 @@ echo $View->render('header');
                     <h5><?= $formHeader ?></h5>
                 </div>
                 <div class="content">
-                    <div class="form-group">
-                        <label for="title">Title</label>
-                        <input type="text" name="title" id="title" class="form-control" value="<?php echo $Node->File->title; ?>">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="label">Label</label>
-                        <input class="form-control" type="text" name="label" id="label" value="<?php echo $Node->label ?? ''; ?>">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea class="form-control" name="description" id="description"><?php echo $Node->description; ?></textarea>
-                    </div>
+                    <?php include 'P_Dashboard._nodeFormElements.php'; ?>
 
                     <div class="form-group">
                         <label for="body"></label>

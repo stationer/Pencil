@@ -15,6 +15,7 @@ use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
 use Stationer\Pencil\AssetManager;
+use Stationer\Pencil\ExportWorkflow;
 use Stationer\Pencil\models\Site;
 use Stationer\Pencil\PencilDashboardController;
 
@@ -58,11 +59,11 @@ class P_DashboardController extends PencilDashboardController {
 
         if ('POST' == $this->method) {
             /** @var Site $Site */
-            $Site = $SiteNode->File;
-            $Site->title = $request['title'];
-            $Site->theme_id = $request['theme_id'];
+            $Site                 = $SiteNode->File;
+            $Site->title          = $request['title'];
+            $Site->theme_id       = $request['theme_id'];
             $Site->defaultPage_id = $request['defaultPage_id'];
-            $result = $this->DB->save($Site);
+            $result               = $this->DB->save($Site);
             if (false !== $result) {
                 G::msg('Saved Site Settings.');
             } else {
@@ -118,7 +119,7 @@ class P_DashboardController extends PencilDashboardController {
             return strcmp($a["path"], $b["path"]);
         });
         $this->View->Nodes = $Nodes;
-        $this->View->root = $this->Tree->getRoot();
+        $this->View->root  = $this->Tree->getRoot();
 
         return $this->View;
     }
@@ -138,6 +139,7 @@ class P_DashboardController extends PencilDashboardController {
 
         $this->Tree->reindex();
         die;
+
         return $this->do_home($argv, $request);
     }
 
@@ -169,6 +171,7 @@ class P_DashboardController extends PencilDashboardController {
         unlink($filename);
         exit;
     }
+
     /**
      * Invoke the tree rebuild
      *
@@ -185,6 +188,12 @@ class P_DashboardController extends PencilDashboardController {
         if ('POST' == $this->method) {
             G::msg(ob_var_dump($_FILES));
 
+            /** @var ExportWorkflow $Port */
+            $Port = G::build(ExportWorkflow::class, $this->Tree, $this->DB);
+            if ('text/xml' == $_FILES['upload']['type']) {
+                $Port->importWordPressXML(file_get_contents($_FILES['upload']['tmp_name']));
+            }
+            /* Potentially dead code, at least until we finish our own export format
             if (isset($_FILES['upload']['tmp_name'])
                 && is_file($_FILES['upload']['tmp_name'])
                 && is_readable($_FILES['upload']['tmp_name'])
@@ -211,8 +220,8 @@ class P_DashboardController extends PencilDashboardController {
                     G::msg($file);
                 }
             }
+            */
         }
-        end:
 
         return $this->View;
     }

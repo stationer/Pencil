@@ -13,6 +13,7 @@ namespace Stationer\Pencil;
 
 use const Stationer\Graphite\DATETIME_HTTP;
 use Stationer\Graphite\G;
+use Stationer\Pencil\models\Article;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\models\Page;
 use Stationer\Pencil\models\Site;
@@ -70,6 +71,18 @@ class PaperWorkflow {
         switch ($mode) {
             case 'html':
                 switch ($Node->contentType) {
+                    case 'Article':
+                        $ArticleNode = $Node;
+                        $objects['article'] = array_merge($ArticleNode->getAll(), $ArticleNode->File->getAll(),
+                            ['path' => str_replace($this->Tree->getRoot(), '', $ArticleNode->path)]);
+                        $Node = $this->Tree->load(PencilController::BLOG)->loadContent()->getFirst();
+                        $objects['page'] = array_merge($Node->getAll(), $Node->File->getAll(),
+                        [
+                            'path'      => str_replace($this->Tree->getRoot(), '', $Node->path),
+                            'bodyClass' => $this->pathClasses($pagePath),
+                        ]);
+
+                    // Fall through
                     case 'Page':
                         /** @var Page $Page */
                         $Page = $Node->File;

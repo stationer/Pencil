@@ -26,6 +26,7 @@ class AssetManager {
     public static $uploadPath = '/p.uploads';
 
     // TODO Create a friendly name list for these
+    /** @var array Whitelist of file MIME types */
     const allowedTypes = [
         'application/pdf', 'application/postscript',
         'audio/basic', 'audio/mid', 'audio/mpeg', 'audio/x-aiff', 'audio/x-wav',
@@ -34,16 +35,81 @@ class AssetManager {
         'video/mpeg', 'video/mp4', 'video/quicktime',
     ];
 
+    /** @var array Whitelist of file extensions */
     const importExtentions = [
         '.pdf', '.ps',
         '.au', '.mid', '.mp3', '.aiff', '.wav',
-        '.png', '.gif', '.jpeg', '.svg', '.ico',
+        '.png', '.gif', '.jpg', '.jpeg', '.svg', '.ico',
         '.css', '.csv', '.html', '.txt',
         '.mpeg', '.mp4', '.mov',
     ];
 
     public $error = '';
 
+    /**
+     * Download remote file
+     *
+     * @TODO: polish
+     *
+     * @param string $remotePath
+     * @param string $assetPath
+     *
+     * @return string
+     */
+    public function download($remotePath, $assetPath) {
+        // Validate file extension
+        $ext = strtolower(pathinfo($remotePath, PATHINFO_EXTENSION));
+        if (!in_array(".".$ext, self::importExtentions)) {
+            echo "Rejecting invalid extension '$ext' in $remotePath<br>";
+
+            return false;
+        }
+
+        // Create local directory
+        $assetPath = fakepath(static::$uploadPath.$assetPath.preg_replace('~^\w+://~', '', $remotePath));
+        $fullPath  = SITE.$assetPath;
+        $filename  = basename($fullPath);
+        $dirPath   = dirname($fullPath);
+        if (!is_dir($dirPath) && !mkdir($dirPath, 0755, true) && !is_dir($dirPath)) {
+            echo "Failed to create local directory at $dirPath<br>";
+
+            return false;
+        }
+
+        // Download file
+        $curl_handle = curl_init();
+        curl_setopt($curl_handle, CURLOPT_URL, $remotePath);
+        curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, 2);
+        curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl_handle, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+        $file = curl_exec($curl_handle);
+        curl_close($curl_handle);
+        if (false === $file) {
+            echo "Failed to open remote file at $remotePath<br>";
+
+            return false;
+        }
+
+        // Write file to local server
+        $result = file_put_contents($fullPath, $file);
+        if (false === $result) {
+            echo "Failed to write file to $fullPath<br>";
+
+            return false;
+        }
+
+        // On success, return the path of the saved file, relative to SITE root
+        return $assetPath;
+    }
+
+    /**
+     * Update
+     *
+     * @param array  $file
+     * @param string $assetPath
+     *
+     * @return bool|string
+     */
     public function upload(array $file, string $assetPath) {
         $this->error = '';
         if (empty($file)) {
