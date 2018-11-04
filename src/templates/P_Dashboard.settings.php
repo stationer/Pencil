@@ -3,6 +3,7 @@
 /** @var \Stationer\Pencil\models\Node $SiteNode */
 /** @var \Stationer\Pencil\models\Theme[] $Themes */
 /** @var \Stationer\Pencil\models\Page[] $Pages */
+/** @var \Stationer\Pencil\models\Asset[] $Assets */
 /** @var \Stationer\Pencil\models\Site $Site */
 $Site = $SiteNode->File;
 
@@ -42,6 +43,18 @@ echo $View->render('header'); ?>
                             <option value="<?php echo $Page->node_id; ?>" <?php
                             echo $Page->node_id == $Site->defaultPage_id ? 'selected':'';
                             ?>><?php echo '"'.$Page->File->title.'" : ('.$Page->path.')'; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="dashLogo_id">Dashboard Logo</label>
+                    <select name="dashLogo_id" id="dashLogo_id" class="form-control">
+                        <option disabled selected value="">--- Select an Asset ---</option>
+                        <?php foreach($Assets as $Asset) : ?>
+                            <option value="<?php echo $Asset->node_id; ?>" <?php
+                            echo $Asset->node_id == $Site->dashLogo_id ? 'selected':'';
+                            ?>><?php echo $Asset->path; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

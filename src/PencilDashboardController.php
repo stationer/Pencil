@@ -47,6 +47,17 @@ abstract class PencilDashboardController extends PencilController {
         $this->View->_script(str_replace(SITE, '', __DIR__.'/js/Pencil.js'));
         $this->View->_script('https://cdn.quilljs.com/1.0.0/quill.js');
         $this->View->_script(str_replace(SITE, '', __DIR__.'/js/Nib.js'));
+
+        $SiteNode = $this->Tree->setPath('')->load()->loadContent()->getFirst();
+        if ($SiteNode->File->dashLogo_id > 0) {
+            $AssetNode = $this->Tree->descendants('/', [
+                'contentType' => 'Asset',
+                'node_id'     => $SiteNode->File->dashLogo_id,
+            ])->first()->loadContent()->getFirst();
+            if (is_a($AssetNode, Node::class)) {
+                $this->View->_logoURL = '/P_Cache/400x200'.$AssetNode->File->path;
+            }
+        }
     }
 
     public function insertNode(array $request, PassiveRecord $File) {

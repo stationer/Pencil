@@ -12,6 +12,7 @@
 namespace Stationer\Pencil;
 
 use Stationer\Graphite\G;
+use Stationer\Graphite\Session;
 use Stationer\Graphite\View;
 use Stationer\Graphite\Controller;
 use Stationer\Graphite\data\IDataProvider;
@@ -36,6 +37,8 @@ abstract class PencilController extends Controller {
     const THEMES = '/themes';
     const NAVIGATION = '/navigation';
 
+    const TREE_ROOT_KEY = 'siteTreeRoot';
+
     /** @var string Required Role, set to false for no requirement */
     protected $role = false;
 
@@ -58,8 +61,16 @@ abstract class PencilController extends Controller {
     public function __construct(array $argv = [], IDataProvider $DB = null, View $View = null) {
         parent::__construct($argv, $DB, $View);
 
-        // Set the default root path to the current site.
-        $root = '/sites/'.$_SERVER['SERVER_NAME'];
+        // Get or set the site root
+        $Session = Session::getInstance();
+        if ($Session->exists(self::TREE_ROOT_KEY)) {
+            $root = $Session->get(self::TREE_ROOT_KEY);
+        } else {
+            // Set the default root path to the current site.
+            $root = '/sites/'.$_SERVER['SERVER_NAME'];
+            $Session->set(self::TREE_ROOT_KEY, $root);
+        }
+
         $this->Tree = G::build(ArboristWorkflow::class, $this->DB);
         $this->Tree->setRoot('')->create($root)->setRoot($root)->setPath('');
         $this->Website = G::build(WebsiteWorkflow::class, $this->Tree, $this->DB);

@@ -7995,7 +7995,8 @@ section {
 }
 
 .c-brand img {
-	width: 100%;
+	max-width: 100%;
+	max-height: 100px;
 }
 
 .c-avatar {

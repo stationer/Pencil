@@ -12,11 +12,13 @@
 namespace Stationer\Pencil\controllers;
 
 use Stationer\Graphite\G;
+use Stationer\Graphite\Session;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
 use Stationer\Pencil\AssetManager;
 use Stationer\Pencil\ExportWorkflow;
 use Stationer\Pencil\models\Site;
+use Stationer\Pencil\PencilController;
 use Stationer\Pencil\PencilDashboardController;
 
 /**
@@ -43,6 +45,37 @@ class P_DashboardController extends PencilDashboardController {
     }
 
     /**
+     * Page for selecting website
+     *
+     * @param array $argv    Argument list passed from Dispatcher
+     * @param array $request Request_method-specific parameters
+     *
+     * @return View
+     */
+    public function do_setsite(array $argv = [], array $request = []) {
+        if (!G::$S->roleTest($this->role)) {
+            return parent::do_403($argv);
+        }
+
+        $Sites = $this->Tree->setRoot('/sites')->descendants('', ['contentType' => 'Site'])->get();
+        $sites = array_column($Sites, 'path');
+
+        if ('POST' == $this->method) {
+            if (in_array($request['site'] ?? '', $sites)) {
+                $Session = Session::getInstance();
+                $Session->set(PencilController::TREE_ROOT_KEY, $request['site']);
+                $this->_redirect('/P_Dashboard/setsite');
+            }
+        }
+
+        $this->View->sites      = $sites;
+        $this->View->formAction = '/P_Dashboard/setsite';
+        $this->View->formHeader = 'Set Site';
+
+        return $this->View;
+    }
+
+    /**
      * Page for updating website settings
      *
      * @param array $argv    Argument list passed from Dispatcher
@@ -63,9 +96,11 @@ class P_DashboardController extends PencilDashboardController {
             $Site->title          = $request['title'];
             $Site->theme_id       = $request['theme_id'];
             $Site->defaultPage_id = $request['defaultPage_id'];
+            $Site->dashLogo_id    = $request['dashLogo_id'];
             $result               = $this->DB->save($Site);
             if (false !== $result) {
                 G::msg('Saved Site Settings.');
+                $this->_redirect('/P_Dashboard/settings');
             } else {
                 G::msg('Failed to save site settings!', 'error');
             }
@@ -77,8 +112,12 @@ class P_DashboardController extends PencilDashboardController {
         // Get Pages with Files
         $Pages = $this->Tree->descendants(self::WEBROOT, ['contentType' => 'Page'])->loadContent()->get();
 
+        // Get Assets without Files
+        $Assets = $this->Tree->descendants(self::ASSETS, ['contentType' => 'Asset'])->get();
+
         $this->View->Themes   = $Themes;
         $this->View->Pages    = $Pages;
+        $this->View->Assets   = $Assets;
         $this->View->SiteNode = $SiteNode;
 
         return $this->View;
@@ -101,7 +140,7 @@ class P_DashboardController extends PencilDashboardController {
     }
 
     /**
-     * Page for viewing fancy graphs ;-)
+     * Page for viewing a list of all nodes in the site tree
      *
      * @param array $argv    Argument list passed from Dispatcher
      * @param array $request Request_method-specific parameters

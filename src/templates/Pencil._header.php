@@ -12,6 +12,7 @@ use Stationer\Graphite\G;
 /** @var string $_siteURL URL, used in header */
 /** @var string $_loginname Name of current user */
 /** @var int $_login_id ID of current user */
+/** @var int $treeRoot Root path of current site */
 if (!isset($_controller)) {
     $_controller = '';
 }
@@ -35,6 +36,9 @@ if (!isset($_avatarURL)) {
     } else {
         $_avatarURL = '/vendor/stationer/pencil/src/images/avatar-1.jpg';
     }
+}
+if(empty($_logoURL)) {
+    $_logoURL = '/vendor/stationer/pencil/src/images/logo.jpg';
 }
 ?><!DOCTYPE html>
 <html lang="en">
@@ -71,7 +75,7 @@ if (!isset($_avatarURL)) {
 <label for="l-drawer-toggle" id="l-drawer-label"><i data-feather="menu"></i></label>
 <header>
         <span>
-            <h1>Pencil Dashboard</h1>
+            <h1>Pencil Dashboard: <?= basename($treeRoot) ?></h1>
         </span>
     <div>
         <a href="/" class="c-btn m-outline">View Site</a>
@@ -93,7 +97,7 @@ if (!isset($_avatarURL)) {
 </header>
 <nav>
     <?php // TODO Add a setting for which uploaded asset to display here ?>
-    <div class="c-brand"><img src="/vendor/stationer/pencil/src/images/logo.jpg"></div>
+    <div class="c-brand"><img src="<?= $_logoURL ?>"></div>
     <ul class="c-side-nav">
         <li><a href="#"><i data-feather="home"></i> Dashboard
                 <div><i data-feather="chevron-down"></i></div>
@@ -101,6 +105,7 @@ if (!isset($_avatarURL)) {
             <ul>
                 <li><a href="/P_Dashboard">Home</a></li>
                 <li><a href="/P_Dashboard/settings">Site Settings</a></li>
+                <li><a href="/P_Dashboard/setsite">Select Site</a></li>
                 <li><a href="/P_Dashboard/tree">Site Tree</a></li>
                 <li><a href="/P_Dashboard/import">Import / Export</a></li>
             </ul>
