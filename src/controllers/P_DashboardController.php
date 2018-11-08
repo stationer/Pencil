@@ -15,7 +15,6 @@ use Stationer\Graphite\G;
 use Stationer\Graphite\Session;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
-use Stationer\Pencil\AssetManager;
 use Stationer\Pencil\ExportWorkflow;
 use Stationer\Pencil\models\Site;
 use Stationer\Pencil\PencilController;
@@ -32,6 +31,9 @@ use Stationer\Pencil\PencilDashboardController;
 class P_DashboardController extends PencilDashboardController {
     /** @var string Default action */
     protected $action = 'home';
+
+    /** @var string The Node->contentType this Controller works on */
+    const CONTENT_TYPE = 'Site';
 
     /**
      * Controller constructor
@@ -88,21 +90,27 @@ class P_DashboardController extends PencilDashboardController {
             return parent::do_403($argv);
         }
 
-        $SiteNode = $this->Website->getSiteRoot();
+        $Node = $this->Website->getSiteRoot();
+
+        // If we didn't get the Node, show error and delegate to do_list
+        if (empty($Node)) {
+            G::msg('Requested '.static::CONTENT_TYPE.' not found: '.$argv[1], 'error');
+            $this->_redirect('/P_Page/list');
+        }
 
         if ('POST' == $this->method) {
-            /** @var Site $Site */
-            $Site                 = $SiteNode->File;
-            $Site->title          = $request['title'];
-            $Site->theme_id       = $request['theme_id'];
-            $Site->defaultPage_id = $request['defaultPage_id'];
-            $Site->dashLogo_id    = $request['dashLogo_id'];
-            $result               = $this->DB->save($Site);
+            // Ensure we don't move Sites
+            unset($request['parentPath']);
+            // Default the label to the current domain
+            $request['label'] = $request['label'] ?: $_SERVER['SERVER_NAME'];
+
+            $result = $this->updateNode($Node, $request);
+            $this->resultMessage($result);
+            // Set the default root path to the current site.
+            Session::getInstance()->set(self::TREE_ROOT_KEY, $Node->path);
+
             if (false !== $result) {
-                G::msg('Saved Site Settings.');
                 $this->_redirect('/P_Dashboard/settings');
-            } else {
-                G::msg('Failed to save site settings!', 'error');
             }
         }
 
@@ -118,7 +126,9 @@ class P_DashboardController extends PencilDashboardController {
         $this->View->Themes   = $Themes;
         $this->View->Pages    = $Pages;
         $this->View->Assets   = $Assets;
-        $this->View->SiteNode = $SiteNode;
+        $this->View->Node     = $Node;
+        $this->View->formAction = '/P_Dashboard/settings';
+        $this->View->formHeader = 'Site Settings';
 
         return $this->View;
     }

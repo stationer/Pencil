@@ -96,7 +96,7 @@ abstract class PencilDashboardController extends PencilController {
         ])->loadContent()->getFirst();
     }
 
-    public function updateNode(Node $Node, array $request) {
+    public function updateNode(Node &$Node, array $request) {
         // Set the checkbox values according to whether they were checked
         $request['published'] = !empty($request['published']);
         $request['trashed']   = !empty($request['trashed']);
