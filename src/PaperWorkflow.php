@@ -13,7 +13,6 @@ namespace Stationer\Pencil;
 
 use const Stationer\Graphite\DATETIME_HTTP;
 use Stationer\Graphite\G;
-use Stationer\Pencil\models\Article;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\models\Page;
 use Stationer\Pencil\models\Site;
@@ -45,12 +44,13 @@ class PaperWorkflow {
     /**
      * Render a given Node
      *
-     * @param Node   $Node
-     * @param string $mode Render mode
+     * @param Node   $Node      Node to render
+     * @param string $mode      Render mode
+     * @param array  $overrides Values to override what's fetched by default
      *
      * @return string
      */
-    public function render(Node $Node, $mode = 'html') {
+    public function render(Node $Node, $mode = 'html', $overrides = []) {
         $result   = '';
         $SiteNode = $this->Tree->load('')->loadContent()->getFirst();
         /** @var Site $Site */
@@ -120,7 +120,7 @@ class PaperWorkflow {
                         $objects['theme'] = array_merge($ThemeNode->getAll(), $Theme->getAll(),
                             ['path' => str_replace($this->Tree->getRoot(), '', $ThemeNode->path)]);
 
-                        $ContentNodes = $this->Tree->descendants($Node->path, [
+                        $ContentNodes = $this->Tree->children($Node->path, [
                             'contentType' => 'Text',
                         ])->loadContent()->get();
                         $objects['content'] = [];
@@ -157,13 +157,30 @@ class PaperWorkflow {
                 break;
         }
 
+        // Apply Overrides
+        $objects = array_replace_recursive($objects, $overrides);
+
         // Process merge codes
         do {
             $codes = $this->mergeCodes($result);
             foreach ($codes as $code) {
                 if (!isset($objects[$code[1]][$code[2]])) {
-                    trigger_error('Unresolvable merge code: '.$code[0]);
-                    $objects[$code[1]][$code[2]] = '';
+                    switch ($code[0]) {
+                        case '[blog.categorySelector]':
+                            /** @var BlogWorkflow $BlogWF */
+                            $BlogWF = G::build(BlogWorkflow::class, $this->Tree);
+                            $objects[$code[1]][$code[2]] = $BlogWF->getCategorySelector();
+                            break;
+                        case '[blog.archiveSelector]':
+                            /** @var BlogWorkflow $BlogWF */
+                            $BlogWF = G::build(BlogWorkflow::class, $this->Tree);
+                            $objects[$code[1]][$code[2]] = $BlogWF->getArchiveSelector();
+                            break;
+                        default:
+                            trigger_error('Unresolvable merge code: '.$code[0]);
+                            $objects[$code[1]][$code[2]] = '';
+                            break;
+                    }
                 }
                 $result = str_replace($code[0], $objects[$code[1]][$code[2]], $result);
             }
