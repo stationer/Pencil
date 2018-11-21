@@ -42,14 +42,14 @@ echo $View->render('header');
                         </div>
                     </div>
                 </form>
-                <table>
+                <table class="js-sort-table">
                     <thead>
                     <tr>
                         <th></th>
-                        <th class="sort" data-sort="title">Title</th>
-                        <th class="sort" data-sort="path">Path</th>
-                        <th class="sort" data-sort="visibility">Visibility</th>
-                        <th class="sort" data-sort="date">Date</th>
+                        <th class="sortable">Title</th>
+                        <th class="sortable">Path</th>
+                        <th class="sortable">Visibility</th>
+                        <th class="sortable js-sort-date">Date</th>
                         <th class="table-actions">Quick Options</th>
                     </tr>
                     </thead>

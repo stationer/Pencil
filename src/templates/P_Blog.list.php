@@ -4,24 +4,24 @@
 
 echo $View->render('header');
 ?>
-	<section>
-		<div class="c-card">
-			<div class="header">
-				<h5>List Blog Articles</h5>
-			</div>
-			<div class="content">
-				<table>
+    <section>
+        <div class="c-card">
+            <div class="header">
+                <h5>List Blog Articles</h5>
+            </div>
+            <div class="content">
+                <table class="js-sort-table">
                     <thead>
                     <tr>
                         <th></th>
-                        <th class="sort" data-sort="title">Title</th>
-                        <th class="sort" data-sort="author">Author</th>
-                        <th class="sort" data-sort="visibility">Visibility</th>
-                        <th class="sort" data-sort="date">Date</th>
+                        <th class="sortable">Title</th>
+                        <th class="sortable">Author</th>
+                        <th class="sortable">Visibility</th>
+                        <th class="sortable js-sort-date">Date</th>
                         <th class="table-actions">Quick Options</th>
                     </tr>
                     </thead>
-					<tbody>
+                    <tbody>
                     <?php foreach ($Articles as $Article) : ?>
                         <tr>
                             <td><input type="checkbox" name="input[]" title=""/></td>
@@ -43,12 +43,12 @@ echo $View->render('header');
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
-				</table>
-				<?php if (empty($Articles)) : ?>
-					<p>There are currently now articles. Would you like to <a href="/P_Blog/add">create one</a>?</p>
-				<?php endif; ?>
-			</div>
-		</div>
-	</section>
+                </table>
+                <?php if (empty($Articles)) : ?>
+                    <p>There are currently now articles. Would you like to <a href="/P_Blog/add">create one</a>?</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
 
 <?php echo $View->render('footer');

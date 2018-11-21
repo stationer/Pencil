@@ -14,8 +14,8 @@ echo $View->render('header');
                 <table>
                     <tr>
                         <th></th>
-                        <th>Path</th>
-                        <th>MIME Type</th>
+                        <th class="sortable">Path</th>
+                        <th class="sortable">MIME Type</th>
                         <th>Preview</th>
                     </tr>
                     <?php foreach ($Texts as $Text) : ?>

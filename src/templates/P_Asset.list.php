@@ -11,11 +11,11 @@ echo $View->render('header');
                 <h5>Manage Asset</h5>
             </div>
             <div class="content">
-                <table>
+                <table class="js-sort-table">
                     <thead>
                     <tr>
-                        <th class="sort" data-sort="label">Label</th>
-                        <th class="sort" data-sort="type">MIME Type</th>
+                        <th class="sortable">Label</th>
+                        <th class="sortable">MIME Type</th>
                         <th>Preview</th>
                     </tr>
                     </thead>

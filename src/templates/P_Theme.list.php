@@ -10,11 +10,11 @@ echo $View->render('header');
                 <h5>List Themes</h5>
             </div>
             <div class="content">
-                <table>
+                <table class="js-sort-table">
                     <thead>
                     <tr>
-                        <th class="sort" data-sort="theme">Theme</th>
-                        <th class="sort" data-sort="updated">Last Updated</th>
+                        <th class="sortable">Theme</th>
+                        <th class="sortable js-sort-date">Last Updated</th>
                     </tr>
                     </thead>
                     <tbody>

@@ -1,0 +1,88 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "b43e44ec553f62fe77c76119dfe3e22e",
+    "packages": [
+        {
+            "name": "stationer/barrel",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stationer/Barrel.git",
+                "reference": "d8330f886065fd486b5a0ef7ae1e191144bb75cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stationer/Barrel/zipball/d8330f886065fd486b5a0ef7ae1e191144bb75cf",
+                "reference": "d8330f886065fd486b5a0ef7ae1e191144bb75cf",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0",
+                "stationer/graphite": "*"
+            },
+            "suggest": {
+                "mpdf/mpdf": "To render views as PDF"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Stationer\\Barrel\\": "src/"
+                }
+            },
+            "description": "Default controllers for basic auth/admin functionality",
+            "homepage": "https://github.com/stationer/Barrel",
+            "support": {
+                "source": "https://github.com/stationer/Barrel/tree/master"
+            },
+            "time": "2018-08-11T02:26:24+00:00"
+        },
+        {
+            "name": "stationer/graphite",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stationer/Graphite.git",
+                "reference": "703c678e908f3a3cd8e75805609db77e57ba6f7c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stationer/Graphite/zipball/703c678e908f3a3cd8e75805609db77e57ba6f7c",
+                "reference": "703c678e908f3a3cd8e75805609db77e57ba6f7c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0"
+            },
+            "suggest": {
+                "graphite/barrel": "Default controllers for basic auth/admin functionality",
+                "mpdf/mpdf": "To render views as PDF"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Stationer\\Graphite\\": "src/"
+                }
+            },
+            "description": "A small PHP framework",
+            "homepage": "https://github.com/stationer/Graphite",
+            "support": {
+                "source": "https://github.com/stationer/Graphite/tree/master"
+            },
+            "time": "2018-08-11T02:39:27+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": [],
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": {
+        "php": "^7.0"
+    },
+    "platform-dev": []
+}

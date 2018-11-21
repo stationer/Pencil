@@ -9,13 +9,13 @@ echo $View->render('header');
                 <h5>List Forms</h5>
             </div>
             <div class="content">
-                <table>
+                <table class="js-sort-table">
                     <thead>
                     <tr>
-                        <th class="sort" data-sort="name">Name</th>
-                        <th class="sort" data-sort="author">Author</th>
-                        <th class="sort" data-sort="visibility">Visibility</th>
-                        <th class="sort" data-sort="date">Date</th>
+                        <th class="sortable">Name</th>
+                        <th class="sortable">Author</th>
+                        <th class="sortable">Visibility</th>
+                        <th class="sortable js-sort-date">Date</th>
                         <th class="table-actions">Quick Options</th>
                     </tr>
                     </thead>

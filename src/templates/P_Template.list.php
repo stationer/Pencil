@@ -3,17 +3,17 @@
 /** @var \Stationer\Pencil\models\Template[] $Templates */
 echo $View->render('header');
 ?>
-	<section>
-		<div class="c-card">
-			<div class="header">
-				<h5>List Templates</h5>
-			</div>
-			<div class="content">
-				<table>
+    <section>
+        <div class="c-card">
+            <div class="header">
+                <h5>List Templates</h5>
+            </div>
+            <div class="content">
+                <table class="js-sort-table">
                     <thead>
                     <tr>
-                        <th class="sort" data-sort="template">Template</th>
-                        <th class="sort" data-sort="updated">Last Updated</th>
+                        <th class="sortable">Template</th>
+                        <th class="sortable js-sort-date">Last Updated</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -30,9 +30,9 @@ echo $View->render('header');
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
-				</table>
-			</div>
-		</div>
-	</section>
+                </table>
+            </div>
+        </div>
+    </section>
 
 <?php echo $View->render('footer');

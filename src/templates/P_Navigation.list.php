@@ -3,16 +3,16 @@
 /** @var \Stationer\Pencil\models\Navigation[] $Navigations */
 echo $View->render('header');
 ?>
-	<section>
-		<div class="c-card">
-			<div class="header">
-				<h5>Manage Navigation</h5>
-			</div>
-			<div class="content">
-				<table>
+    <section>
+        <div class="c-card">
+            <div class="header">
+                <h5>Manage Navigation</h5>
+            </div>
+            <div class="content">
+                <table class="js-sort-table">
                     <thead>
                     <tr>
-                        <th class="sort" data-sort="label">Label</th>
+                        <th class="sortable">Label</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -28,9 +28,9 @@ echo $View->render('header');
                         <?php endforeach; ?>
                     <?php endif; ?>
                     </tbody>
-				</table>
-			</div>
-		</div>
-	</section>
+                </table>
+            </div>
+        </div>
+    </section>
 
 <?php echo $View->render('footer');
