@@ -93,7 +93,6 @@ if(empty($_logoURL)) {
             </ul>
         </div>
     </div>
-
 </header>
 <nav>
     <?php // TODO Add a setting for which uploaded asset to display here ?>
