@@ -73,10 +73,10 @@ if(empty($_logoURL)) {
 <body class="<?php echo $_bodyClass; ?>">
 <input type="checkbox" id="l-drawer-toggle" name="l-drawer-toggle"/>
 <label for="l-drawer-toggle" id="l-drawer-label"><i data-feather="menu"></i></label>
-<header>
-        <span>
-            <h1>Pencil Dashboard: <?= basename($treeRoot) ?></h1>
-        </span>
+<header class="l-header-right">
+    <div>
+        <h1>Pencil Dashboard: <?= basename($treeRoot) ?></h1>
+    </div>
     <div>
         <a href="/" class="c-btn m-outline">View Site</a>
         <div class="c-dropdown">
@@ -93,9 +93,8 @@ if(empty($_logoURL)) {
             </ul>
         </div>
     </div>
-
 </header>
-<nav>
+<nav class="l-nav-left">
     <?php // TODO Add a setting for which uploaded asset to display here ?>
     <div class="c-brand"><img src="<?= $_logoURL ?>"></div>
     <ul class="c-side-nav">
@@ -180,7 +179,7 @@ if(empty($_logoURL)) {
         </li>
     </ul>
 </nav>
-<main>
+<main class="l-main-left">
     <div class="container-fluid">
         <div class="row">
             <?php if (!empty(G::msg())): ?>
