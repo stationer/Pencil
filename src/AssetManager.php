@@ -176,6 +176,10 @@ class AssetManager {
         }
 
         list($og_width, $og_height) = $info = getimagesize($original);
+        // If the original has no dimensions, use the original file
+        if ($og_height < 1 || $og_width < 1) {
+            return $path;
+        }
         $mimetype = $info['mime'];
 
         // if the request max size is wider than the original, use height as the limit
