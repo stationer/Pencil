@@ -37,7 +37,7 @@ echo $View->render('header');
                             <p class="m-sm">No File Found</p>
                         <?php } else { ?>
                             <p class="m-sm"><?= $Node->File->path ?></p>
-                        <? } ?>
+                        <?php } ?>
                     </div>
 
                     <div class="form-group">

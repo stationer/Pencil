@@ -50,9 +50,10 @@ class ExportWorkflow {
      */
     public function importWordPressXML($xml) {
         /** @var \SimpleXMLElement $RSS */
-        $RSS = G::build(\SimpleXMLElement::class, $xml);
+        $RSS = new \SimpleXMLElement($xml);
         croak((string)$RSS->channel[0]->title);
         $contentTypes = ['post' => 'Article', 'page' => 'Page', 'attachment' => 'Asset', '' => 'Text'];
+        $categoryTypes = ['post_tag' => 'tag'];
         $data         = [];
 
         // Loop the item nodes and map the content to our format
@@ -74,7 +75,18 @@ class ExportWorkflow {
                 'body'        => trim($item->children('content', true)->encoded),
 
                 'post_type' => trim($wp->post_type ?? ''),
+                'tags' => [],
             ];
+            if ($item->category) {
+                foreach ($item->category as $cat) {
+                    $type = trim($cat['domain']);
+                    $datum['tags'][] = [
+                        'label' => trim($cat),
+                        'type' => $categoryTypes[$type] ?? $type,
+                    ];
+                }
+            }
+
             $data[] = $datum;
         }
 
@@ -130,9 +142,11 @@ class ExportWorkflow {
                         continue;
                     }
                 }
+                echo "Creating Node at ".$datum['path']."<br>";
 
                 // Create a new Node
                 $Node = $this->Tree->create($datum['path'], $datum)->getFirst();
+                echo "Created Node at ".$Node['path']."<br>";
                 $File = G::build(Article::class);
                 if (is_a($Node, Node::class)) {
                     $datum['body'] = str_replace($oldPaths, $newPaths, $datum['body']);
@@ -143,6 +157,9 @@ class ExportWorkflow {
                         $Node->File = $File;
                         // Finally, update the node to refer to the new file.
                         $this->DB->update($Node);
+                    }
+                    foreach ($datum['tags'] as $tag) {
+                        $this->Tree->tag($tag['label'], $tag['type']);
                     }
                 }
             }

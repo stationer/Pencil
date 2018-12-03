@@ -185,9 +185,9 @@ class P_DashboardController extends PencilDashboardController {
         if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
+        G::msg('This feature is currently disabled');
 
-        $this->Tree->reindex();
-        die;
+//        $this->Tree->reindex();
 
         return $this->do_home($argv, $request);
     }
@@ -234,7 +234,8 @@ class P_DashboardController extends PencilDashboardController {
             return parent::do_403($argv);
         }
 
-        if ('POST' == $this->method) {
+        G::msg('This feature is currently disabled');
+        if (false && 'POST' == $this->method) {
             G::msg(ob_var_dump($_FILES));
 
             /** @var ExportWorkflow $Port */
@@ -287,8 +288,8 @@ class P_DashboardController extends PencilDashboardController {
         if (!G::$S->roleTest($this->role)) {
             return parent::do_403($argv);
         }
-
-        $this->Website->resetSite();
+        G::msg('This feature is currently disabled');
+//        $this->Website->resetSite();
 
         return $this->do_settings();
     }

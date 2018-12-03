@@ -50,7 +50,7 @@ class BlogWorkflow {
             'contentType' => 'Article',
         ]);
 
-        $result = '<select name="categorySelector" id="categorySelector" class="categorySelector"
+        $result = '<select name="categorySelector" id="categorySelector" class="form-control categorySelector"
                     onchange="this.form.submit();">'
             .'<option value="">[Any Category]</option>';
         if (is_array($options)) {
@@ -70,7 +70,7 @@ class BlogWorkflow {
             'published' => 1,
         ]);
 
-        $result = '<select name="archiveSelector" id="archiveSelector" class="archiveSelector"
+        $result = '<select name="archiveSelector" id="archiveSelector" class="form-control archiveSelector"
                     onchange="this.form.submit();">'
             .'<option value="">[Any Date]</option>';
         if (is_array($options)) {

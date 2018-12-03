@@ -510,11 +510,12 @@ class ArboristWorkflow {
      * Add specified tag to current Nodes
      *
      * @param string $tag
+     * @param string $type
      *
      * @return $this
      */
-    public function tag(string $tag) {
-        $Tag = G::build(Tag::class, ['label' => $tag]);
+    public function tag(string $tag, string $type = null) {
+        $Tag = G::build(Tag::class, ['label' => $tag, 'type' => $type]);
         $this->DB->fill($Tag);
         if (0 == $Tag->tag_id) {
             $this->DB->insert($Tag);
@@ -540,12 +541,13 @@ VALUES ";
      * Remove specified tag from current Nodes
      *
      * @param string $tag
+     * @param string $type
      *
      * @return $this
      */
-    public function untag(string $tag) {
+    public function untag(string $tag, string $type = null) {
         // Fetch the tag
-        $Tag = $this->DB->fetch(Tag::class, ['label' => $tag]);
+        $Tag = $this->DB->fetch(Tag::class, ['label' => $tag, 'type' => $type]);
         // If we didn't find the tag, we're done
         if (empty($Tag)) {
             return $this;

@@ -55,7 +55,7 @@ FROM `$table` t
     LEFT JOIN `$tag` t2 ON j.`tag_id` = t2.`tag_id`
 WHERE %s
 GROUP BY t.`node_id`
--- ORDER BY a.`featured` DESC, a.`release_uts` ASC
+ORDER BY t.`featured` DESC, a.`release_uts` DESC
 ";
         parent::__construct($a, $b);
     }

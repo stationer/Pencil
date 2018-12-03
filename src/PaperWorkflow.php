@@ -12,6 +12,7 @@
 namespace Stationer\Pencil;
 
 use const Stationer\Graphite\DATETIME_HTTP;
+use const Stationer\Graphite\DATETIME_HUMAN;
 use Stationer\Graphite\G;
 use Stationer\Pencil\models\Node;
 use Stationer\Pencil\models\Page;
@@ -73,8 +74,9 @@ class PaperWorkflow {
                 switch ($Node->contentType) {
                     case 'Article':
                         $ArticleNode = $Node;
-                        $objects['article'] = array_merge($ArticleNode->getAll(), $ArticleNode->File->getAll(),
-                            ['path' => str_replace($this->Tree->getRoot(), '', $ArticleNode->path)]);
+                        $objects['article'] = array_merge($ArticleNode->getAll(), $ArticleNode->File->getAll());
+                        $objects['article']['path'] = str_replace($this->Tree->getRoot(), '', $ArticleNode->path);
+                        $objects['article']['releaseDate'] = date(DATETIME_HUMAN, $ArticleNode->File->release_uts);
                         $Node = $this->Tree->load(PencilController::BLOG)->loadContent()->getFirst();
                         $objects['page'] = array_merge($Node->getAll(), $Node->File->getAll(),
                         [
@@ -177,8 +179,13 @@ class PaperWorkflow {
                             $objects[$code[1]][$code[2]] = $BlogWF->getArchiveSelector();
                             break;
                         default:
-                            trigger_error('Unresolvable merge code: '.$code[0]);
-                            $objects[$code[1]][$code[2]] = '';
+                            if (!isset($objects[$code[1]])) {
+                                // TODO: Change the merge code syntax to prevent errors in Javascript
+                                $objects[$code[1]][$code[2]] = "[ {$code[1]}.{$code[2]} ]";
+                            } else {
+                                trigger_error('Unresolvable merge code: '.$code[0]);
+                                $objects[$code[1]][$code[2]] = '';
+                            }
                             break;
                     }
                 }
