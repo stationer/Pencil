@@ -17,7 +17,8 @@ echo $View->render('header');
                         <th class="sortable">Title</th>
                         <th class="sortable">Author</th>
                         <th class="sortable">Visibility</th>
-                        <th class="sortable js-sort-date">Date</th>
+                        <th class="sortable js-sort-date">Created</th>
+                        <th class="sortable js-sort-date">Published</th>
                         <th class="table-actions">Quick Options</th>
                     </tr>
                     </thead>
@@ -39,6 +40,7 @@ echo $View->render('header');
                             <td><?php echo $Article->File->author_id; ?></td>
                             <td><?php echo $Article->published ? 'Public' : 'Private'; ?></td>
                             <td><?php echo date('F j, Y g:i a', $Article->created_uts); ?></td>
+                            <td><?php echo date('F j, Y g:i a', $Article->File->release_uts); ?></td>
                             <td></td>
                         </tr>
                     <?php endforeach; ?>

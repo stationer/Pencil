@@ -135,7 +135,7 @@ class P_BlogController extends PencilDashboardController {
             /** @var Article $Article */
             $Article = $Node->File;
             // If a article is marked as published and doesn't have a released date, set it
-            if (isset($request['published']) && $Article->release_uts != null) {
+            if (isset($request['published']) && $Article->release_uts == null) {
                 $request['release_uts'] = NOW;
             }
             $result = $this->updateNode($Node, $request);
