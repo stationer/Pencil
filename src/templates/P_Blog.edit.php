@@ -16,7 +16,13 @@ echo $View->render('header');
                     <?php include 'P_Dashboard._nodeFormElements.php'; ?>
 
                     <div class="form-group">
-                        <label for="body"></label>
+                        <label for="title">Title</label>
+                        <input type="text" name="title" id="title" class="form-control"
+                               value="<?php echo $Node->File->title ?: 'No Title'; ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="body">Article Body</label>
                         <textarea name="body" id="body"><?php echo $Node->File->body; ?></textarea>
                     </div>
                 </div>
