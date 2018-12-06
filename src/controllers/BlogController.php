@@ -70,7 +70,7 @@ class BlogController extends PencilController {
 
         // TODO: Handle Paging
         $Articles = $this->DB->fetch(ArticleSearchReport::class, $params,
-            [/*'featured' => false, 'release_uts' => !true*/], 500);
+            [/* @TODO: 'featured' => false, 'release_uts' => !true */], 20);
 
         // Load teasers
         // TODO: fetch teaser component according to Site->blogTeaserComponent_id and use a View here
