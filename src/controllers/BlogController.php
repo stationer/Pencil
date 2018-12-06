@@ -12,7 +12,7 @@
 
 namespace Stationer\Pencil\controllers;
 
-use const Stationer\Graphite\DATETIME_HUMAN;
+use const Stationer\Graphite\DATE_HUMAN;
 use Stationer\Graphite\G;
 use Stationer\Graphite\View;
 use Stationer\Graphite\data\IDataProvider;
@@ -70,7 +70,7 @@ class BlogController extends PencilController {
 
         // TODO: Handle Paging
         $Articles = $this->DB->fetch(ArticleSearchReport::class, $params,
-            [/*'featured' => false, 'release_uts' => !true*/], 10);
+            [/*'featured' => false, 'release_uts' => !true*/], 500);
 
         // Load teasers
         // TODO: fetch teaser component according to Site->blogTeaserComponent_id and use a View here
@@ -83,28 +83,35 @@ class BlogController extends PencilController {
 
             $Images = $DOM->getElementsByTagName('img');
             $img = '';
+            $desc = '';
             if (!empty($Images) && $Images->length > 0) {
                 foreach ($Images as $Image) {
                     $img = $Image->getAttribute('src');
                     if ('/p.uploads/' == substr($img, 0, 11)) {
                         $img = '/P_Cache/300x500'.$img;
                     }
-                    $img = '<div style="max-height: 500px; overflow: hidden; margin-bottom: 40px;">' .
-                        '<a href="'.str_replace($remove, '', $Article->path).'">' .
-                        '<img src="'.$img.'" style="width: 100%"></a></div>';
+                    $img = '<a href="'.str_replace($remove, '', $Article->path).'"><img src="'.$img.'"></a>';
                     break;
                 }
             }
             if (empty($img)) {
-                $img = '<div style="background: #eee; padding: 4px">'
-                    .trim(substr(strip_tags($Article->File->body), 0, 200)).'...</div>';
+                $desc = trim(substr(strip_tags($Article->File->body), 0, 250)).'...';
             }
-            $html .= '<div class="col-sm-4">'
-                .'<a href="'.str_replace($remove, '', $Article->path).'"><h3>'.$Article->File->title.'</h3></a>'
-                .'<div>'.date(DATETIME_HUMAN, $Article->File->release_uts).'</div>'
-                .$img
-                .'</div>';
+            $html .= '
+<div class="blog_item">
+    <div class="blog_item_img">
+        '.$img.'
+    </div>
+    <div class="blog_item_title"><a href="'.str_replace($remove, '', $Article->path).'"><h3>'
+                .$Article->File->title.'</h3></a>
+    </div>
+    <div class="blog_item_date">'.date(DATE_HUMAN, $Article->File->release_uts).'</div>
+    <div class="blog_item_desc">'.$desc.'</div>
+</div>';
         }
+        $html = '<div class="blog_results"
+            data-masonry=\'{ "columnWidth": ".blog_item", "itemSelector": ".blog_item","gutter": 30 }\'>'
+            .$html.'</div>';
         $overrides['content']['html1'] = $html;
 
         // Load Blog Page
