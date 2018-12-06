@@ -71,7 +71,7 @@ echo $View->render('header'); ?>
                 </div>
                 <div class="footer">
                     <div class="buttons">
-                        <button class="c-btn" type="submit">Save Changes</button>
+                        <button type="submit" class="c-btn">Save</button>
                     </div>
                 </div>
             </div>
