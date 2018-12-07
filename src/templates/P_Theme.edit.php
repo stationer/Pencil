@@ -20,7 +20,7 @@ echo $View->render('header');
 
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea class="form-control" name="description" id="description"><?php echo $Node->description; ?></textarea>
+                        <textarea class="form-control" name="description" id="description"><?php html($Node->description); ?></textarea>
                     </div>
 
                     <div class="form-group">
@@ -54,7 +54,7 @@ echo $View->render('header');
 
                     <div class="form-group">
                         <label for="css">Theme CSS</label>
-                        <textarea class="form-control" name="css" id="css"><?php echo $Node->File->css; ?></textarea>
+                        <textarea class="form-control" name="css" id="css"><?php html($Node->File->css); ?></textarea>
                     </div>
                 </div>
             </div>

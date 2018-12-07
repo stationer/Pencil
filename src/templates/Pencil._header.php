@@ -51,7 +51,9 @@ if(empty($_logoURL)) {
     <meta name="author" content="">
 
     <title><?php html($_title); ?></title>
-    <base href="<?php html($_siteURL); ?>">
+    <?php if (!empty($_baseURL)) { ?>
+        <base href="<?php html($_baseURL); ?>">
+    <?php } ?>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 
     <?php foreach ($_meta as $k => $v) { ?>

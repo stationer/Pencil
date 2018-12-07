@@ -17,7 +17,7 @@ echo $View->render('header');
                     <?php include 'P_Dashboard._nodeFormElements.php'; ?>
                     <div class="form-group">
                         <label for="source">Source</label>
-                        <textarea style="height:150px;" class="form-control" name="source" id="source"><?php echo $Node->File->source; ?></textarea>
+                        <textarea style="height:150px;" class="form-control" name="source" id="source"><?php html($Node->File->source); ?></textarea>
                     </div>
                 </div>
             </div>

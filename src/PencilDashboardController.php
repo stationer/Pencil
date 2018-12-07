@@ -44,11 +44,13 @@ abstract class PencilDashboardController extends PencilController {
         $this->View->setTemplate('debug', 'footer.debug.php');
         $this->View->_style(str_replace(SITE, '', __DIR__.'/css/letterhead.css'));
         $this->View->_style(str_replace(SITE, '', __DIR__.'/css/ok-sort.css'));
+        $this->View->_style(str_replace(SITE, '', __DIR__.'/css/pencil.css'));
         $this->View->_style('https://cdn.quilljs.com/1.0.0/quill.snow.css');
         $this->View->_script(str_replace(SITE, '', __DIR__.'/js/letterhead.js'));
         $this->View->_script(str_replace(SITE, '', __DIR__.'/js/oksort.js'));
         $this->View->_script('https://cdn.quilljs.com/1.0.0/quill.js');
         $this->View->_script(str_replace(SITE, '', __DIR__.'/js/Nib.js'));
+        $this->View->_script(str_replace(SITE, '', dirname(__DIR__).'/node_modules/ok-chalk/src/chalk.js'));
 
         $SiteNode = $this->Tree->setPath('')->load()->loadContent()->getFirst();
         if ($SiteNode->File->dashLogo_id > 0) {

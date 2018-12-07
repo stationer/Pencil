@@ -27,7 +27,7 @@ echo $View->render('header');
 
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea class="form-control" name="description" id="description"><?php echo $Node->description; ?></textarea>
+                        <textarea class="form-control" name="description" id="description"><?php html($Node->description); ?></textarea>
                     </div>
 
                     <?php // TODO: Can we add file name to display when a user is uploading a file ?>

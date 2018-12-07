@@ -19,6 +19,7 @@
   "homepage": "https://github.com/stationer/Pencil#readme",
   "dependencies": {
     "letterhead": "0.0.3",
-    "ok-sort": "^1.0.0"
+    "ok-sort": "^1.0.0",
+    "ok-chalk": "^1.0.0"
   }
 }
