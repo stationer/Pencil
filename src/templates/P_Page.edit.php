@@ -21,7 +21,8 @@ echo $View->render('header');
                     <?php include 'P_Dashboard._nodeFormElements.php'; ?>
                     <div class="form-group">
                         <label for="title">Title</label>
-                        <input type="text" name="title" id="title" class="form-control" value="<?php echo $Node->File->title ?: 'No Title'; ?>">
+                        <input type="text" name="title" id="title" class="form-control"
+                               value="<?php echo $Node->File->title ?: 'No Title'; ?>">
                     </div>
 
                     <div class="form-group">
@@ -36,12 +37,17 @@ echo $View->render('header');
                         </select>
                     </div>
 
-                    <?php if (!empty($ContentNodes)) foreach ($ContentNodes as $ContentNode) : ?>
-                        <div class="form-group">
-                            <label for="content-<?= $ContentNode->label ?>">[content.<?= $ContentNode->label ?>]</label>
-                            <textarea class="form-control " name="content[<?= $ContentNode->label ?>]" id="content-<?= $ContentNode->label ?>"><?php echo $ContentNode->File->body; ?></textarea>
-                        </div>
-                    <?php endforeach; ?>
+                    <?php if (!empty($ContentNodes)) {
+                        foreach ($ContentNodes as $ContentNode) : ?>
+                            <div class="form-group">
+                                <label for="content-<?= $ContentNode->label ?>">[content.<?= $ContentNode->label ?>
+                                    ]</label>
+                                <textarea class="form-control wysiwyg" name="content[<?= $ContentNode->label ?>]"
+                                          data-chalk-class="chalk-text-show"
+                                          id="content-<?= $ContentNode->label ?>"><?php html($ContentNode->File->body); ?></textarea>
+                            </div>
+                        <?php endforeach;
+                    } ?>
                 </div>
             </div>
         </section>

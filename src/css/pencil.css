@@ -1,0 +1,7 @@
+.form-group textarea {
+    height: 100px;
+}
+
+textarea.wysiwyg {
+    height: 300px;
+}

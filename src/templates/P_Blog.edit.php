@@ -23,7 +23,7 @@ echo $View->render('header');
 
                     <div class="form-group">
                         <label for="body">Article Body</label>
-                        <textarea name="body" id="body"><?php echo $Node->File->body; ?></textarea>
+                        <textarea class="wysiwyg" name="body" id="body"><?php html($Node->File->body); ?></textarea>
                     </div>
                 </div>
             </div>

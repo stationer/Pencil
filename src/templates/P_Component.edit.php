@@ -26,17 +26,17 @@ echo $View->render('header');
 
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea class="form-control" name="description" id="description"><?php echo $Node->description; ?></textarea>
+                        <textarea class="form-control" name="description" id="description"><?php html($Node->description); ?></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="body">Template Body</label>
-                        <textarea class="form-control" name="body" id="body"><?php echo $Node->File->body; ?></textarea>
+                        <textarea class="form-control" name="body" id="body"><?php html($Node->File->body); ?></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="css">Template CSS</label>
-                        <textarea class="form-control" name="css" id="css"><?php echo $Node->File->css; ?></textarea>
+                        <textarea class="form-control" name="css" id="css"><?php html($Node->File->css); ?></textarea>
                     </div>
 
                     <div class="form-group">

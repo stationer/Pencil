@@ -33,7 +33,7 @@ echo $View->render('header');
 
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea class="form-control" name="description" id="description"><?php echo $Node->description; ?></textarea>
+                        <textarea class="form-control" name="description" id="description"><?php html($Node->description); ?></textarea>
                     </div>
 
                     <div class="form-group">
@@ -43,7 +43,7 @@ echo $View->render('header');
 
                     <div class="form-group">
                         <label for="body">Text Body</label>
-                        <textarea class="form-control" name="body" id="body"><?php echo $Node->File->body; ?></textarea>
+                        <textarea class="form-control wysiwyg" name="body" id="body"><?php html($Node->File->body); ?></textarea>
                     </div>
                 </div>
             </div>

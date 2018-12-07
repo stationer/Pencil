@@ -73,7 +73,7 @@ echo $View->render('header');
                             <td><?php echo date('m-d-Y', $Page->created_uts); ?></td>
                             <td>
                                 <a href="">
-                                    <i data-feather="edit"></i>
+                                    <span data-feather="edit"></span>
                                 </a>
                                 <a href="">
                                     <i data-feather="eye"></i>
