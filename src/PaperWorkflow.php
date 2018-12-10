@@ -92,8 +92,8 @@ class PaperWorkflow {
                             $Template = $this->Tree->descendants(PencilController::TEMPLATES, [
                                 'contentType' => 'Template',
                                 'node_id'     => $Page->template_id,
-//                    'published'   => true,
-//                    'trashed'     => false,
+                                'published'   => true,
+                                'trashed'     => false,
                             ])->first()->loadContent()->getFirst();
                             if (false === $Template) {
                                 trigger_error('Template Node '.$Page->template_id.' not found');
@@ -109,8 +109,8 @@ class PaperWorkflow {
                         $ThemeNode = $this->Tree->descendants(PencilController::THEMES, [
                             'contentType' => 'Theme',
                             'node_id'     => $Site->theme_id,
-//                    'published'   => true,
-//                    'trashed'     => false,
+                            'published'   => true,
+                            'trashed'     => false,
                         ])->first()->loadContent()->getFirst();
                         if (false === $ThemeNode) {
                             trigger_error('Theme Node '.$Site->theme_id.' not found');
