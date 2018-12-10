@@ -52,7 +52,7 @@ class P_RenderController extends PencilController {
         }
 
         $SiteNode = $this->Tree->load('')->loadContent()->getFirst();
-        $url      = $_SERVER['REQUEST_URI'] ?? '/';
+        $url      = '/'.trim($argv['_path'] ?? $_SERVER['REQUEST_URI'] ?? '', '/');
         $parts    = explode('.', $url);
         $path     = array_shift($parts);
         $mode     = 'html';
