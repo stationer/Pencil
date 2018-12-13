@@ -19,24 +19,24 @@ use Stationer\Graphite\data\PassiveRecord;
  * @package Stationer\Pencil\models
  * @author  Andrew Leach
  *
- * @property int           node_id
- * @property string        created_uts
- * @property int           updated_dts
- * @property int           parent_id
- * @property int           content_id
- * @property string        contentType
- * @property string        label
- * @property int           creator_id
- * @property string        keywords
- * @property string        description
- * @property bool          published
- * @property bool          trashed
- * @property bool          featured
- * @property string        pathAlias
- * @property int           ordinal
- * @property string        path
- * @property int           left_index
- * @property int           right_index
+ * @property int    $node_id
+ * @property string $created_uts
+ * @property int    $updated_dts
+ * @property int    $parent_id
+ * @property int    $content_id
+ * @property string $contentType
+ * @property string $label
+ * @property int    $creator_id
+ * @property string $keywords
+ * @property string $description
+ * @property bool   $published
+ * @property bool   $trashed
+ * @property bool   $featured
+ * @property string $pathAlias
+ * @property int    $ordinal
+ * @property string $path
+ * @property int    $left_index
+ * @property int    $right_index
  *
  * @property PassiveRecord $File
  */

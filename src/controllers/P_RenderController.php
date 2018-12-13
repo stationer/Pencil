@@ -53,6 +53,9 @@ class P_RenderController extends PencilController {
 
         $SiteNode = $this->Tree->load('')->loadContent()->getFirst();
         $url      = '/'.trim($argv['_path'] ?? $_SERVER['REQUEST_URI'] ?? '', '/');
+        if ('/sitemap.xml' == $url) {
+            return $this->do_sitemap($argv, $request);
+        }
         $parts    = explode('.', $url);
         $path     = array_shift($parts);
         $mode     = 'html';
@@ -90,6 +93,34 @@ class P_RenderController extends PencilController {
         echo $result;
         G::close();
         die;
+    }
+
+    /**
+     * Default action for handling 404 errors
+     *
+     * @param array $argv    Argument list passed from Dispatcher
+     * @param array $request Request_method-specific parameters
+     *
+     * @return View
+     */
+    public function do_sitemap(array $argv = [], array $request = []) {
+        $this->View->_template = 'P_Render.sitemap.php';
+
+        $Nodes = $this->Tree->descendants(self::WEBROOT, [
+            'contentType' => 'Page',
+            'published'   => true,
+            'trashed'     => false,
+        ])->loadContent()->get()
+            + $this->Tree->descendants(self::LANDING, [
+            'contentType' => 'Page',
+            'published'   => true,
+            'trashed'     => false,
+        ])->loadContent()->get();
+
+        $this->View->Pages = $Nodes;
+        $this->View->root = $this->Tree->getRoot();
+
+        return $this->View;
     }
 
     /**
