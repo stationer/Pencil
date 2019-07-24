@@ -52,7 +52,7 @@ class P_RenderController extends PencilController {
         }
 
         $SiteNode = $this->Tree->load('')->loadContent()->getFirst();
-        $url      = '/'.trim($argv['_path'] ?? $_SERVER['REQUEST_URI'] ?? '', '/');
+        $url      = '/'.trim($argv['_path'] ?? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '', '/');
         if ('/sitemap.xml' == $url) {
             return $this->do_sitemap($argv, $request);
         }
