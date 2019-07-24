@@ -33,15 +33,25 @@ class AssetManager {
         'image/png', 'image/gif', 'image/jpeg', 'image/svg+xml', 'image/vnd.microsoft.icon',
         'text/css', 'text/csv', 'text/html', 'text/plain', 'text/richtext', 'text/x-vcard',
         'video/mpeg', 'video/mp4', 'video/quicktime',
+        'font/ttf', 'font/eot', 'font/otf', 'font/woff', 'font/woff2',
+            'application/x-font-woff', 'application/font-woff', 'application/x-font-woff2', 'application/font-woff2',
+            'application/vnd.ms-fontobject',
     ];
 
     /** @var array Whitelist of file extensions */
     const importExtentions = [
+        // PostScript
         '.pdf', '.ps',
+        // Audio
         '.au', '.mid', '.mp3', '.aiff', '.wav',
+        // Image
         '.png', '.gif', '.jpg', '.jpeg', '.svg', '.ico',
+        // Text
         '.css', '.csv', '.html', '.txt',
+        // Video
         '.mpeg', '.mp4', '.mov',
+        // Font
+        '.eot', '.ttf', '.otf', '.woff', '.woff2',
     ];
 
     public $error = '';
